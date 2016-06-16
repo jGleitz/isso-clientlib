@@ -40,7 +40,7 @@ export const standard = {
 			hash: '4509c1eeda98',
 			author: 'Max Müller',
 			website: 'max@müller.org',
-			created: 138732125.572392,
+			created: 1387321281.572392,
 			modified: <number> null,
 			likes: 0,
 			dislikes: 1,
@@ -141,7 +141,7 @@ export const deeplyNested = {
 			hash: '4509c1eeda98',
 			author: 'Max Müller',
 			website: 'max@müller.org',
-			created: 138732125.572392,
+			created: 1387321291.572392,
 			modified: <number> null,
 			likes: 0,
 			dislikes: 1,
@@ -156,7 +156,7 @@ export const deeplyNested = {
 			hash: '4509cuiaea98',
 			author: 'Marina Müller',
 			website: 'marina@müller.org',
-			created: 158732145.572392,
+			created: 1387321391.572392,
 			modified: <number> null,
 			likes: 5,
 			dislikes: 2,
@@ -187,8 +187,7 @@ export const forSorting = {
 			total_replies: 0,
 			hidden_replies: 0,
 			replies: <Array<any>> []
-		},
-		{
+		}, {
 			id: 2,
 			parent: <number> null,
 			text: '<p>Yet another comments</p>\n',
@@ -203,8 +202,7 @@ export const forSorting = {
 			total_replies: 0,
 			hidden_replies: 0,
 			replies: <Array<any>> []
-		},
-		{
+		}, {
 			id: 3,
 			parent: <number> null,
 			text: '<p>Yet another comments</p>\n',
@@ -219,8 +217,7 @@ export const forSorting = {
 			total_replies: 0,
 			hidden_replies: 0,
 			replies: <Array<any>> []
-		},
-		{
+		}, {
 			id: 4,
 			parent: <number> null,
 			text: '<p>Yet another comments</p>\n',
@@ -235,8 +232,7 @@ export const forSorting = {
 			total_replies: 0,
 			hidden_replies: 0,
 			replies: <Array<any>> []
-		},
-		{
+		}, {
 			id: 5,
 			parent: <number> null,
 			text: '<p>Yet another comments</p>\n',
