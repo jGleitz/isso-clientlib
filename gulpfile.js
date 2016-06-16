@@ -37,7 +37,9 @@ const paths = {
 	},
 	compileSettings: 'config/compilersettings',
 	compiledTypes: 'build/lib/**/*.d.ts',
-	coverageFile: './coverage/coverage.json'
+	coverageFile: './build/raw-coverage.json',
+	coverageReportFolder: 'build/coverage',
+	lcovCoverageReport: 'build/coverage.lcov'
 };
 
 
@@ -89,7 +91,7 @@ function compileTask(settings, sources, output) {
 			.pipe(typescript(settings, {}, typescript.reporter.longReporter()));
 
 		const jsStream = compileStream.js
-			.pipe(sourcemaps.write('.'));
+			.pipe(sourcemaps.write('.', {sourceRoot: 'lib'}));
 
 		return merge([
 			jsStream,
@@ -149,7 +151,8 @@ function testStream(opts) {
 					basePath: paths.lib,
 					reports: {
 						text: '',
-						html: 'build/coverage'
+						html: paths.coverageReportFolder,
+						lcovonly: paths.lcovCoverageReport
 					}
 				})))
 			);
@@ -158,7 +161,6 @@ function testStream(opts) {
 gulp.task('test', ['bundle-test'], () => testStream());
 
 gulp.task('silent-test', ['bundle-test'], () => testStream({silent: true}));
-
 
 gulp.task('watch', ['bundle-test', 'silent-test', 'doc'], () => {
 	browserSyncTest.init({
