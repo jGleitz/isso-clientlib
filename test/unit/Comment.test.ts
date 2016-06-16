@@ -22,7 +22,7 @@ describe('Comment', () => {
 		const comment = Comment.fromServerData(commentData, page, null);
 		expect(comment.text).to.equal('<p>Hello, World!</p>\n');
 		expect(comment.id).to.equal(1);
-		expect(comment.createdOn).to.equalTime(new Date(2013, 11, 18, 0, 1, 1, 572));
+		expect(comment.createdOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 1, 1, 572)));
 		expect(comment.lastModifiedOn).to.be.null;
 		expect(comment.likes).to.equal(3);
 		expect(comment.dislikes).to.equal(1);
@@ -33,7 +33,7 @@ describe('Comment', () => {
 
 		const reply = comment.replies[0];
 		expect(reply.parent).to.equal(comment);
-		expect(reply.lastModifiedOn).to.equalTime(new Date(2013, 11, 18, 0, 2, 58, 613));
+		expect(reply.lastModifiedOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 2, 58, 613)));
 	});
 
 	it('can be submitted to the server when new', () => {
@@ -75,7 +75,7 @@ describe('Comment', () => {
 			.then(() => {
 				expect(comment.published).to.be.true;
 				expect(comment.deleted).to.be.false;
-				expect(comment.createdOn).to.equalTime(new Date(2013, 11, 18, 0, 1, 1, 572));
+				expect(comment.createdOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 1, 1, 572)));
 				expect(comment.id).to.equal(18);
 				expect(commentInsertSpy).to.have.been.calledWith(comment);
 			})
@@ -198,7 +198,7 @@ describe('Comment', () => {
 		return comment.fetch()
 			.then(() => {
 				expect(comment.text).to.equal('<p>changed</p>\n');
-				expect(comment.lastModifiedOn).to.equalTime(new Date(2013, 11, 18, 0, 2, 58, 613));
+				expect(comment.lastModifiedOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 2, 58, 613)));
 				expect(comment.author.name).to.equal('Tester');
 				expect(comment.likes).to.equal(8);
 				expect(comment.dislikes).to.equal(2);
