@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>IssoSlim unit test page</title>
+		<meta charset="utf-8" />
+		<base href="../../" />
+
+		<script src="node_modules/source-map-support/browser-source-map-support.js"></script>
+		<script>sourceMapSupport.install();</script>
+
+		<!-- Test library setup -->
+		<link rel="stylesheet" href="node_modules/mocha/mocha.css" />
+		<script src="node_modules/mocha/mocha.js"></script>
+		<script>
+			mocha.ui('bdd');
+			mocha.reporter('html');
+		</script>
+		<!-- Sinon does not play well with webpack and is thus imported here: -->
+		<script src='node_modules/sinon/pkg/sinon.js'></script>
+
+		<!-- test bundle, includes libraries -->
+		<script src="build/bundles/test.js"></script>
+	</head>
+	<body>
+		<div id="mocha"></div>
+		<script>
+			mocha.run();
+		</script>
+	</body>
+</html>
