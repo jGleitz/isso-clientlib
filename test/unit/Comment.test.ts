@@ -181,6 +181,7 @@ describe('Comment', () => {
 
 	it('does not send when unchanged', () => {
 		const comment = Comment.fromServerData(commentData, page, null);
+		comment.rawText = comment.rawText;
 		return expect(comment.send()).to.be.fulfilled;
 	});
 
