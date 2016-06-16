@@ -1,0 +1,17 @@
+{
+	"compileOnSave": false,
+    "compilerOptions": {
+		"allowSyntheticDefaultImports": false,
+		"allowUnreachableCode": false,
+        "target": "es5",
+        "noImplicitAny": true
+    },
+	"exclude": [
+		"node_modules",
+		"typings/main",
+		"typings/main.d.ts",
+		"build",
+		"dist",
+		"config"
+	]
+}

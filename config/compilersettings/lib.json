@@ -1,0 +1,8 @@
+{
+	"allowSyntheticDefaultImports": false,
+	"allowUnreachableCode": false,
+    "target": "es5",
+    "declaration": true,
+    "noImplicitAny": true,
+    "removeComments": false
+}

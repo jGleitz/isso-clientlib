@@ -1,0 +1,153 @@
+rules:
+    indent:
+        - warn
+        - tab
+        - SwitchCase: 1
+    quotes:
+        - warn
+        - single
+        - avoid-escape
+    linebreak-style:
+        - error
+        - unix
+    semi:
+        - error
+        - always
+    valid-jsdoc: warn
+    block-scoped-var: error
+    complexity: error
+    array-callback-return: error
+    consistent-return: error
+    curly: warn
+    default-case: error
+    guard-for-in: warn
+    no-alert: error
+    dot-location:
+        - warn
+        - property
+    dot-notation: off
+    eqeqeq: error
+    no-caller: error
+    no-eq-null: error
+    no-eval: error
+    no-extend-native: error
+    no-extra-bind: warn
+    no-extra-label: warn
+    no-implied-eval: error
+    no-invalid-this: error
+    no-iterator: error
+    no-lone-blocks: warn
+    no-loop-func: error
+    no-multi-spaces: error
+    no-multi-str: error
+    no-native-reassign: error
+    no-new: error
+    no-new-func: error
+    no-new-wrappers: warn
+    no-octal-escape: warn
+    no-param-reassign: error
+    no-return-assign: error
+    no-self-compare: error
+    no-proto: error
+    no-script-url: error
+    no-throw-literal: error
+    no-useless-call: warn
+    no-useless-concat: error
+    no-useless-escape: warn
+    no-with: error
+    wrap-iife:
+        - error
+        - inside
+    yoda: warn
+    strict: off
+    no-catch-shadow: error
+    no-label-var: error
+    no-shadow: error
+    callback-return: error
+    global-require: error
+    handle-callback-err: error
+    no-mixed-requires: error
+    no-new-require: error
+    no-path-concat: error
+    arrow-body-style: warn
+    arrow-parens:
+        - warn
+        - as-needed
+    arrow-spacing: warn
+    generator-star-spacing: warn
+    no-confusing-arrow: error
+    no-duplicate-imports: error
+    no-useless-constructor: warn
+    no-var: error
+    object-shorthand:
+        - warn
+        - methods
+    prefer-arrow-callback: warn
+    prefer-const: warn
+    prefer-rest-params: warn
+    prefer-spread: warn
+    require-yield: error
+    array-bracket-spacing: warn
+    brace-style: warn
+    camelcase:
+        - error
+        - properties: never
+    comma-spacing: warn
+    comma-style: warn
+    computed-property-spacing: warn
+    consistent-this: error
+    eol-last: error
+    key-spacing: warn
+    keyword-spacing: warn
+    lines-around-comment: warn
+    max-len:
+        - error
+        -
+            code: 120
+            comments: 80
+            tabWidth: 4
+    new-cap: error
+    new-parens: error
+    newline-per-chained-call: warn
+    no-array-constructor: error
+    no-lonely-if: warn
+    no-multiple-empty-lines: warn
+    no-new-object: error
+    no-trailing-spaces: error
+    no-spaced-func: warn
+    no-unneeded-ternary: error
+    no-unused-vars: warn
+    no-whitespace-before-property: warn
+    object-curly-spacing: warn
+    one-var:
+        - error
+        - never
+    one-var-declaration-per-line: error
+    operator-assignment: warn
+    operator-linebreak:
+        - warn
+        - before
+    quote-props:
+        - warn
+        - as-needed
+    require-jsdoc:
+        - warn
+        - require:
+                FunctionDeclaration: true
+                MethodDefinition: true
+                ClassDeclaration: true
+    semi-spacing: warn
+    sort-imports: warn
+    space-before-blocks: warn
+    space-before-function-paren:
+        - warn
+        - never
+    space-in-parens: warn
+    spaced-comment: warn
+env:
+    es6: true
+
+parserOptions:
+    sourceType: module
+
+extends: eslint:recommended
