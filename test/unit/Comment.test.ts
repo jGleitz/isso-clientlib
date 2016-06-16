@@ -38,7 +38,7 @@ describe('Comment', () => {
 
 	it('can be submitted to the server when new', () => {
 		const comment = new Comment(page, null);
-		comment.text = 'Hey there!';
+		comment.rawText = 'Hey there!';
 
 		expect(comment.author).to.exist;
 		expect(comment.published).to.be.false;
@@ -78,7 +78,7 @@ describe('Comment', () => {
 			})
 			.then(() => {
 				const reply = new Comment(page, comment);
-				reply.text = 'Hey again!';
+				reply.rawText = 'Hey again!';
 				server.responseToPost('/new', expectData({
 					text: 'Hey again!',
 					email: undefined,
@@ -111,7 +111,7 @@ describe('Comment', () => {
 
 	it('recognises when awaiting moderation', () => {
 		const comment = new Comment(page, null);
-		comment.text = 'Hey there!';
+		comment.rawText = 'Hey there!';
 
 		const unpublishedResponse = {
 			id: 18,
@@ -149,7 +149,7 @@ describe('Comment', () => {
 
 	it('can be updated on the server', () => {
 		const comment = Comment.fromServerData(commentData, page, null);
-		comment.text = 'Hey test!';
+		comment.rawText = 'Hey test!';
 		server.responseToPut('/id/1', expectData({
 			text: 'Hey test!',
 			email: undefined,

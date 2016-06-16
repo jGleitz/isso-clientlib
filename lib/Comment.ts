@@ -65,16 +65,38 @@ export default class Comment {
 		return this._deleted;
 	}
 
-	private _text: string = '';
+	private _text: string = null;
 
+	/**
+	 * The comment’s `text`. If this comment is not known to the server yet, this is `null`.
+	 */
 	public get text(): string {
 		return this._text;
 	}
 
-	public set text(text: string) {
-		if (text !== this._text) {
+	private updateText(newText: string): void {
+		if (this._text !== newText) {
+			this.onTextChanged.post(this._text = newText);
+		}
+	}
+
+	private _rawText: string = null;
+
+	/**
+	 * This comments’s raw text. This is the unrendered, unfiltered text as entered by the user. The raw text is only
+	 * set if this comment was created or edited by the user. Comments received from the server do not have a raw
+	 * text set. It’s `null` otherwise.
+	 */
+	public get rawText(): string {
+		return this._rawText;
+	}
+
+	/**
+	 * This comments’s raw text. This is the unrendered, unfiltered text as entered by the user.
+	 */
+	public set rawText(rawText: string) {
+		if (rawText !== this._rawText) {
 			this.dirty = true;
-			this.onTextChanged.post(this._text = text);
 		}
 	}
 
@@ -230,7 +252,7 @@ export default class Comment {
 		if (this.id === null) {
 			this.onIdAssigned.post(this.id = serverData.id);
 		}
-		this.text = serverData.text;
+		this.updateText(serverData.text);
 		this._createdOn = this._createdOn || new Date(serverData.created * TIMESTAMP_MULTIPLIER);
 		if (serverData.modified !== null
 			&& (this._lastModifiedOn === null || this._lastModifiedOn.getTime() !== serverData.modified)) {
@@ -316,7 +338,7 @@ export default class Comment {
 	 */
 	private toRequestData(): Object {
 		return {
-			text: this.text,
+			text: this.rawText || (this.existsOnServer ? undefined : ''),
 			author: this.author.name || undefined,
 			website: this.author.website || undefined,
 			email: this.author.email || undefined,
