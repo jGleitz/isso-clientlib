@@ -232,6 +232,7 @@ export default class Comment {
 	 */
 	public static fromServerData(serverData: any, page: Page, parent: Comment): Comment {
 		const result = new Comment(page, parent);
+		result.existsOnServer = true; // we don’t want to fire an onPublished event for this comment.
 		result.updateFromServer(serverData);
 		return result;
 	}
@@ -246,6 +247,7 @@ export default class Comment {
 		if (serverData.mode === DELETED_STATE) {
 			this.wasDeleted();
 		} else if (serverData.mode === PUBLISHED_STATE && !this.published) {
+			this.page.comments.insert(this);
 			this.onPublished.post();
 		}
 		this.awaitsModeration = serverData.mode === AWAITS_MODERATION_STATE;
@@ -370,7 +372,6 @@ export default class Comment {
 	 * Callback for after a successful create request.
 	 */
 	private afterCreate(serverResponse: Response): Comment {
-		this.existsOnServer = true;
 		return this.afterUpdate(serverResponse);
 	}
 

@@ -58,7 +58,12 @@ export default class CommentList implements ArrayLike<Comment> {
 	private sortFunction: (a: Comment, b: Comment) => number = null;
 
 	/**
-	 * The number of comments in this list.
+	 * The comparison function used to sort this list.
+	 */
+	private sortFunction: (a: Comment, b: Comment) => number;
+
+	/**
+	 * The number of comments known to belong in this list. May differ from this list’s [#length](#length).
 	 */
 	public get count(): number {
 		return this._count;
@@ -127,6 +132,7 @@ export default class CommentList implements ArrayLike<Comment> {
 			this.page = parent.page;
 			this.parent = parent;
 		}
+		this.sortBy(SortCriterion.CREATION, SortMode.ASCENDING);
 	}
 
 	public fetchCount(): Promise<number> {
@@ -314,12 +320,10 @@ export default class CommentList implements ArrayLike<Comment> {
 	}
 
 	private sort(): void {
-		if (this.sortFunction !== null) {
-			const newOrder = this.map(comment => comment);
-			newOrder.sort(this.sortFunction);
-			for (let i = 0; i < newOrder.length; i++) {
-				this[i] = newOrder[i];
-			}
+		const newOrder = this.map(comment => comment);
+		newOrder.sort(this.sortFunction);
+		for (let i = 0; i < newOrder.length; i++) {
+			this[i] = newOrder[i];
 		}
 	}
 
@@ -357,4 +361,21 @@ export default class CommentList implements ArrayLike<Comment> {
 		};
 		this.sort();
 	}
+
+	/**
+	 * Adds the provided `comment` to this list.
+	 *
+	 * @hidden
+	 * @param comment	The comment to add.
+	 */
+	public insert(comment: Comment): void {
+		let i = this.length - 1;
+		for (; i >= 0 && this.sortFunction(this[i], comment) > 0; i--) {
+			this[i + 1] = this[i];
+		}
+		this[i + 1] = comment;
+		this.commentsById[comment.id] = comment;
+		this._length++;
+	}
+
 }

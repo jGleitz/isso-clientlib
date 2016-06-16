@@ -251,4 +251,29 @@ describe('CommentList', () => {
 				});
 			});
 	});
+
+	it('allows to insert new comments', () => {
+		return pageWithCommentList(SERVER_FIXTURES.forSorting)
+			.then(page => {
+				page.comments.sortBy(SortCriterion.LIKESUM);
+				const newComment = Comment.fromServerData({
+					id: 9,
+					parent: <number> null,
+					text: '<p>Yet another comment</p>\n',
+					mode: 1,
+					hash: '4509cuiaea98',
+					author: 'Marina Müller',
+					website: 'marina@müller.org',
+					created: 158732126.572392,
+					modified: <number> null,
+					likes: 3,
+					dislikes: 1,
+					total_replies: 0,
+					hidden_replies: 0,
+					replies: <Array<any>> []
+				}, page, null);
+				page.comments.insert(newComment);
+				expect(page.comments.map(toId)).to.deep.equal([2, 3, 1, 6, 9, 5, 4]);
+			});
+	});
 });

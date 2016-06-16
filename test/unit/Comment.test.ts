@@ -38,6 +38,8 @@ describe('Comment', () => {
 
 	it('can be submitted to the server when new', () => {
 		const comment = new Comment(page, null);
+		const commentInsertSpy = sinon.spy(page.comments, 'insert');
+		const replyInsertSpy = sinon.spy(comment.replies, 'insert');
 		comment.rawText = 'Hey there!';
 
 		expect(comment.author).to.exist;
@@ -75,6 +77,7 @@ describe('Comment', () => {
 				expect(comment.deleted).to.be.false;
 				expect(comment.createdOn).to.equalTime(new Date(2013, 11, 18, 0, 1, 1, 572));
 				expect(comment.id).to.equal(18);
+				expect(commentInsertSpy).to.have.been.calledWith(comment);
 			})
 			.then(() => {
 				const reply = new Comment(page, comment);
@@ -105,6 +108,7 @@ describe('Comment', () => {
 				return reply.send().
 					then(() => {
 						expect(reply.parent).to.equal(comment);
+						expect(replyInsertSpy).to.have.been.calledWith(reply);
 					});
 			});
 	});
