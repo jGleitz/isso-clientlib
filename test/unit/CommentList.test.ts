@@ -63,7 +63,7 @@ describe('CommentList', () => {
 			.then(page => {
 				expect(page.comments.byId(1)).to.be.an.instanceof(Comment);
 				expect(page.comments.byId(2)).to.be.undefined;
-				expect(page.comments.byId(1).children.byId(2)).to.be.an.instanceof(Comment);
+				expect(page.comments.byId(1).replies.byId(2)).to.be.an.instanceof(Comment);
 				expect(page.comments.byId(3)).to.be.an.instanceof(Comment);
 				expect(page.comments.byId(5)).to.be.undefined;
 				expect(page.comments.byId(0)).to.be.undefined;
@@ -100,12 +100,12 @@ describe('CommentList', () => {
 							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[1]);
 						expect(createFromServerSpy).to.have.been.calledWith(SERVER_FIXTURES.deeplyNested.replies[2]);
 
-						expect(page.comments.byId(1).children.byId(2)).to.exist;
-						expect(page.comments.byId(1).children.byId(2).id).to.equal(2);
+						expect(page.comments.byId(1).replies.byId(2)).to.exist;
+						expect(page.comments.byId(1).replies.byId(2).id).to.equal(2);
 
 						expect(page.comments.count).to.equal(3);
 						expect(page.comments.deepCount).to.equal(7);
-						expect(page.comments[0].children.deepCount).to.equal(4);
+						expect(page.comments[0].replies.deepCount).to.equal(4);
 					});
 			});
 	});
@@ -140,8 +140,8 @@ describe('CommentList', () => {
 			};
 			modifiedChildList.replies[0].text = 'Test Text';
 			server.responseToGet('/', successResponse(modifiedChildList));
-			const updateSpy = sinon.spy(page.comments.byId(1).children.byId(2), 'updateFromServer');
-			return page.comments.byId(1).children.fetch()
+			const updateSpy = sinon.spy(page.comments.byId(1).replies.byId(2), 'updateFromServer');
+			return page.comments.byId(1).replies.fetch()
 				.then(() => {
 					expect(updateSpy).to.have.been.calledWith(modifiedChildList.replies[0]);
 				});
@@ -176,9 +176,9 @@ describe('CommentList', () => {
 	it('can update the deep count for replies', () => {
 		return pageWithCommentList().then(page => {
 			server.responseToGet('/', successResponse(SERVER_FIXTURES.deeplyNested.replies[0]));
-			return page.comments[0].children.fetchDeepCount().then(deepCount => {
+			return page.comments[0].replies.fetchDeepCount().then(deepCount => {
 				expect(deepCount).to.equal(4);
-				expect(page.comments[0].children.deepCount).to.equal(4);
+				expect(page.comments[0].replies.deepCount).to.equal(4);
 			});
 		});
 	});

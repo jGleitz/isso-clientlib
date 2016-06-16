@@ -164,7 +164,7 @@ export default class Comment {
 		).then(() => this._dislikes);
 	}
 
-	public children = new CommentList(this);
+	public replies = new CommentList(this);
 	/**
 	 * Fired when this comment was removed from the server.
 	 */
@@ -266,7 +266,7 @@ export default class Comment {
 		this.dirty = false;
 		this.existsOnServer = true;
 		if (serverData.replies !== undefined) {
-			this.children.updateFromServer(serverData);
+			this.replies.updateFromServer(serverData);
 		}
 	}
 

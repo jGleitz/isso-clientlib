@@ -228,7 +228,7 @@ export default class CommentList implements ArrayLike<Comment> {
 			}
 			newCommentById[data.id] = comment;
 			this[i] = comment;
-			childrenDeepCount += comment.children.deepCount;
+			childrenDeepCount += comment.replies.deepCount;
 		}
 		for (; i < this.length; i++) {
 			this[i] = undefined;
@@ -282,7 +282,7 @@ export default class CommentList implements ArrayLike<Comment> {
 			for (let i = 0; i < this.length; i++) {
 				result.push(transformer(this[i]));
 				if (includeChildren) {
-					this[i].children.flatMap(transformer)
+					this[i].replies.flatMap(transformer)
 						.forEach(transformed => result.push(transformed));
 				}
 			}

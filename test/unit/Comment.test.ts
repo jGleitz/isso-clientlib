@@ -27,11 +27,11 @@ describe('Comment', () => {
 		expect(comment.likes).to.equal(3);
 		expect(comment.dislikes).to.equal(1);
 		expect(comment.parent).to.be.null;
-		expect(comment.children.length).to.equal(1);
+		expect(comment.replies.length).to.equal(1);
 		expect(comment.published).to.be.true;
 		expect(comment.deleted).to.be.false;
 
-		const reply = comment.children[0];
+		const reply = comment.replies[0];
 		expect(reply.parent).to.equal(comment);
 		expect(reply.lastModifiedOn).to.equalTime(new Date(2013, 11, 18, 0, 2, 58, 613));
 	});
