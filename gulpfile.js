@@ -45,13 +45,11 @@ const paths = {
 /**
  * Checks the coding conventions.
  */
-gulp.task('lint', ['lint-lib', 'lint-test']);
-
-gulp.task('lint-lib', () =>
-	gulp.src([paths.lib])
+gulp.task('lint', () =>
+	gulp.src([paths.lib, paths.test])
 		.pipe(tslint())
 		.pipe(tslint.report(stylish, {
-			emitError: false,
+			emitError: true,
 			sort: true,
 			bell: true
 		}))
