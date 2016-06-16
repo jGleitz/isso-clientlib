@@ -3,11 +3,17 @@ import Comment from './Comment';
 import {AsyncEvent} from 'ts-events';
 import {Response} from 'superagent';
 
+/**
+ * Modes a `CommentList` can be sorted by.
+ */
 export const enum SortMode {
 	ASCENDING,
 	DESCENDING
 }
 
+/**
+ * Criteria a `CommentList` can be sorted by.
+ */
 export const enum SortCriterion {
 	/**
 	 * Sort based on the comment’s creation timestamp.
@@ -32,6 +38,9 @@ export const enum SortCriterion {
 	LIKESUM
 };
 
+/**
+ * Functions returning the number to use for comparison for each `SortCriterion`.
+ */
 const COMMENT_MEMBER_ACCESS_FUNCTIONS = (() => {
 	const memberAccessFunctions: {[criterion: number]: (comment: Comment) => number} = {};
 	memberAccessFunctions[SortCriterion.CREATION] = comment => comment.createdOn.getTime();
@@ -43,19 +52,39 @@ const COMMENT_MEMBER_ACCESS_FUNCTIONS = (() => {
 	return memberAccessFunctions;
 })();
 
+/**
+ * A list of comments. Offers the ability to query and update the comments in this list. The list’s `count`, the number
+ * of comments known by the server to belong into this list, can be queried independently.
+ *
+ * A list contains only comments that are published or deleted but still have replies.
+ */
 export default class CommentList implements ArrayLike<Comment> {
 
+	/**
+	 * Array like index signature. Keeps the comments in the order set through [#orderBys](#orderBys) or
+	 * [#orderBy](#orderby). If no order was set yet, the list is ordered by creation the comments’ date.
+	 */
 	[index: number]: Comment;
 
+	/**
+	 * Maps ids to their comment objects.
+	 */
 	private commentsById: {[id: number]: Comment} = {};
 
+	/**
+	 * The page the comments in this list belongs to.
+	 */
 	private page: Page;
 
+	/**
+	 * If this list contains the replies to a comment, this is the comment being replied to. `null` otherwise.
+	 */
 	private parent: Comment;
 
+	/**
+	 * The (flat) count of comments belonging into this list.
+	 */
 	public _count = 0;
-
-	private sortFunction: (a: Comment, b: Comment) => number = null;
 
 	/**
 	 * The comparison function used to sort this list.
@@ -69,6 +98,9 @@ export default class CommentList implements ArrayLike<Comment> {
 		return this._count;
 	}
 
+	/**
+	 * Updates `_count`. Fires `#onCountChange` if necessary.
+	 */
 	private updateCount(newCount: number): void {
 		if (newCount !== this._count) {
 			this.onCountChange.post(this._count = newCount);
@@ -78,7 +110,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	private _deepCount = 0;
 
 	/**
-	 * The number of comments in this list, recursevly including replies.
+	 * The number of comments known to belong in this list, recursively including replies.
 	 */
 	public get deepCount(): number {
 		return this._deepCount;
@@ -135,10 +167,20 @@ export default class CommentList implements ArrayLike<Comment> {
 		this.sortBy(SortCriterion.CREATION, SortMode.ASCENDING);
 	}
 
+	/**
+	 * Updates the count (number of comments excluding replies) of this list. Calling this method will not change
+	 * this list’s content.
+	 *
+	 * @return	A promise that will be resolved with the deep count when its retrieval succeeded.
+	 */
 	public fetchCount(): Promise<number> {
 		return this._fetch({limit: 0}).then(() => this.count);
 	}
 
+	/**
+	 * Issues a collective update of deep counts for the pages collected in `collectiveCountQueue`. Fulfills
+	 * `collectiveCountPromise` when the count are ready.
+	 */
 	private static fetchCollectiveCounts(): Promise<any> {
 		const firstPage = CommentList.collectiveCountQueue[0];
 		const pages = CommentList.collectiveCountQueue;
@@ -180,6 +222,12 @@ export default class CommentList implements ArrayLike<Comment> {
 		return this.commentsById[id];
 	}
 
+	/**
+	 * Updates the deep count (number of comments including replies) of this list. Calling this method will not change
+	 * this list’s content.
+	 *
+	 * @return	A promise that will be resolved with the deep count when its retrieval succeeded.
+	 */
 	public fetchDeepCount(): Promise<number> {
 		// If this is a nested list, there is no collective way to fetch the count.
 		if (this.parent !== null) {
@@ -200,10 +248,18 @@ export default class CommentList implements ArrayLike<Comment> {
 		return CommentList.collectiveCountPromise.then(() => this.deepCount);
 	}
 
+	/**
+	 * Updates the comments in this list from the server.
+	 *
+	 * @return	A promise that will be resolved with `this` list when the update succeeded.
+	 */
 	public fetch(): Promise<CommentList> {
 		return this._fetch();
 	}
 
+	/**
+	 * Executes a fetch request, sending the provieded `data`.
+	 */
 	private _fetch(data: any = {}): Promise<CommentList> {
 		return this.page.send(
 			this.page.server.get('/')
@@ -263,12 +319,13 @@ export default class CommentList implements ArrayLike<Comment> {
 	}
 
 	/**
-	 * Transforms `this` comment list and the children into an array using the provided `transformer`.
+	 * Transforms `this` comment list together with the comments’ replies into an array using the provided
+	 * `transformer`.
 	 *
 	 * @param transformer
 	 *		A function mapping each comment to the desired value.
 	 * @return The array containing the result of transforming each comment in this list. The returned array will have
-	 *		the transformed values in the same order as the source comment were in this list. Child comments come
+	 *		the transformed values in the same order as the source comments were in this list. Replies come
 	 *		directly after their parent.
 	 */
 	public flatMap<ResultType>(transformer: (comment: Comment) => ResultType): Array<ResultType> {
@@ -319,6 +376,9 @@ export default class CommentList implements ArrayLike<Comment> {
 		return data;
 	}
 
+	/**
+	 * Sorts this list accordings to `#sortFunction`.
+	 */
 	private sort(): void {
 		const newOrder = this.map(comment => comment);
 		newOrder.sort(this.sortFunction);

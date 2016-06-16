@@ -61,6 +61,10 @@ export default class Comment {
 
 	private _deleted = false;
 
+	/**
+	 * Whether this comment once existed on the server but is now deleted. Deleted comments may still have (not deleted)
+	 * replies.
+	 */
 	public get deleted(): boolean {
 		return this._deleted;
 	}
@@ -97,6 +101,7 @@ export default class Comment {
 	public set rawText(rawText: string) {
 		if (rawText !== this._rawText) {
 			this.dirty = true;
+			this._rawText = rawText;
 		}
 	}
 
@@ -246,8 +251,8 @@ export default class Comment {
 	public updateFromServer(serverData: any): void {
 		if (serverData.mode === DELETED_STATE) {
 			this.wasDeleted();
-		} else if (serverData.mode === PUBLISHED_STATE && !this.published) {
-			this.page.comments.insert(this);
+		} else if (serverData.mode === PUBLISHED_STATE && !this.existsOnServer) {
+			(this.parent === null ? this.page.comments : this.parent.replies).insert(this);
 			this.onPublished.post();
 		}
 		this.awaitsModeration = serverData.mode === AWAITS_MODERATION_STATE;
@@ -340,7 +345,7 @@ export default class Comment {
 	 */
 	private toRequestData(): Object {
 		return {
-			text: this.rawText || (this.existsOnServer ? undefined : ''),
+			text: this.rawText,
 			author: this.author.name || undefined,
 			website: this.author.website || undefined,
 			email: this.author.email || undefined,
