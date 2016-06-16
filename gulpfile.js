@@ -8,7 +8,6 @@ const gutil = require('gulp-util');
 const tslint = require('gulp-tslint');
 const stylish = require('tslint-stylish');
 const typescript = require('gulp-typescript');
-const eslint = require('gulp-eslint');
 const sourcemaps = require('gulp-sourcemaps');
 const merge = require('merge2');
 const path = require('path');
@@ -58,13 +57,6 @@ gulp.task('lint-lib', () =>
 		}))
 );
 
-gulp.task('lint-test', () =>
-	gulp.src([paths.test, 'gulpfile.js'])
-		.pipe(eslint())
-		.pipe(eslint.format())
-		.pipe(eslint.failAfterError())
-);
-
 const compileSettings = {
 	lib: require('./' + path.join(paths.compileSettings, 'lib.json')),
 	test: require('./' + path.join(paths.compileSettings, 'test.json'))
@@ -72,17 +64,6 @@ const compileSettings = {
 
 /**
  * Compile typescript to ES5
- */
-/**
- * Creates a typescript compilation task.
- *
- * @param {Object} settings
- * 		Settings for the typescript compiler.
- * @param {Array<string>} sources
- *		The file globs to construct the stream from.
- * @param {string} output
- *		The output folder to compile to.
- * @return {function} The task function.
  */
 function compileTask(settings, sources, output) {
 	return () => {
@@ -116,8 +97,8 @@ gulp.task('instrument', ['compile'], () =>
 		.pipe(gulp.dest(paths.output.testLib))
 );
 
-/**
- * Bundles the library to be used in the browser.
+/*
+ * Bundle the tests to be used in the browser.
  */
 gulp.task('bundle-test', ['compile-test', 'instrument'], () =>
 	gulp.src(path.join(paths.output.test, 'unit/start.js'))
@@ -136,6 +117,10 @@ gulp.task('bundle-test', ['compile-test', 'instrument'], () =>
 		.pipe(gulp.dest(paths.output.bundles))
 );
 
+
+/*
+ * Execute the tests.
+ */
 function testStream(opts) {
 	return gulp.src('test/unit/index.html', {read: false})
 		.pipe(mochaPhantomJs(Object.assign({
@@ -162,6 +147,10 @@ gulp.task('test', ['bundle-test'], () => testStream());
 
 gulp.task('silent-test', ['bundle-test'], () => testStream({silent: true}));
 
+
+/*
+ * Development pages in the browser.
+ */
 gulp.task('watch', ['bundle-test', 'silent-test', 'doc'], () => {
 	browserSyncTest.init({
 		server: {
@@ -195,6 +184,10 @@ gulp.task('watch', ['bundle-test', 'silent-test', 'doc'], () => {
 gulp.task('reload-test', ['bundle-test'], () => browserSyncTest.reload());
 gulp.task('reload-build', ['silent-test', 'doc'], () => browserSyncBuild.reload());
 
+
+/*
+ * Build documentation
+ */
 gulp.task('doc', () =>
 	gulp.src([paths.lib, paths.typings])
 		.pipe(typedoc({
