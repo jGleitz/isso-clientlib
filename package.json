@@ -9,6 +9,7 @@
     "postinstall": "typings install"
   },
   "author": "Joshua Gleitze",
+  "repository": "https://github.com/jGleitz/isso-clientlib.git",
   "license": "MIT",
   "devDependencies": {
     "benv": "^3.0.0",
