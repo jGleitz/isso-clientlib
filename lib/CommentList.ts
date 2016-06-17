@@ -98,15 +98,6 @@ export default class CommentList implements ArrayLike<Comment> {
 		return this._count;
 	}
 
-	/**
-	 * Updates `_count`. Fires `#onCountChange` if necessary.
-	 */
-	private updateCount(newCount: number): void {
-		if (newCount !== this._count) {
-			this.onCountChange.post(this._count = newCount);
-		}
-	}
-
 	private _deepCount = 0;
 
 	/**
@@ -116,12 +107,6 @@ export default class CommentList implements ArrayLike<Comment> {
 		return this._deepCount;
 	}
 
-	private updateDeepCount(newCount: number): void {
-		if (newCount !== this._deepCount) {
-			this.onDeepCountChange.post(this._deepCount = newCount);
-		}
-	}
-
 	private _length = 0;
 
 	/**
@@ -129,12 +114,6 @@ export default class CommentList implements ArrayLike<Comment> {
 	 */
 	public get length(): number {
 		return this._length;
-	}
-
-	private updateLength(newLength: number): void {
-		if (newLength !== this.length) {
-			this.onLengthChange.post(this._length = newLength);
-		}
 	}
 
 	private static collectiveCountQueue: Array<Page> = [];
@@ -147,15 +126,27 @@ export default class CommentList implements ArrayLike<Comment> {
 	public onNew = new AsyncEvent<Comment>();
 
 	/**
-	 * Fired when the number of comments on this page changed.
+	 * Fired when this list’s [#count](#count) changed.
 	 */
 	 // TODO: Use `readonly` when TS 2.0 is available
 	public onCountChange = new AsyncEvent<number>();
 
+	/**
+	 * Fired when this list’s [#deepCount](#deepcount) changed.
+	 */
 	public onDeepCountChange = new AsyncEvent<number>();
 
+	/**
+	 * Fired when this list’s [#length](#length) changed.
+	 */
 	public onLengthChange = new AsyncEvent<number>();
 
+	/**
+	 * Creates a comment list.
+	 *
+	 * @param parent	The object this list is collecting comments of. Either a page if this list is collecting its
+	 *		comments, or a comment if this list is collecting its replies.
+	 */
 	public constructor(parent: Page | Comment) {
 		if (parent instanceof Page) {
 			this.page = parent;
@@ -438,4 +429,25 @@ export default class CommentList implements ArrayLike<Comment> {
 		this._length++;
 	}
 
+	/*
+	 * Field updaters, firing the relevant events if necessary:
+	 */
+
+	private updateLength(newLength: number): void {
+		if (newLength !== this.length) {
+			this.onLengthChange.post(this._length = newLength);
+		}
+	}
+
+	private updateDeepCount(newCount: number): void {
+		if (newCount !== this._deepCount) {
+			this.onDeepCountChange.post(this._deepCount = newCount);
+		}
+	}
+
+	private updateCount(newCount: number): void {
+		if (newCount !== this._count) {
+			this.onCountChange.post(this._count = newCount);
+		}
+	}
 }

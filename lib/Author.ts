@@ -2,7 +2,9 @@ import {AsyncEvent} from 'ts-events';
 
 /**
  * The author of a comment. Every author has an unique identifier that is
- * constanst over pages, websites and time.
+ * constanst over pages, websites and time. Howere, every comment has its
+ * own author object and different author objects with the same identifier
+ * may still have differnt data for the [#name](#name) and [#website](#website).
  */
 export default class Author {
 
@@ -10,6 +12,9 @@ export default class Author {
 
 	private _ident: string = null;
 
+	/**
+	 * The author’s identifier. Computed by the server based on its email address.
+	 */
 	public get ident(): string {
 		return this._ident;
 	}
@@ -20,6 +25,9 @@ export default class Author {
 		}
 	}
 
+	/**
+	 * The author’s website.
+	 */
 	public get website(): string {
 		return this._website;
 	}
@@ -32,6 +40,9 @@ export default class Author {
 
 	private _name: string = null;
 
+	/**
+	 * The author’s name.
+	 */
 	public get name(): string {
 		return this._name;
 	}
@@ -42,9 +53,23 @@ export default class Author {
 		}
 	}
 
+	/**
+	 * The author’s email address.
+	 */
 	public email: string = null;
 
+
+	/**
+	 * Fired when the server assigned an [identifier](#ident) to this author.
+	 */
 	public onIdentAssigned = new AsyncEvent<string>();
+
+	/**
+	 * Fired when this author’s [website](#website) has changed.
+	 */
 	public onWebsiteChanged = new AsyncEvent<string>();
+	/**
+	 * Fired when this author’s [name](#name) changed.
+	 */
 	public onNameChanged = new AsyncEvent<string>();
 }

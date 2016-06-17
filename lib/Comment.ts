@@ -7,23 +7,31 @@ import CommentList from './CommentList';
 /**
  * The integer used by isso to encode the “awaits moderation” state of a
  * comment.
+ *
+ * @hidden
  */
 const AWAITS_MODERATION_STATE = 2;
 
 /**
  * The integer used by isso to encode the “deleted but referenced” state of a
  * comment.
+ *
+ * @hidden
  */
 const DELETED_STATE = 4;
 
 /**
  * The integer used by isso to encode the “fully published” state of a
  * comment.
+ *
+ * @hidden
  */
 const PUBLISHED_STATE = 1;
 
 /**
  * The number to multiply timestamps received from the isso server with in order to correctly convert them to JS `Date`.
+ *
+ * @hidden
  */
 const TIMESTAMP_MULTIPLIER = 1000;
 
@@ -76,12 +84,6 @@ export default class Comment {
 	 */
 	public get text(): string {
 		return this._text;
-	}
-
-	private updateText(newText: string): void {
-		if (this._text !== newText) {
-			this.onTextChanged.post(this._text = newText);
-		}
 	}
 
 	private _rawText: string = null;
@@ -138,38 +140,21 @@ export default class Comment {
 		return this._likes;
 	}
 
-	/**
-	 * Sends a like to the server, increasing the number of likes on this comment by one.
-	 *
-	 * @return A promise that will be resolved with the new number of likes when the server request succeeded.
-	 */
-	public sendLike(): Promise<number> {
-		return this.page.send(
-			this.page.server.post(`/id/${this.id}/like`),
-			this.processLikes, this
-		).then(() => this._likes);
-	}
-
 	private _dislikes: number = 0;
 
 
+	/**
+	 * The number of dislikes placed on this comment.
+	 */
 	public get dislikes(): number {
 		return this._dislikes;
 	}
 
 	/**
-	 * Sends a dislike to the server, increasing the number of dislike on this comment by one.
-	 *
-	 * @return A promise that will be resolved with the new number of dislikes when the server request succeeded.
+	 * Comments replying to this comment. Comments in this list have `this` as their [#parent](#parent).
 	 */
-	public sendDislike(): Promise<number> {
-		return this.page.send(
-			this.page.server.post(`/id/${this.id}/dislike`),
-			this.processLikes, this
-		).then(() => this._dislikes);
-	}
-
 	public replies = new CommentList(this);
+
 	/**
 	 * Fired when this comment was removed from the server.
 	 */
@@ -210,7 +195,7 @@ export default class Comment {
 	 * Creates a comment on the given `page`.
 	 *
 	 * @param page	The page this comment is on.
-	 * @param parent	The comment that is being replied on if this comment is a response.
+	 * @param parent	The comment that is being replied on if this comment is a reply.
 	 */
 	constructor(public page: Page, public parent?: Comment) {
 		this._author.onNameChanged.attach(() => this.dirty = true);
@@ -306,10 +291,39 @@ export default class Comment {
 		return Promise.resolve(this);
 	}
 
+	/**
+	 * Updates this comment’s data from the server.
+	 *
+	 * @return	A promised resolved with `this` when the update suceeded.
+	 */
 	public fetch(): Promise<Comment> {
 		return this.page.send(
 			this.page.server.get(`/id/${this.id}`),
 			this.afterUpdate, this);
+	}
+
+	/**
+	 * Sends a like to the server, increasing the number of likes on this comment by one.
+	 *
+	 * @return A promise that will be resolved with the new number of likes when the server request succeeded.
+	 */
+	public sendLike(): Promise<number> {
+		return this.page.send(
+			this.page.server.post(`/id/${this.id}/like`),
+			this.processLikes, this
+		).then(() => this._likes);
+	}
+
+	/**
+	 * Sends a dislike to the server, increasing the number of dislike on this comment by one.
+	 *
+	 * @return A promise that will be resolved with the new number of dislikes when the server request succeeded.
+	 */
+	public sendDislike(): Promise<number> {
+		return this.page.send(
+			this.page.server.post(`/id/${this.id}/dislike`),
+			this.processLikes, this
+		).then(() => this._dislikes);
 	}
 
 	/**
@@ -364,6 +378,12 @@ export default class Comment {
 		this.applyLikes(response.body);
 	}
 
+	/**
+	 * Takes the provided `commentLikeObject` and applies the contained information about likes and dislikes to this
+	 * comment.
+	 *
+	 * @param commentLikeObject	An object at least having a `likes` and `dislikes` property.
+	 */
 	private applyLikes(commentLikeObject: any): void {
 		if (commentLikeObject.likes !== this.likes) {
 			this.onLikesChanged.post(this._likes = commentLikeObject.likes);
@@ -386,5 +406,15 @@ export default class Comment {
 	private afterUpdate(serverResponse: Response): Comment {
 		this.updateFromServer(serverResponse.body);
 		return this;
+	}
+
+	/*
+	 * Field updaters, firing the relevant events if necessary:
+	 */
+
+	private updateText(newText: string): void {
+		if (this._text !== newText) {
+			this.onTextChanged.post(this._text = newText);
+		}
 	}
 }
