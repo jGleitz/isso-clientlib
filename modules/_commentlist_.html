@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>SortCriterion | isso-clientlib</title>
+	<title>&quot;CommentList&quot; | isso-clientlib</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,119 +57,83 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_commentlist_.html">&quot;CommentList&quot;</a>
-				</li>
-				<li>
-					<a href="_commentlist_.sortcriterion.html">SortCriterion</a>
+					<a href="_commentlist_.html">&quot;CommentList&quot;</a>
 				</li>
 			</ul>
-			<h1>Enumeration SortCriterion</h1>
+			<h1>External module &quot;CommentList&quot;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Criteria a <code>CommentList</code> can be sorted by.</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Enumeration members</h3>
+							<h3>Enumerations</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_commentlist_.sortcriterion.html#creation" class="tsd-kind-icon">CREATION</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_commentlist_.sortcriterion.html#dislikes" class="tsd-kind-icon">DISLIKES</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_commentlist_.sortcriterion.html#likes" class="tsd-kind-icon">LIKES</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_commentlist_.sortcriterion.html#likesum" class="tsd-kind-icon">LIKESUM</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_commentlist_.sortcriterion.html#modification" class="tsd-kind-icon">MODIFICATION</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-external-module"><a href="../enums/_commentlist_.sortcriterion.html" class="tsd-kind-icon">Sort<wbr>Criterion</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-external-module"><a href="../enums/_commentlist_.sortmode.html" class="tsd-kind-icon">Sort<wbr>Mode</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Classes</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_commentlist_.commentlist.html" class="tsd-kind-icon">Comment<wbr>List</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_commentlist_.html#comment_member_access_functions" class="tsd-kind-icon">COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Enumeration members</h2>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="creation" class="tsd-anchor"></a>
-					<h3>CREATION</h3>
-					<div class="tsd-signature tsd-kind-icon">CREATION<span class="tsd-signature-symbol">:</span> </div>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="comment_member_access_functions" class="tsd-anchor"></a>
+					<h3>COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS</h3>
+					<div class="tsd-signature tsd-kind-icon">COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> =&nbsp;(() &#x3D;&gt; {const memberAccessFunctions: {[criterion: number]: (comment: Comment) &#x3D;&gt; number} &#x3D; {};memberAccessFunctions[SortCriterion.CREATION] &#x3D; comment &#x3D;&gt; comment.createdOn.getTime();memberAccessFunctions[SortCriterion.MODIFICATION] &#x3D;comment &#x3D;&gt; (comment.lastModifiedOn || comment.createdOn).getTime();memberAccessFunctions[SortCriterion.LIKES] &#x3D; comment &#x3D;&gt; comment.likes;memberAccessFunctions[SortCriterion.DISLIKES] &#x3D; comment &#x3D;&gt; comment.dislikes;memberAccessFunctions[SortCriterion.LIKESUM] &#x3D; comment &#x3D;&gt; comment.likes - comment.dislikes;return memberAccessFunctions;})()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/74edb90/lib/CommentList.ts#L21">CommentList.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/740ce98/lib/CommentList.ts#L44">CommentList.ts:44</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Sort based on the comment’s creation timestamp.</p>
+							<p>Functions returning the number to use for comparison for each <code>SortCriterion</code>.</p>
 						</div>
 					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="dislikes" class="tsd-anchor"></a>
-					<h3>DISLIKES</h3>
-					<div class="tsd-signature tsd-kind-icon">DISLIKES<span class="tsd-signature-symbol">:</span> </div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/74edb90/lib/CommentList.ts#L34">CommentList.ts:34</a></li>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>criterion: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">function</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>comment<span class="tsd-signature-symbol">: </span><a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5>comment: <a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
 						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Sort based on the comment’s number of dislikes.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="likes" class="tsd-anchor"></a>
-					<h3>LIKES</h3>
-					<div class="tsd-signature tsd-kind-icon">LIKES<span class="tsd-signature-symbol">:</span> </div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/74edb90/lib/CommentList.ts#L30">CommentList.ts:30</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Sort based on the comment’s number of likes.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="likesum" class="tsd-anchor"></a>
-					<h3>LIKESUM</h3>
-					<div class="tsd-signature tsd-kind-icon">LIKESUM<span class="tsd-signature-symbol">:</span> </div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/74edb90/lib/CommentList.ts#L38">CommentList.ts:38</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Sort based on the comment’s number of likes minus the comment’s number of dislikes.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="modification" class="tsd-anchor"></a>
-					<h3>MODIFICATION</h3>
-					<div class="tsd-signature tsd-kind-icon">MODIFICATION<span class="tsd-signature-symbol">:</span> </div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/74edb90/lib/CommentList.ts#L26">CommentList.ts:26</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Sort based on the comment’s last modification timestamp or the comment’s creation timestamp if the comment was
-							not yet modified.</p>
-						</div>
 					</div>
 				</section>
 			</section>
@@ -181,56 +145,35 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_author_.html">"<wbr>Author"</a>
+						<a href="_author_.html">"<wbr>Author"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_comment_.html">"<wbr>Comment"</a>
+						<a href="_comment_.html">"<wbr>Comment"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_commentlist_.html">"<wbr>Comment<wbr>List"</a>
+						<a href="_commentlist_.html">"<wbr>Comment<wbr>List"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_issoserver_.html">"<wbr>Isso<wbr>Server"</a>
+						<a href="_issoserver_.html">"<wbr>Isso<wbr>Server"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_page_.html">"<wbr>Page"</a>
+						<a href="_page_.html">"<wbr>Page"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_commentlist_.sortcriterion.html" class="tsd-kind-icon">Sort<wbr>Criterion</a>
-						<ul>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_commentlist_.sortcriterion.html#creation" class="tsd-kind-icon">CREATION</a>
-							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_commentlist_.sortcriterion.html#dislikes" class="tsd-kind-icon">DISLIKES</a>
-							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_commentlist_.sortcriterion.html#likes" class="tsd-kind-icon">LIKES</a>
-							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_commentlist_.sortcriterion.html#likesum" class="tsd-kind-icon">LIKESUM</a>
-							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_commentlist_.sortcriterion.html#modification" class="tsd-kind-icon">MODIFICATION</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_commentlist_.sortmode.html" class="tsd-kind-icon">Sort<wbr>Mode</a>
+						<a href="../enums/_commentlist_.sortcriterion.html" class="tsd-kind-icon">Sort<wbr>Criterion</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="../enums/_commentlist_.sortmode.html" class="tsd-kind-icon">Sort<wbr>Mode</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_commentlist_.commentlist.html" class="tsd-kind-icon">Comment<wbr>List</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_commentlist_.html#comment_member_access_functions" class="tsd-kind-icon">COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS</a>
+						<a href="_commentlist_.html#comment_member_access_functions" class="tsd-kind-icon">COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS</a>
 					</li>
 				</ul>
 			</nav>
