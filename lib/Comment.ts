@@ -197,7 +197,7 @@ export default class Comment {
 	 * @param page	The page this comment is on.
 	 * @param parent	The comment that is being replied on if this comment is a reply.
 	 */
-	constructor(public page: Page, public parent?: Comment) {
+	constructor(public page: Page, public parent: Comment = null) {
 		this._author.onNameChanged.attach(() => this.dirty = true);
 		this._author.onWebsiteChanged.attach(() => this.dirty = true);
 	}
