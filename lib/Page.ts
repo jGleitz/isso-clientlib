@@ -54,6 +54,7 @@ export default class Page {
 			request.end((error, result) => {
 				if (error) {
 					reject(error);
+					return;
 				}
 				const processor = thisObject ? process.bind(thisObject) : process;
 				resolve(processor(result));
