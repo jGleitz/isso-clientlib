@@ -15,6 +15,13 @@ describe('Page', () => {
 		expect(page.comments.length).to.equal(0);
 	});
 
+	it('inserts "/" at the start', () => {
+		const pageWithout = new Page(server, 'test/uri');
+		const pageWith = new Page(server, '/test/uri');
+		expect(pageWithout.uri).to.equal('/test/uri');
+		expect(pageWith.uri).to.equal('/test/uri');
+	});
+
 	it('can obtain the current page', () => {
 		Location.update('/this/is/the/uri');
 		const page = Page.getCurrent(server);

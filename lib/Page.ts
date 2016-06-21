@@ -20,13 +20,17 @@ export default class Page {
 	 */
 	public comments = new CommentList(this);
 
+	public uri: string;
+
 	/**
 	 * Creates an abstraction of one page.
 	 *
 	 * @param server	The isso server.
 	 * @param uri	The created page’s uri.
 	 */
-	constructor(public server: IssoServer, public uri: string) {}
+	constructor(public server: IssoServer, uri: string) {
+		this.uri = uri.charAt(0) === '/' ? uri : '/' + uri;
+	}
 
 	/**
 	 * Creates a page abstraction for the page currently loaded in the browser.
