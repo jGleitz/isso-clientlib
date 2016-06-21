@@ -236,9 +236,6 @@ export default class Comment {
 	public updateFromServer(serverData: any): void {
 		if (serverData.mode === DELETED_STATE) {
 			this.wasDeleted();
-		} else if (serverData.mode === PUBLISHED_STATE && !this.existsOnServer) {
-			(this.parent === null ? this.page.comments : this.parent.replies).insert(this);
-			this.onPublished.post();
 		}
 		this.awaitsModeration = serverData.mode === AWAITS_MODERATION_STATE;
 		if (this.id === null) {
@@ -255,11 +252,15 @@ export default class Comment {
 		this.author.ident = serverData.hash;
 		this.author.website = serverData.website;
 		this.author.name = serverData.author;
-		this.dirty = false;
-		this.existsOnServer = true;
 		if (serverData.replies !== undefined) {
 			this.replies.updateFromServer(serverData);
 		}
+		if (serverData.mode === PUBLISHED_STATE && !this.existsOnServer) {
+			(this.parent === null ? this.page.comments : this.parent.replies).insert(this);
+			this.onPublished.post();
+		}
+		this.dirty = false;
+		this.existsOnServer = true;
 	}
 
 	/**
