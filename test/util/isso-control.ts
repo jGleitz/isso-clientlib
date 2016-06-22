@@ -1,7 +1,5 @@
 /**
- * Module constrolling an isso server instance that was made available for system tests.
- *
- * The isso server instance is offered at `localhost:3006`.
+ * Module constrolling an isso server instance that was made available for integration tests.
  */
 
 import * as Http from 'superagent';

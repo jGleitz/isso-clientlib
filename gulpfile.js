@@ -29,7 +29,7 @@ const paths = {
 	lib: 'lib/**/*.ts',
 	typings: 'typings/*/**/*.d.ts',
 	unitTest: 'build/test/unit/**/*.js',
-	systemTest: 'build/test/system/**/*.js',
+	integrationTest: 'build/test/integration/**/*.js',
 	test: 'test/**/*.ts',
 	testrunner: 'test/runner.html',
 	output: {
@@ -43,9 +43,9 @@ const paths = {
 	compiledTypes: 'build/lib/**/*.d.ts',
 	coverageFile: './build/raw-coverage.json',
 	unitCoverageReportFolder: 'build/coverage/unit',
-	systemCoverageReportFolder: 'build/coverage/system',
+	integrationCoverageReportFolder: 'build/coverage/integration',
 	unitCoverageReport: 'build/unit-coverage.lcov',
-	systemCoverageReport: 'build/system-coverage.lcov'
+	integrationCoverageReport: 'build/integration-coverage.lcov'
 };
 
 const d = (dependencies, task) => gulp.series(gulp.parallel(dependencies), task);
@@ -132,15 +132,15 @@ function bundleUnitTest() {
 		.pipe(gulp.dest(paths.output.bundles))
 }
 
-function bundleSystemTest() {
-	return gulp.src(path.join(paths.output.test, 'system/start.js'))
-		.pipe(bundleStream('system-test.js'))
+function bundleIntegrationTest() {
+	return gulp.src(path.join(paths.output.test, 'integration/start.js'))
+		.pipe(bundleStream('integration-test.js'))
 		.pipe(gulp.dest(paths.output.bundles));
 }
 
 const bundle = gulp.series(
 		gulp.parallel(gulp.series(compile, instrument), compileTest),
-		gulp.parallel(bundleUnitTest, bundleSystemTest)
+		gulp.parallel(bundleUnitTest, bundleIntegrationTest)
 	);
 
 /*
@@ -173,7 +173,7 @@ const unitTestIstanbulOpts = {
 	}
 }
 
-const systemTestPhantomOpts = {
+const integrationTestPhantomOpts = {
 	phantomjs: {
 		customHeaders: {
 			Origin: 'http://localhost:3010',
@@ -189,10 +189,10 @@ const silentPhantom = {
 	silent: true
 };
 
-const systemTestIstanbulOpts = {
+const integrationTestIstanbulOpts = {
 	reports: {
-		html: paths.systemCoverageReportFolder,
-		lcovonly: paths.systemCoverageReport
+		html: paths.integrationCoverageReportFolder,
+		lcovonly: paths.integrationCoverageReport
 	}
 }
 
@@ -209,21 +209,21 @@ function unitTest() {
 	return testStream('test/unit/index.html', {}, unitTestIstanbulOpts);
 }
 
-function systemTest() {
-	return testStream('test/system/index.html', systemTestPhantomOpts, systemTestIstanbulOpts);
+function integrationTest() {
+	return testStream('test/integration/index.html', integrationTestPhantomOpts, integrationTestIstanbulOpts);
 }
 
 function silentUnitTest() {
 	return testStream('test/unit/index.html', silentPhantom, unitTestIstanbulOpts);
 }
 
-function silentSystemTest() {
-	return testStream('test/system/index.html', assign({}, systemTestPhantomOpts, silentPhantom), systemTestIstanbulOpts);
+function silentIntegrationTest() {
+	return testStream('test/integration/index.html', assign({}, integrationTestPhantomOpts, silentPhantom), integrationTestIstanbulOpts);
 }
 
-const silentTest = gulp.series(silentUnitTest, silentSystemTest);
+const silentTest = gulp.series(silentUnitTest, silentIntegrationTest);
 
-gulp.task('test', gulp.series(preTest, unitTest, systemTest, stopIsso));
+gulp.task('test', gulp.series(preTest, unitTest, integrationTest, stopIsso));
 
 /*
  * Build documentation
