@@ -46,7 +46,7 @@ export function start(): Promise<string> {
 	if (issoId !== undefined) {
 		return call('start', {id: issoId}).then(response => response.url);
 	} else {
-		return call('start').then(response => {issoId = response.id; return response.url;});
+		return call('start').then(response => {issoId = response.id; return response.url; });
 	}
 }
 
