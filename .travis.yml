@@ -9,7 +9,7 @@ script:
  - gulp test
 
 after_success:
- - bash <(curl -s https://codecov.io/bash) -f build/coverage.lcov
+ - bash <(curl -s https://codecov.io/bash) -f build/unit-coverage.lcov -F unit
+ - bash <(curl -s https://codecov.io/bash) -f build/integration-coverage.lcov -F integration
  - gulp doc
  - bash <(curl -s https://jgleitz.github.io/travis-deploy-gh-pages/deploy.sh) build/doc/*
-
