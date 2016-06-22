@@ -3,9 +3,13 @@ node_js: node
 
 addons:
   apt:
+    sources:
+     - deadsnakes
     packages:
      - python-virtualenv
-     - realpath
+     - python3.5
+     - python3.5-dev
+     - python3.5-venv 
 
 before_script:
  - npm install -g gulp-cli

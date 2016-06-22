@@ -88,14 +88,12 @@ function kill(process) {
  */
 function exec(command, spawnedHandler) {
 	return new Promise((resolve, reject) => {
-		const spawned = process.exec(command, {shell: '/bin/bash'}, (error, stdout, stderr) => {
+		const spawned = process.exec(command, (error, stdout, stderr) => {
 			if (spawnedHandler) {
 				spawnedHandler(spawned);
 			}
 			if (error !== null) {
 				reject(error);
-			} else if (stderr.trim() !== '') {
-				reject(stderr);
 			} else {
 				resolve(stdout);
 			}
@@ -111,11 +109,22 @@ let freeList = [];
 let communicationServer = null;
 
 const installscript = `
-cd "$(mktemp -d)"
-virtualenv .
-source ./bin/activate
+here="$(mktemp -d)"
+cd "$here"
+
+# Prefer python 3.5 over python 2.7
+if [ -f '/usr/bin/python3.5' ] && [ -f '/usr/include/python3.5m/Python.h' ]; then
+	python3.5 -m venv "$here"
+elif [ -f '/usr/bin/python2.7' ] && [ -f '/usr/include/python2.7/Python.h' ]; then
+	virtualenv "$here"
+else
+	echo 'Please install python 2.7 or python 3.5 together with the according python-dev package!'
+	exit 1
+fi
+
+. "$here"/bin/activate
 pip install isso
-realpath .`;
+echo "$here"`;
 
 /**
  * Installs isso.
@@ -205,7 +214,12 @@ function communicationServerResponse(request, response) {
 			return;
 	}
 	promise.then(result => response.end(JSON.stringify(result)))
-		.catch(error => {console.error(error.toString()); response.statusCode = 500; response.end(error.toString())});
+		.catch(error => {
+			console.error(error.toString());
+			response.setHeader('Content-Type', 'text/plain')
+			response.statusCode = 500;
+			response.end(error.toString())
+		});
 }
 
 function startCommunicationServer() {
