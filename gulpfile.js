@@ -19,12 +19,17 @@ const istanbul = require('gulp-istanbul');
 const mochaPhantomJs = require('gulp-mocha-phantomjs');
 const istanbulReport = require('remap-istanbul/lib/gulpRemapIstanbul');
 const typedoc = require('gulp-typedoc');
+const assign = require('deep-assign');
+const isso = require('./isso-management');
+const testPageMiddleware = require('./test/util/testPageMiddleware');
+isso.printOutput(false);
 
 const coverageVariableName = '__coverage__';
 const paths = {
 	lib: 'lib/**/*.ts',
 	typings: 'typings/*/**/*.d.ts',
 	unitTest: 'build/test/unit/**/*.js',
+	systemTest: 'build/test/system/**/*.js',
 	test: 'test/**/*.ts',
 	testrunner: 'test/runner.html',
 	output: {
@@ -37,10 +42,13 @@ const paths = {
 	compileSettings: 'config/compilersettings',
 	compiledTypes: 'build/lib/**/*.d.ts',
 	coverageFile: './build/raw-coverage.json',
-	coverageReportFolder: 'build/coverage',
-	lcovCoverageReport: 'build/coverage.lcov'
+	unitCoverageReportFolder: 'build/coverage/unit',
+	systemCoverageReportFolder: 'build/coverage/system',
+	unitCoverageReport: 'build/unit-coverage.lcov',
+	systemCoverageReport: 'build/system-coverage.lcov'
 };
 
+const d = (dependencies, task) => gulp.series(gulp.parallel(dependencies), task);
 
 /**
  * Checks the coding conventions.
@@ -63,99 +71,194 @@ const compileSettings = {
 /**
  * Compile typescript to ES5
  */
-function compileTask(settings, sources, output) {
-	return () => {
-		const compileStream = gulp.src(sources)
-			.pipe(sourcemaps.init())
-			.pipe(typescript(settings, {}, typescript.reporter.longReporter()));
+function doCompile(settings, sources, output) {
+	const compileStream = gulp.src(sources)
+		.pipe(sourcemaps.init())
+		.pipe(typescript(settings, {}, typescript.reporter.longReporter()));
 
-		const jsStream = compileStream.js
-			.pipe(sourcemaps.write('.', {sourceRoot: 'lib'}));
+	const jsStream = compileStream.js
+		.pipe(sourcemaps.write('.', {sourceRoot: 'lib'}));
 
-		return merge([
-			jsStream,
-			compileStream.dts
-		])
-			.pipe(gulp.dest(output));
-	};
+	return merge([
+		jsStream,
+		compileStream.dts
+	])
+		.pipe(gulp.dest(output));
 }
 
-gulp.task('compile', compileTask(compileSettings.lib, [paths.lib, paths.typings], paths.output.lib));
-gulp.task('compile-test', ['compile'], compileTask(compileSettings.test,
-	[paths.test, paths.typings, paths.compiledTypes], paths.output.test));
+function compile() {
+	return doCompile(compileSettings.lib, [paths.lib, paths.typings], paths.output.lib)
+}
 
-gulp.task('instrument', ['compile'], () =>
-	gulp.src(path.join(paths.output.lib, '**/*.js'))
+function compileTest() {
+	return doCompile(compileSettings.test, [paths.test, paths.typings, paths.compiledTypes], paths.output.test);
+}
+
+function instrument() {
+	return gulp.src(path.join(paths.output.lib, '**/*.js'))
 		.pipe(sourcemaps.init({loadMaps: true}))
 		.pipe(istanbul({
 			coverageVariable: coverageVariableName,
 			preserveComments: true
 		}))
 		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest(paths.output.testLib))
-);
+		.pipe(gulp.dest(paths.output.testLib));
+}
 
 /*
  * Bundle the tests to be used in the browser.
  */
-gulp.task('bundle-test', ['compile-test', 'instrument'], () =>
-	gulp.src(path.join(paths.output.test, 'unit/start.js'))
-		.pipe(webpack({
-			output: {
-				filename: 'test.js'
-			},
-			devtool: 'source-map',
-			module: {
-				preLoaders: [{
-					test: /\.js$/,
-					loader: 'source-map-loader'
-				}]
-			}
-		}).on('error', gutil.log))
-		.pipe(gulp.dest(paths.output.bundles))
-);
 
+function bundleStream(fileName) {
+	return webpack({
+		output: {
+			filename: fileName
+		},
+		devtool: 'source-map',
+		quiet: true,
+		module: {
+			preLoaders: [{
+				test: /\.js$/,
+				loader: 'source-map-loader'
+			}]
+		}
+	})
+	.on('error', gutil.log)
+}
+
+function bundleUnitTest() {
+	return gulp.src(path.join(paths.output.test, 'unit/start.js'))
+		.pipe(bundleStream('unit-test.js'))
+		.pipe(gulp.dest(paths.output.bundles))
+}
+
+function bundleSystemTest() {
+	return gulp.src(path.join(paths.output.test, 'system/start.js'))
+		.pipe(bundleStream('system-test.js'))
+		.pipe(gulp.dest(paths.output.bundles));
+}
+
+const bundle = gulp.series(
+		gulp.parallel(gulp.series(compile, instrument), compileTest),
+		gulp.parallel(bundleUnitTest, bundleSystemTest)
+	);
 
 /*
  * Execute the tests.
  */
-function testStream(opts) {
-	return gulp.src('test/unit/index.html', {read: false})
-		.pipe(mochaPhantomJs(Object.assign({
+function testStream(testFile, phantomOpts, istanbulOpts) {
+	return gulp.src(testFile, {read: false})
+		.pipe(mochaPhantomJs(assign({
 			phantomjs: {
 				useColors: true,
 				hooks: 'mocha-phantomjs-istanbul',
 				coverageFile: path.resolve(paths.coverageFile)
 			}
-		}, opts))
-		.on('finish', () =>
-			gulp.src(paths.coverageFile)
-				.pipe(istanbulReport({
-					basePath: paths.lib,
-					reports: {
-						text: '',
-						html: paths.coverageReportFolder,
-						lcovonly: paths.lcovCoverageReport
-					}
-				})))
-			);
+		}, phantomOpts || {}))
+			.on('finish', () =>
+				gulp.src(paths.coverageFile)
+					.pipe(istanbulReport(assign({
+						basePath: paths.lib,
+						reports: {
+							text: ''
+						}
+					}, istanbulOpts || {}))))
+		);
 }
 
-gulp.task('test', ['bundle-test'], () => testStream());
+const unitTestIstanbulOpts = {
+	reports: {
+		html: paths.unitCoverageReportFolder,
+		lcovonly: paths.unitCoverageReport
+	}
+}
 
-gulp.task('silent-test', ['bundle-test'], () => testStream({silent: true}));
+const systemTestPhantomOpts = {
+	phantomjs: {
+		customHeaders: {
+			Origin: 'http://localhost:3010',
+			Host: 'http://localhost:3010'
+		},
+		settings: {
+			localToRemoteUrlAccessEnabled: true
+		}
+	}
+};
+
+const silentPhantom = {
+	silent: true
+};
+
+const systemTestIstanbulOpts = {
+	reports: {
+		html: paths.systemCoverageReportFolder,
+		lcovonly: paths.systemCoverageReport
+	}
+}
+
+function startIsso() {
+	return isso.install().then(isso.start);
+}
+
+function stopIsso() {
+	return isso.destroy();
+}
+const preTest = gulp.parallel(bundle, startIsso);
+
+function unitTest() {
+	return testStream('test/unit/index.html', {}, unitTestIstanbulOpts);
+}
+
+function systemTest() {
+	return testStream('test/system/index.html', systemTestPhantomOpts, systemTestIstanbulOpts);
+}
+
+function silentUnitTest() {
+	return testStream('test/unit/index.html', silentPhantom, unitTestIstanbulOpts);
+}
+
+function silentSystemTest() {
+	return testStream('test/system/index.html', assign({}, systemTestPhantomOpts, silentPhantom), systemTestIstanbulOpts);
+}
+
+const silentTest = gulp.series(silentUnitTest, silentSystemTest);
+
+gulp.task('test', gulp.series(preTest, unitTest, systemTest, stopIsso));
+
+/*
+ * Build documentation
+ */
+gulp.task('doc', () =>
+	gulp.src([paths.lib, paths.typings])
+		.pipe(typedoc({
+			module: 'commonjs',
+			target: 'ES5',
+			out: paths.output.doc
+		}))
+);
 
 
 /*
  * Development pages in the browser.
  */
-gulp.task('watch', ['bundle-test', 'silent-test', 'doc'], () => {
+ function reloadTestServer(done) {
+	 browserSyncTest.reload();
+	 done();
+ }
+
+ function reloadBuildServer(done) {
+	 browserSyncBuild.reload();
+	 done();
+ }
+
+function syncServer() {
 	browserSyncTest.init({
 		server: {
 			baseDir: './'
 		},
 		open: false,
 		startPath: 'test/unit',
+		middleware: [testPageMiddleware],
 		notify: {
 			styles: {
 				left: 0,
@@ -176,21 +279,10 @@ gulp.task('watch', ['bundle-test', 'silent-test', 'doc'], () => {
 		port: 3002,
 		open: false
 	});
-	gulp.watch([paths.lib, paths.test], ['reload-test', 'reload-build']);
-	gulp.watch('test/**/*.html', () => browserSyncTest.reload());
-});
-gulp.task('reload-test', ['bundle-test'], () => browserSyncTest.reload());
-gulp.task('reload-build', ['silent-test', 'doc'], () => browserSyncBuild.reload());
+	gulp.watch([paths.lib, paths.test],
+		gulp.series(bundle, gulp.parallel(reloadTestServer, silentTest, 'doc'), reloadBuildServer)
+	);
+	gulp.watch('test/**/*.html', reloadTestServer);
+}
 
-
-/*
- * Build documentation
- */
-gulp.task('doc', () =>
-	gulp.src([paths.lib, paths.typings])
-		.pipe(typedoc({
-			module: 'commonjs',
-			target: 'ES5',
-			out: paths.output.doc
-		}))
-);
+gulp.task('watch', gulp.series(gulp.parallel(gulp.series(preTest, silentTest), 'doc') , syncServer));

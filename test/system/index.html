@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>IssoSlim unit test page</title>
+		<title>IssoSlim system test page</title>
 		<meta charset="utf-8" />
 		<base href="../../" />
 
@@ -15,11 +15,9 @@
 			mocha.ui('bdd');
 			mocha.reporter('html');
 		</script>
-		<!-- Sinon does not play well with webpack and is thus imported here: -->
-		<script src='node_modules/sinon/pkg/sinon.js'></script>
 
 		<!-- test bundle, includes libraries -->
-		<script src="build/bundles/unit-test.js"></script>
+		<script src="build/bundles/system-test.js"></script>
 	</head>
 	<body>
 		<div id="mocha"></div>
