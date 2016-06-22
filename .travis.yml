@@ -1,11 +1,17 @@
 language: node_js
 node_js: node
 
+addons:
+  apt:
+    packages:
+     - python-virtualenv
+     - realpath
+
 before_script:
  - npm install -g gulp-cli
 
 script:
- - gulp test
+ - npm test -s
 
 after_success:
  - bash <(curl -s https://codecov.io/bash) -f build/unit-coverage.lcov -F unit

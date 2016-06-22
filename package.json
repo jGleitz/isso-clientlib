@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "gulp watch",
-    "test": "gulp lint test",
+    "test": "gulp lint test -LL",
     "postinstall": "typings install"
   },
   "author": "Joshua Gleitze",
