@@ -224,6 +224,8 @@ function silentIntegrationTest() {
 const silentTest = gulp.series(silentUnitTest, silentIntegrationTest);
 
 gulp.task('test', gulp.series(preTest, unitTest, integrationTest, stopIsso));
+gulp.task('unit-test', gulp.series(bundle, unitTest));
+gulp.task('integration-test', gulp.series(preTest, integrationTest, stopIsso));
 
 /*
  * Build documentation
