@@ -77,9 +77,10 @@ export default class CommentList implements ArrayLike<Comment> {
 	private page: Page;
 
 	/**
-	 * If this list contains the replies to a comment, this is the comment being replied to. `null` otherwise.
+	 * If this list contains the replies to a comment, this is that comment. It’s this list contains the top level
+	 * comment of a page, this is this page.
 	 */
-	private parent: Comment;
+	private parent: Comment | Page;
 
 	/**
 	 * The (flat) count of comments belonging into this list.
@@ -148,13 +149,8 @@ export default class CommentList implements ArrayLike<Comment> {
 	 *		comments, or a comment if this list is collecting its replies.
 	 */
 	public constructor(parent: Page | Comment) {
-		if (parent instanceof Page) {
-			this.page = parent;
-			this.parent = null;
-		} else {
-			this.page = parent.page;
-			this.parent = parent;
-		}
+		this.page = parent instanceof Page ? parent : parent.page;
+		this.parent = parent;
 		this.sortBy(SortCriterion.CREATION, SortMode.ASCENDING);
 	}
 
@@ -221,7 +217,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	 */
 	public fetchDeepCount(): Promise<number> {
 		// If this is a nested list, there is no collective way to fetch the count.
-		if (this.parent !== null) {
+		if (this.parent instanceof Comment) {
 			// The server offers no other method to fetch the deep count than to fetch all comments.
 			return this._fetch().then(() => this.deepCount);
 		}
@@ -274,7 +270,7 @@ export default class CommentList implements ArrayLike<Comment> {
 			const data = newList[i];
 			let comment = this.commentsById[data.id];
 			if (comment === undefined) {
-				comment = Comment.fromServerData(data, this.page, this.parent);
+				comment = Comment.fromServerData(data, this.parent || this.page);
 				this.onNew.post(comment);
 			} else {
 				comment.updateFromServer(data);
@@ -361,8 +357,8 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * @return A data object suitable for a fetch request. Contains the data set in the provided `data` object.
 	 */
 	private requestData(data: any): any {
-		if (this.parent !== null) {
-			data.parent = this.parent.id;
+		if (this.parent instanceof Comment) {
+			data.parent = (<Comment> this.parent).id; // cast necessary for typedoc!
 		}
 		return data;
 	}

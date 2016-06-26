@@ -153,7 +153,7 @@ export default class Comment {
 	/**
 	 * Comments replying to this comment. Comments in this list have `this` as their [#parent](#parent).
 	 */
-	public replies = new CommentList(this);
+	public replies: CommentList;
 
 	/**
 	 * Fired when this comment was removed from the server.
@@ -192,12 +192,29 @@ export default class Comment {
 	public onPublished = new VoidAsyncEvent();
 
 	/**
+	 * The comment this comment replies to if it’s a reply. `null` otherwise.
+	 */
+	public repliesTo: Comment = null;
+
+	/**
+	 * The page this comment is on.
+	 */
+	public page: Page;
+
+	/**
 	 * Creates a comment on the given `page`.
 	 *
-	 * @param page	The page this comment is on.
-	 * @param parent	The comment that is being replied on if this comment is a reply.
+	 * @param parent	The created comment’s parent: The page it’s on if it’s a top level comment, or the comment
+	 *		this comment replies to if it’s a reply.
 	 */
-	constructor(public page: Page, public parent: Comment = null) {
+	constructor(parent: Comment | Page) {
+		if (parent instanceof Comment) {
+			this.repliesTo = parent;
+			this.page = parent.page;
+		} else {
+			this.page = parent;
+		}
+		this.replies = new CommentList(this);
 		this._author.onNameChanged.attach(() => this.dirty = true);
 		this._author.onWebsiteChanged.attach(() => this.dirty = true);
 	}
@@ -216,12 +233,12 @@ export default class Comment {
 	 *
 	 * @hidden
 	 * @param serverData	Data received from the isso server.
-	 * @param page	The page the comment belongs to.
-	 * @param parent	The created comment’s parent comment, or `null`.
+	 * @param parent	The created comment’s parent: The page it’s on if it’s a top level comment, or the comment
+	 *		this comment replies to if it’s a reply.
 	 * @return The comment object represented by `serverData`.
 	 */
-	public static fromServerData(serverData: any, page: Page, parent: Comment): Comment {
-		const result = new Comment(page, parent);
+	public static fromServerData(serverData: any, parent: Comment | Page): Comment {
+		const result = new Comment(parent);
 		result.existsOnServer = true; // we don’t want to fire an onPublished event for this comment.
 		result.updateFromServer(serverData);
 		return result;
@@ -256,7 +273,7 @@ export default class Comment {
 			this.replies.updateFromServer(serverData);
 		}
 		if (serverData.mode === PUBLISHED_STATE && !this.existsOnServer) {
-			(this.parent === null ? this.page.comments : this.parent.replies).insert(this);
+			(this.repliesTo === null ? this.page.comments : this.repliesTo.replies).insert(this);
 			this.onPublished.post();
 		}
 		this.dirty = false;
@@ -364,7 +381,7 @@ export default class Comment {
 			author: this.author.name || undefined,
 			website: this.author.website || undefined,
 			email: this.author.email || undefined,
-			parent: this.parent !== null ? this.parent.id : null
+			parent: this.repliesTo !== null ? this.repliesTo.id : null
 		};
 	}
 

@@ -35,7 +35,7 @@ export default (pages: Array<Page>) => describe('creating comments', () => {
 	it('response', ()  => {
 		expect(pages[0].comments).to.have.length(2);
 		const parent = pages[0].comments[0];
-		const reply = new Comment(pages[0], parent);
+		const reply = new Comment(parent);
 		reply.rawText = 'This is a reply';
 		reply.author.name = 'I only want to tell my name';
 		return reply.send().then(checkComment);

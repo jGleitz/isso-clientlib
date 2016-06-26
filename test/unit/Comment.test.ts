@@ -19,25 +19,26 @@ describe('Comment', () => {
 	afterEach('reset fake server', () => server.reset());
 
 	it('can be created from server data', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 		expect(comment.text).to.equal('<p>Hello, World!</p>\n');
 		expect(comment.id).to.equal(1);
 		expect(comment.createdOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 1, 1, 572)));
 		expect(comment.lastModifiedOn).to.be.null;
 		expect(comment.likes).to.equal(3);
 		expect(comment.dislikes).to.equal(1);
-		expect(comment.parent).to.be.null;
+		expect(comment.repliesTo).to.be.null;
+		expect(comment.page).to.equal(page);
 		expect(comment.replies.length).to.equal(1);
 		expect(comment.published).to.be.true;
 		expect(comment.deleted).to.be.false;
 
 		const reply = comment.replies[0];
-		expect(reply.parent).to.equal(comment);
+		expect(reply.repliesTo).to.equal(comment);
 		expect(reply.lastModifiedOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 2, 58, 613)));
 	});
 
 	it('can be submitted to the server when new', () => {
-		const comment = new Comment(page, null);
+		const comment = new Comment(page);
 		const commentInsertSpy = sinon.spy(page.comments, 'insert');
 		const replyInsertSpy = sinon.spy(comment.replies, 'insert');
 		comment.rawText = 'Hey there!';
@@ -80,7 +81,7 @@ describe('Comment', () => {
 				expect(commentInsertSpy).to.have.been.calledWith(comment);
 			})
 			.then(() => {
-				const reply = new Comment(page, comment);
+				const reply = new Comment(comment);
 				reply.rawText = 'Hey again!';
 				server.responseToPost('/new', expectData({
 					text: 'Hey again!',
@@ -107,14 +108,15 @@ describe('Comment', () => {
 
 				return reply.send().
 					then(() => {
-						expect(reply.parent).to.equal(comment);
+						expect(reply.repliesTo).to.equal(comment);
+						expect(reply.page).to.equal(page);
 						expect(replyInsertSpy).to.have.been.calledWith(reply);
 					});
 			});
 	});
 
 	it('recognises when awaiting moderation', () => {
-		const comment = new Comment(page, null);
+		const comment = new Comment(page);
 		comment.rawText = 'Hey there!';
 
 		const unpublishedResponse = {
@@ -152,7 +154,7 @@ describe('Comment', () => {
 	});
 
 	it('can be updated on the server', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 		comment.rawText = 'Hey test!';
 		server.responseToPut('/id/1', expectData({
 			text: 'Hey test!',
@@ -180,13 +182,13 @@ describe('Comment', () => {
 	});
 
 	it('does not send when unchanged', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 		comment.rawText = comment.rawText;
 		return expect(comment.send()).to.be.fulfilled;
 	});
 
 	it('can be updated from the server', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 		const changed = clone(commentData);
 		changed.text = '<p>changed</p>\n';
 		changed.modified = 1387321378.613392;
@@ -206,7 +208,7 @@ describe('Comment', () => {
 	});
 
 	it('recognises when being deleted but referenced', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 		const asDeleted = clone(commentData);
 		asDeleted.mode = 4;
 		server.responseToGet('/id/1', successResponse(asDeleted));
@@ -219,7 +221,7 @@ describe('Comment', () => {
 	});
 
 	it('can send likes', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 
 		server.responseToPost('/id/1/like', successResponse({
 			likes: 8,
@@ -234,7 +236,7 @@ describe('Comment', () => {
 	});
 
 	it('can send dislikes', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 
 		server.responseToPost('/id/1/dislike', successResponse({
 			likes: 8,
@@ -249,7 +251,7 @@ describe('Comment', () => {
 	});
 
 	it('can be deleted', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 
 		server.responseToDelete('/id/1', successResponse(null));
 
@@ -261,7 +263,7 @@ describe('Comment', () => {
 	});
 
 	it('does not delete when already being deleted', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 
 		server.responseToDelete('/id/1', successResponse(null));
 

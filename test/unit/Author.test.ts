@@ -15,7 +15,7 @@ describe('Author', () => {
 	beforeEach('create a page', () => page = new Page(server, 'test/uri'));
 
 	it('is initialised with the comment', () => {
-		const comment = Comment.fromServerData(commentData, page, null);
+		const comment = Comment.fromServerData(commentData, page);
 		expect(comment.author.name).to.equal('Peter Pan');
 		expect(comment.author.website).to.equal('peterpan.org');
 		expect(comment.author.ident).to.equal('4505c1eeda98');

@@ -271,7 +271,7 @@ describe('CommentList', () => {
 					total_replies: 0,
 					hidden_replies: 0,
 					replies: <Array<any>> []
-				}, page, null);
+				}, page);
 				page.comments.insert(newComment);
 				expect(page.comments.map(toId)).to.deep.equal([2, 3, 1, 6, 9, 5, 4]);
 			});
