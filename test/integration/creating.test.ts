@@ -41,6 +41,34 @@ export default (pages: Array<Page>) => describe('creating comments', () => {
 		return reply.send().then(checkComment);
 	});
 
+	it('more comments', () => {
+		let c = -1;
+		let comments: Array<Comment> = [];
+
+		comments[++c] = new Comment(pages[0]);
+		comments[c].rawText = 'Yet a nother comment';
+		comments[c].author.email = 'author@example.org';
+
+		comments[++c] = new Comment(pages[0]);
+		comments[c].rawText = 'Controversal comment';
+
+		comments[++c] = new Comment(comments[c - 1]);
+		comments[c].rawText = 'How can you say that?';
+
+		comments[++c] = new Comment(comments[c - 2]);
+		comments[c].rawText = 'I’m really offended!';
+		comments[c].author.name = 'Angry Man';
+		comments[c].author.email = 'angry.man@example.org';
+
+		['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eigth', 'ninth', 'tenth']
+			.forEach(text => {
+				comments[++c] = new Comment(pages[1]);
+				comments[c].rawText = `*${text}* comment on this page! That’s so **cool**!`;
+			});
+
+		return Promise.all(comments.map(comment => comment.send()));
+	});
+
 	describe('', () => {
 		before('enable moderation', Isso.enableModeration);
 
@@ -56,7 +84,7 @@ export default (pages: Array<Page>) => describe('creating comments', () => {
 				.then(checkComment)
 				.then(() => {
 					expect(comment.published).to.be.false;
-					expect(pages[0].comments).to.have.length(2);
+					expect(pages[0].comments).to.have.length(4);
 				});
 		});
 	});
