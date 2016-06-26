@@ -39,6 +39,25 @@ describe('Page', () => {
 		});
 	});
 
+	it('can send a request from a factory', () => {
+		const requestFactory = sinon.spy(() => requestFor(successResponse()));
+		let continueCallback: () => void;
+		const delayPromise = new Promise((resolve, reject) => continueCallback = resolve);
+		const page = new Page(server, 'test/uri');
+		const promises: Array<Promise<any>> = [];
+
+		promises[0] = page.send(requestFor(successResponse()), () => {
+			expect(requestFactory).to.not.have.been.called;
+			return delayPromise;
+		});
+		promises[1] = page.send(requestFactory, a => a).then(() => {
+			expect(requestFactory).to.have.been.called;
+		});
+		expect(requestFactory).to.not.have.been.called;
+		continueCallback();
+		return Promise.all(promises);
+	});
+
 	it('rejects promises for failed requests', () => {
 		const page = new Page(server, 'test/uri');
 		const request = requestFor(callback => callback(new Error('test'), null));

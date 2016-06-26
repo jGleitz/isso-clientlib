@@ -48,14 +48,16 @@ export default class Page {
 	 * will be sent until the `request` has finished and was processed by the provided `process` function.
 	 *
 	 * @hidden
-	 * @param request	The request to send.
+	 * @param request	The request to send or a function returning it. If a function is provided, it will not be
+	 *		invoked before all requests pending before the request being issued have finished.
 	 * @param process	The function processing the request, i.e. applying all necessary changes to the data objects.
 	 * @param thisObject	The object to bind `process` to.
 	 * @return A promise that will be resolved with `process`’s result.
 	 */
-	public send<R>(request: Request<any>, process: (response: Response) => R, thisObject?: any): Promise<R> {
+	public send<R>(request: Request<any> | (() => Request<any>), process: (response: Response) => R, thisObject?: any)
+		: Promise<R> {
 		return this.onNoRequest(() => new Promise((resolve, reject) => {
-			request.end((error, result) => {
+			this.getRequest(request).end((error, result) => {
 				if (error) {
 					reject(error);
 					return;
@@ -64,6 +66,13 @@ export default class Page {
 				resolve(processor(result));
 			});
 		}));
+	}
+
+	private getRequest(request: Request<any> | (() => Request<any>)): Request<any> {
+		if (typeof request === 'function') {
+			return (<() => Request<any>> request)();
+		}
+		return <Request<any>> request;
 	}
 
 	/**

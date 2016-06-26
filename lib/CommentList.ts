@@ -358,7 +358,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	 */
 	private requestData(data: any): any {
 		if (this.parent instanceof Comment) {
-			data.parent = (<Comment> this.parent).id; // cast necessary for typedoc!
+			data.parent = (<Comment> this.parent).id;
 		}
 		return data;
 	}

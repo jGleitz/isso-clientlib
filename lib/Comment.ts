@@ -295,13 +295,13 @@ export default class Comment {
 	 */
 	public send(): Promise<Comment> {
 		if (!this.existsOnServer) {
-			return this.page.send(
+			return this.page.send(() =>
 				this.page.server.post('/new')
 					.query({uri: this.page.uri})
 					.send(this.toRequestData()),
 				this.afterCreate, this);
 		} else if (this.dirty) {
-			return this.page.send(
+			return this.page.send(() =>
 				this.page.server.put(`/id/${this.id}`)
 					.send(this.toRequestData()),
 				this.afterUpdate, this);
@@ -376,6 +376,9 @@ export default class Comment {
 	 * @return This comment’s server representation.
 	 */
 	private toRequestData(): Object {
+		if (this.repliesTo !== null && this.repliesTo.id === null) {
+			throw new Error('The parent comment was not sent yet!');
+		}
 		return {
 			text: this.rawText,
 			author: this.author.name || undefined,
