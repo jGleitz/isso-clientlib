@@ -270,7 +270,7 @@ export default class CommentList implements ArrayLike<Comment> {
 			const data = newList[i];
 			let comment = this.commentsById[data.id];
 			if (comment === undefined) {
-				comment = Comment.fromServerData(data, this.parent || this.page);
+				comment = Comment.fromServerData(data, this.parent);
 				this.onNew.post(comment);
 			} else {
 				comment.updateFromServer(data);
