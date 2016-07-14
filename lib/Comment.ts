@@ -392,7 +392,8 @@ export default class Comment {
 			throw new Error('The parent comment was not sent yet!');
 		}
 		return {
-			text: this.rawText,
+			// the server expects the text to be sent on updates.
+			text: this.rawText || this.text,
 			author: this.author.name || undefined,
 			website: this.author.website || undefined,
 			email: this.author.email || undefined,
