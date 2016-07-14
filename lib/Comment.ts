@@ -201,6 +201,10 @@ export default class Comment {
 	 */
 	public page: Page;
 
+	private get parentList(): CommentList {
+		return this.repliesTo === null ? this.page.comments : this.repliesTo.replies;
+	}
+
 	/**
 	 * Creates a comment on the given `page`.
 	 *
@@ -350,7 +354,7 @@ export default class Comment {
 	 * Deletes this comment. This action may fail because the user is not
 	 * allowed to delete this comment. See
 	 * https://posativ.org/isso/docs/configuration/server/#guard for details.
-	 * Deleting an already delted comment has no effect.
+	 * Deleting an already deleted comment has no effect.
 	 *
 	 * @return A Promise that will be fulfilled when `this` comment was deleted.
 	 */
@@ -359,7 +363,7 @@ export default class Comment {
 			return this.page.send(
 				this.page.server.delete(`/id/${this.id}`)
 					.withCredentials(),
-			this.wasDeleted, this);
+			this.afterDelete, this);
 		}
 		return Promise.resolve(undefined);
 	}
@@ -370,6 +374,11 @@ export default class Comment {
 	public wasDeleted(): void {
 		this._deleted = true;
 		this.onDeleted.post();
+	}
+
+	private afterDelete(): void {
+		this.parentList.remove(this);
+		this.wasDeleted();
 	}
 
 	/**

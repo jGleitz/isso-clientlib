@@ -311,4 +311,16 @@ describe('CommentList', () => {
 				expect(page.comments.map(toId)).to.deep.equal([2, 3, 1, 6, 9, 5, 4]);
 			});
 	});
+
+	it('allows to remove comments', () => {
+		return pageWithCommentList(SERVER_FIXTURES.forSorting)
+			.then(page => {
+				page.comments.remove(page.comments[2]);
+				expect(page.comments).to.have.length(6);
+				expect(page.comments[6]).to.be.undefined;
+				for (let i = 0; i < page.comments.length; i++) {
+					expect(page.comments[i]).to.exist;
+				}
+			});
+	});
 });

@@ -22,5 +22,4 @@ export default (pages: Array<Page>) => describe('counting comments on pages', ()
 				expect(pages[3].comments.count).to.equal(0);
 			});
 	});
-
 });

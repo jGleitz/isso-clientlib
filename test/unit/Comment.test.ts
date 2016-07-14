@@ -281,4 +281,23 @@ describe('Comment', () => {
 				expect(comment.deleted).to.be.true;
 			});
 	});
+
+	it('notifies its parent list when being deleted', () => {
+		const comment = Comment.fromServerData(commentData, page);
+		const reply = Comment.fromServerData(SERVER_FIXTURES.standard.replies[0].replies[0], comment);
+		const pageSpy = sinon.spy(page.comments, 'remove');
+		const commentSpy = sinon.spy(comment.replies, 'remove');
+
+		server.responseToDelete('/id/1', successResponse(null));
+		server.responseToDelete('/id/2', successResponse(null));
+
+		return comment.delete()
+			.then(() => {
+				expect(pageSpy).to.have.been.calledWith(comment);
+			})
+			.then(() => reply.delete())
+			.then(() => {
+				expect(commentSpy).to.have.been.calledWith(reply);
+			});
+	});
 });

@@ -428,6 +428,25 @@ export default class CommentList implements ArrayLike<Comment> {
 		this._length++;
 	}
 
+	/**
+	 * Removes the provided `comment` from this list.
+	 *
+	 * @hidden
+	 * @param comment	The comment to remove.
+	 */
+	public remove(comment: Comment): void {
+		let lastComment: Comment = undefined;
+		let i = this.length - 1;
+		for (; i >= 0 && this[i] !== comment; i--) {
+			let copy = this[i];
+			this[i] = lastComment;
+			lastComment = copy;
+		}
+		delete this.commentsById[comment.id];
+		this[i] = lastComment;
+		this._length--;
+	}
+
 	/*
 	 * Field updaters, firing the relevant events if necessary:
 	 */
