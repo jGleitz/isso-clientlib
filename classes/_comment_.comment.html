@@ -132,6 +132,7 @@
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_comment_.comment.html#dislikes" class="tsd-kind-icon">dislikes</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_comment_.comment.html#lastmodifiedon" class="tsd-kind-icon">last<wbr>Modified<wbr>On</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_comment_.comment.html#likes" class="tsd-kind-icon">likes</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-private"><a href="_comment_.comment.html#parentlist" class="tsd-kind-icon">parent<wbr>List</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_comment_.comment.html#published" class="tsd-kind-icon">published</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="_comment_.comment.html#rawtext" class="tsd-kind-icon">raw<wbr>Text</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_comment_.comment.html#text" class="tsd-kind-icon">text</a></li>
@@ -141,6 +142,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_comment_.comment.html#aftercreate" class="tsd-kind-icon">after<wbr>Create</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_comment_.comment.html#afterdelete" class="tsd-kind-icon">after<wbr>Delete</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_comment_.comment.html#afterupdate" class="tsd-kind-icon">after<wbr>Update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_comment_.comment.html#applylikes" class="tsd-kind-icon">apply<wbr>Likes</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_comment_.comment.html#delete" class="tsd-kind-icon">delete</a></li>
@@ -151,7 +153,6 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_comment_.comment.html#sendlike" class="tsd-kind-icon">send<wbr>Like</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_comment_.comment.html#torequestdata" class="tsd-kind-icon">to<wbr>Request<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_comment_.comment.html#updatetext" class="tsd-kind-icon">update<wbr>Text</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_comment_.comment.html#wasdeleted" class="tsd-kind-icon">was<wbr>Deleted</a></li>
 							</ul>
 						</section>
 					</div>
@@ -169,7 +170,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L202">Comment.ts:202</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L206">Comment.ts:206</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -199,10 +200,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_author" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _author</h3>
-					<div class="tsd-signature tsd-kind-icon">_author<span class="tsd-signature-symbol">:</span> <a href="_author_.author.html" class="tsd-signature-type">Author</a><span class="tsd-signature-symbol"> =&nbsp;new Author()</span></div>
+					<div class="tsd-signature tsd-kind-icon">_author<span class="tsd-signature-symbol">:</span> <a href="_author_.author.html" class="tsd-signature-type">Author</a><span class="tsd-signature-symbol"> =&nbsp;new Author(this)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L110">Comment.ts:110</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L110">Comment.ts:110</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -212,7 +213,7 @@
 					<div class="tsd-signature tsd-kind-icon">_created<wbr>On<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L116">Comment.ts:116</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L116">Comment.ts:116</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -222,7 +223,7 @@
 					<div class="tsd-signature tsd-kind-icon">_deleted<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L70">Comment.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L70">Comment.ts:70</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -232,7 +233,7 @@
 					<div class="tsd-signature tsd-kind-icon">_dislikes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L143">Comment.ts:143</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L143">Comment.ts:143</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -242,7 +243,7 @@
 					<div class="tsd-signature tsd-kind-icon">_last<wbr>Modified<wbr>On<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L125">Comment.ts:125</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L125">Comment.ts:125</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -252,7 +253,7 @@
 					<div class="tsd-signature tsd-kind-icon">_likes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L134">Comment.ts:134</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L134">Comment.ts:134</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -262,7 +263,7 @@
 					<div class="tsd-signature tsd-kind-icon">_raw<wbr>Text<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L89">Comment.ts:89</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L89">Comment.ts:89</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -272,7 +273,7 @@
 					<div class="tsd-signature tsd-kind-icon">_text<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L80">Comment.ts:80</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L80">Comment.ts:80</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -282,7 +283,7 @@
 					<div class="tsd-signature tsd-kind-icon">awaits<wbr>Moderation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L62">Comment.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L62">Comment.ts:62</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -298,7 +299,7 @@
 					<div class="tsd-signature tsd-kind-icon">dirty<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L48">Comment.ts:48</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L48">Comment.ts:48</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -314,7 +315,7 @@
 					<div class="tsd-signature tsd-kind-icon">exists<wbr>OnServer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L56">Comment.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L56">Comment.ts:56</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -332,7 +333,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L68">Comment.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L68">Comment.ts:68</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -348,7 +349,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Deleted<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">VoidAsyncEvent</span><span class="tsd-signature-symbol"> =&nbsp;new VoidAsyncEvent()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L161">Comment.ts:161</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L161">Comment.ts:161</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -363,7 +364,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Dislikes<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncEvent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new AsyncEvent&lt;number&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L181">Comment.ts:181</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L181">Comment.ts:181</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -378,7 +379,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>IdAssigned<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncEvent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new AsyncEvent&lt;number&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L187">Comment.ts:187</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L187">Comment.ts:187</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -394,7 +395,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Likes<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncEvent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new AsyncEvent&lt;number&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L176">Comment.ts:176</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L176">Comment.ts:176</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -409,7 +410,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Modified<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncEvent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Date</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new AsyncEvent&lt;Date&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L171">Comment.ts:171</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L171">Comment.ts:171</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -424,7 +425,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Published<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">VoidAsyncEvent</span><span class="tsd-signature-symbol"> =&nbsp;new VoidAsyncEvent()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L192">Comment.ts:192</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L192">Comment.ts:192</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -439,7 +440,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Text<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncEvent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new AsyncEvent&lt;string&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L166">Comment.ts:166</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L166">Comment.ts:166</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -454,7 +455,7 @@
 					<div class="tsd-signature tsd-kind-icon">page<span class="tsd-signature-symbol">:</span> <a href="_page_.page.html" class="tsd-signature-type">Page</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L202">Comment.ts:202</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L202">Comment.ts:202</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -469,7 +470,7 @@
 					<div class="tsd-signature tsd-kind-icon">replies<span class="tsd-signature-symbol">:</span> <a href="_commentlist_.commentlist.html" class="tsd-signature-type">CommentList</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L156">Comment.ts:156</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L156">Comment.ts:156</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -484,7 +485,7 @@
 					<div class="tsd-signature tsd-kind-icon">replies<wbr>To<span class="tsd-signature-symbol">:</span> <a href="_comment_.comment.html" class="tsd-signature-type">Comment</a><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L197">Comment.ts:197</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L197">Comment.ts:197</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -506,7 +507,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L112">Comment.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L112">Comment.ts:112</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="_author_.author.html" class="tsd-signature-type">Author</a></h4>
@@ -523,7 +524,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L121">Comment.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L121">Comment.ts:121</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -545,7 +546,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L76">Comment.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L76">Comment.ts:76</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -568,7 +569,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L149">Comment.ts:149</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L149">Comment.ts:149</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -590,7 +591,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L130">Comment.ts:130</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L130">Comment.ts:130</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -612,7 +613,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L139">Comment.ts:139</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L139">Comment.ts:139</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -621,6 +622,23 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-private">
+					<a name="parentlist" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> parent<wbr>List</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> parentList<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_commentlist_.commentlist.html" class="tsd-signature-type">CommentList</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L204">Comment.ts:204</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_commentlist_.commentlist.html" class="tsd-signature-type">CommentList</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -634,7 +652,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L227">Comment.ts:227</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L229">Comment.ts:229</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -658,7 +676,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L96">Comment.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L96">Comment.ts:96</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -673,7 +691,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L103">Comment.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L103">Comment.ts:103</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -701,7 +719,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L85">Comment.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L85">Comment.ts:85</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -726,7 +744,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L420">Comment.ts:420</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L442">Comment.ts:442</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -745,6 +763,23 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="afterdelete" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> after<wbr>Delete</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">after<wbr>Delete<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L388">Comment.ts:388</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="afterupdate" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> after<wbr>Update</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -754,7 +789,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L427">Comment.ts:427</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L449">Comment.ts:449</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -782,7 +817,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L408">Comment.ts:408</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L430">Comment.ts:430</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -814,7 +849,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L355">Comment.ts:355</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L359">Comment.ts:359</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -822,7 +857,7 @@
 									<p>Deletes this comment. This action may fail because the user is not
 										allowed to delete this comment. See
 										<a href="https://posativ.org/isso/docs/configuration/server/#guard">https://posativ.org/isso/docs/configuration/server/#guard</a> for details.
-									Deleting an already delted comment has no effect.</p>
+									Deleting an already deleted comment has no effect.</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -840,7 +875,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L317">Comment.ts:317</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L321">Comment.ts:321</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -863,7 +898,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L398">Comment.ts:398</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L420">Comment.ts:420</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -896,7 +931,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L296">Comment.ts:296</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L298">Comment.ts:298</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -926,7 +961,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L340">Comment.ts:340</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L344">Comment.ts:344</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -949,7 +984,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L328">Comment.ts:328</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L332">Comment.ts:332</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -972,7 +1007,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L378">Comment.ts:378</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L399">Comment.ts:399</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -996,7 +1031,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L436">Comment.ts:436</a></li>
+									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/ab63729/lib/Comment.ts#L458">Comment.ts:458</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1005,28 +1040,6 @@
 									<h5>newText: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="wasdeleted" class="tsd-anchor"></a>
-					<h3>was<wbr>Deleted</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">was<wbr>Deleted<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/b713165/lib/Comment.ts#L367">Comment.ts:367</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Informs this comment about the fact that is was deleted on the server.</p>
-								</div>
-							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -1150,6 +1163,9 @@
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_comment_.comment.html#likes" class="tsd-kind-icon">likes</a>
 							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-private">
+								<a href="_comment_.comment.html#parentlist" class="tsd-kind-icon">parent<wbr>List</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_comment_.comment.html#published" class="tsd-kind-icon">published</a>
 							</li>
@@ -1161,6 +1177,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_comment_.comment.html#aftercreate" class="tsd-kind-icon">after<wbr>Create</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_comment_.comment.html#afterdelete" class="tsd-kind-icon">after<wbr>Delete</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_comment_.comment.html#afterupdate" class="tsd-kind-icon">after<wbr>Update</a>
@@ -1191,9 +1210,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_comment_.comment.html#updatetext" class="tsd-kind-icon">update<wbr>Text</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_comment_.comment.html#wasdeleted" class="tsd-kind-icon">was<wbr>Deleted</a>
 							</li>
 						</ul>
 					</li>
