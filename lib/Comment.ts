@@ -298,11 +298,13 @@ export default class Comment {
 			return this.page.send(() =>
 				this.page.server.post('/new')
 					.query({uri: this.page.uri})
+					.withCredentials()
 					.send(this.toRequestData()),
 				this.afterCreate, this);
 		} else if (this.dirty) {
 			return this.page.send(() =>
 				this.page.server.put(`/id/${this.id}`)
+					.withCredentials()
 					.send(this.toRequestData()),
 				this.afterUpdate, this);
 		}
@@ -355,7 +357,8 @@ export default class Comment {
 	public delete(): Promise<void> {
 		if (!this.deleted) {
 			return this.page.send(
-				this.page.server.delete(`/id/${this.id}`),
+				this.page.server.delete(`/id/${this.id}`)
+					.withCredentials(),
 			this.wasDeleted, this);
 		}
 		return Promise.resolve(undefined);
