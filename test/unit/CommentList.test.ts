@@ -316,8 +316,8 @@ describe('CommentList', () => {
 		return pageWithCommentList(SERVER_FIXTURES.forSorting)
 			.then(page => {
 				page.comments.remove(page.comments[2]);
-				expect(page.comments).to.have.length(6);
-				expect(page.comments[6]).to.be.undefined;
+				expect(page.comments).to.have.length(5);
+				expect(page.comments[5]).to.be.undefined;
 				for (let i = 0; i < page.comments.length; i++) {
 					expect(page.comments[i]).to.exist;
 				}
