@@ -4,8 +4,7 @@ This library is written in [TypeScript](https://www.typescriptlang.org/) and bui
 
 ### Testing
 
-
-The library is tested using both *unit* and *integration* tests. The integration test uses a real isso instance to make sure the library is always compatible to the latest isso.
+Tests are very important to this project. It’s intended to be a library users can rely on. The library is tested using both *unit* and *integration* tests. The integration test uses a real isso instance to make sure the library is always compatible to the latest isso. 
 
 #### Prerequisite
 
