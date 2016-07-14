@@ -60,11 +60,13 @@ export default (pages: Array<Page>) => describe('creating comments', () => {
 		comments[c].author.name = 'Angry Man';
 		comments[c].author.email = 'angry.man@example.org';
 
-		['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eigth', 'ninth', 'tenth']
-			.forEach(text => {
-				comments[++c] = new Comment(pages[1]);
-				comments[c].rawText = `*${text}* comment on this page! That’s so **cool**!`;
-			});
+		[pages[1], pages[2]].forEach(page => {
+			['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eigth', 'ninth', 'tenth']
+				.forEach(text => {
+					comments[++c] = new Comment(page);
+					comments[c].rawText = `*${text}* comment on this page! That’s so **cool**!`;
+				});
+		});
 
 		return Promise.all(comments.map(comment => comment.send()));
 	});

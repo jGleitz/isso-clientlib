@@ -18,6 +18,7 @@ import counting from './counting.test';
 import querying from './querying.test';
 import deleting from './deleting.test';
 import requerying from './requerying.test';
+import updating from './updating.test';
 
 let server: Server;
 const pages: Array<Page> = [];
@@ -39,6 +40,7 @@ describe('', function(): void {
 		counting,
 		querying,
 		deleting,
+		updating,
 		requerying
 	].forEach(test => test(pages));
 });
