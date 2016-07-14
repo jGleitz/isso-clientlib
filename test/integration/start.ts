@@ -16,6 +16,8 @@ import pageUris from '../fixtures/pageUris';
 import creating from './creating.test';
 import counting from './counting.test';
 import querying from './querying.test';
+import deleting from './deleting.test';
+import requerying from './requerying.test';
 
 let server: Server;
 const pages: Array<Page> = [];
@@ -35,6 +37,8 @@ describe('', function(): void {
 	[
 		creating,
 		counting,
-		querying
+		querying,
+		deleting,
+		requerying
 	].forEach(test => test(pages));
 });
