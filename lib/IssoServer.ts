@@ -41,7 +41,8 @@ export default class IssoServer {
 	 * @return A request object to `POST` on `endpoint`.
 	 */
 	public post(endpoint: string): Http.Request<any> {
-		return Http.post(this.baseUrl + endpoint);
+		return Http.post(this.baseUrl + endpoint)
+			.set('Content-Type', 'application/json');
 	}
 
 	/**
