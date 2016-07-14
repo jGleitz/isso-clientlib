@@ -107,7 +107,7 @@ export default class Comment {
 		}
 	}
 
-	private _author: Author = new Author();
+	private _author: Author = new Author(this);
 
 	public get author(): Author {
 		return this._author;
@@ -219,8 +219,6 @@ export default class Comment {
 			this.page = parent;
 		}
 		this.replies = new CommentList(this);
-		this._author.onNameChanged.attach(() => this.dirty = true);
-		this._author.onWebsiteChanged.attach(() => this.dirty = true);
 	}
 
 	/**
@@ -370,10 +368,21 @@ export default class Comment {
 
 	/**
 	 * Informs this comment about the fact that is was deleted on the server.
+	 *
+	 * @hidden
 	 */
 	public wasDeleted(): void {
 		this._deleted = true;
 		this.onDeleted.post();
+	}
+
+	/**
+	 * Informs this comment about the fact that one of its properties changed.
+	 *
+	 * @hidden
+	 */
+	public authorChanged(): void {
+		this.dirty = true;
 	}
 
 	private afterDelete(): void {

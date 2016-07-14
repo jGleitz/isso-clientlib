@@ -1,4 +1,5 @@
 import {AsyncEvent} from 'ts-events';
+import Comment from './Comment';
 
 /**
  * The author of a comment. Every author has an unique identifier that is
@@ -11,6 +12,8 @@ export default class Author {
 	private _website: string = null;
 
 	private _ident: string = null;
+
+	public constructor(private comment: Comment) {};
 
 	/**
 	 * The author’s identifier. Computed by the server based on its email address.
@@ -35,6 +38,7 @@ export default class Author {
 	public set website(website: string) {
 		if (website !== this._website) {
 			this.onWebsiteChanged.post(this._website = website);
+			this.comment.authorChanged();
 		}
 	}
 
@@ -50,6 +54,7 @@ export default class Author {
 	public set name(name: string) {
 		if (this._name !== name) {
 			this.onNameChanged.post(this._name = name);
+			this.comment.authorChanged();
 		}
 	}
 
