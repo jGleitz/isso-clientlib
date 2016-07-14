@@ -262,36 +262,39 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * @param serverData	A comment-like object recieved from the server.
 	 */
 	public updateFromServer(serverData: any): void {
-		const newList = serverData.replies;
-		const newCommentById: {[id: number]: Comment} = {};
-		let i = 0;
-		let childrenDeepCount = 0;
-		for (; i < newList.length; i++) {
-			const data = newList[i];
-			let comment = this.commentsById[data.id];
-			if (comment === undefined) {
-				comment = Comment.fromServerData(data, this.parent);
-				this.onNew.post(comment);
-			} else {
-				comment.updateFromServer(data);
+		// if all comments were hidden by the limit parameter, we only wanted to fetch the count.
+		if (serverData.hidden_replies !== serverData.total_replies || serverData.total_replies === 0) {
+			const newList = serverData.replies;
+			const newCommentById: {[id: number]: Comment} = {};
+			let i = 0;
+			let childrenDeepCount = 0;
+			for (; i < newList.length; i++) {
+				const data = newList[i];
+				let comment = this.commentsById[data.id];
+				if (comment === undefined) {
+					comment = Comment.fromServerData(data, this.parent);
+					this.onNew.post(comment);
+				} else {
+					comment.updateFromServer(data);
+				}
+				newCommentById[data.id] = comment;
+				this[i] = comment;
+				childrenDeepCount += comment.replies.deepCount;
 			}
-			newCommentById[data.id] = comment;
-			this[i] = comment;
-			childrenDeepCount += comment.replies.deepCount;
-		}
-		for (; i < this.length; i++) {
-			this[i] = undefined;
-		}
-		for (const id in this.commentsById) {
-			if (newCommentById[id] === undefined) {
-				this.commentsById[id].wasDeleted();
+			for (; i < this.length; i++) {
+				this[i] = undefined;
 			}
+			for (const id in this.commentsById) {
+				if (newCommentById[id] === undefined) {
+					this.commentsById[id].wasDeleted();
+				}
+			}
+			this.commentsById = newCommentById;
+			this.updateLength(newList.length);
+			this.updateDeepCount(childrenDeepCount + serverData.total_replies);
+			this.sort();
 		}
-		this.commentsById = newCommentById;
 		this.updateCount(serverData.total_replies);
-		this.updateLength(newList.length);
-		this.updateDeepCount(childrenDeepCount + this.count);
-		this.sort();
 	}
 
 	/**

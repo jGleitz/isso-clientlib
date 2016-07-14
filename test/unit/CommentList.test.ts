@@ -173,6 +173,41 @@ describe('CommentList', () => {
 			});
 	});
 
+	it('does not remove comments when updating the counts', () => {
+		server.responseToGet('/', successResponse(SERVER_FIXTURES.deeplyNested));
+
+		const page = new Page(server, 'test/uri');
+		const checkComments = () => {
+			expect(page.comments).to.have.length(3);
+			expect(page.comments.count).to.equal(3);
+			expect(page.comments.deepCount).to.equal(7);
+			for (let i = 0; i < page.comments.length; i++) {
+				expect(page.comments[i]).to.exist;
+			}
+
+			const replies = page.comments[0].replies;
+			expect(replies).to.have.length(1);
+			expect(replies.count).to.equal(1);
+			expect(replies.deepCount).to.equal(4);
+			expect(replies[0]).to.exist;
+			expect(replies[0].replies[0]).to.exist;
+			expect(replies[0].replies[1]).to.exist;
+		};
+
+		return page.comments.fetch()
+			.then(() => server.responseToGet('/', successResponse(SERVER_FIXTURES.deeplyNested)))
+			.then(() => page.comments.fetchCount())
+			.then(checkComments)
+			.then(() => server.responseToPost('/count', successResponse([7])))
+			.then(() => page.comments.fetchDeepCount())
+			.then(checkComments)
+			.then(() => server.responseToGet('/', successResponse(SERVER_FIXTURES.deeplyNested.replies[0])))
+			.then(() => page.comments[0].replies.fetchCount())
+			.then(checkComments)
+			.then(() => server.responseToGet('/', successResponse(SERVER_FIXTURES.deeplyNested.replies[0])))
+			.then(() => page.comments[0].replies.fetchDeepCount());
+	});
+
 	it('can update the deep count for replies', () => {
 		return pageWithCommentList().then(page => {
 			server.responseToGet('/', successResponse(SERVER_FIXTURES.deeplyNested.replies[0]));
