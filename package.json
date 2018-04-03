@@ -37,7 +37,7 @@
     "sinon": "^1.17.4",
     "sinon-chai": "^2.8.0",
     "source-map-loader": "^0.1.5",
-    "source-map-support": "^0.4.0",
+    "source-map-support": "^0.5.0",
     "tslint": "^3.10.2",
     "tslint-stylish": "^2.1.0-beta",
     "typedoc": "^0.4.1",
