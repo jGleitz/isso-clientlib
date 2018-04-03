@@ -32,7 +32,7 @@
     "mocha": "^2.4.5",
     "mocha-phantomjs-istanbul": "0.0.2",
     "node-promisify": "^1.2.0",
-    "remap-istanbul": "^0.6.4",
+    "remap-istanbul": "^0.11.0",
     "rimraf": "^2.5.2",
     "sinon": "^1.17.4",
     "sinon-chai": "^2.8.0",
