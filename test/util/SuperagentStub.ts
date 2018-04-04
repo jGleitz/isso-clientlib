@@ -1,5 +1,5 @@
 import * as Http from 'superagent';
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import assign from './assign';
 
@@ -14,7 +14,7 @@ export type superagentEndStub = (callback: (error: any, resoponse: any) => void)
  *		{@link #successResponse} or {@link #failResponse} to create it.
  * @return A superagent request suitable for testing.
  */
-export function requestFor(endStub: superagentEndStub): Http.Request<any> {
+export function requestFor(endStub: superagentEndStub): Http.Request {
 	const request = Http.get('https://comments.example.com/endpoint');
 	sinon.stub(request, 'end', endStub);
 	return request;

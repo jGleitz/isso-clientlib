@@ -1,7 +1,6 @@
 import IssoServer from './IssoServer';
-import {Request} from 'superagent';
+import { Request, Response } from 'superagent';
 import CommentList from './CommentList';
-import {Response} from 'superagent';
 
 /**
  * Represents one page on the website that can have comments on it. Every
@@ -54,7 +53,7 @@ export default class Page {
 	 * @param thisObject	The object to bind `process` to.
 	 * @return A promise that will be resolved with `process`’s result.
 	 */
-	public send<R>(request: Request<any> | (() => Request<any>), process: (response: Response) => R, thisObject?: any)
+	public send<R>(request: Request | (() => Request), process: (response: Response) => R, thisObject?: any)
 		: Promise<R> {
 		return this.onNoRequest(() => new Promise((resolve, reject) => {
 			this.getRequest(request).end((error, result) => {
@@ -68,11 +67,11 @@ export default class Page {
 		}));
 	}
 
-	private getRequest(request: Request<any> | (() => Request<any>)): Request<any> {
+	private getRequest(request: Request | (() => Request)): Request {
 		if (typeof request === 'function') {
-			return (<() => Request<any>> request)();
+			return (<() => Request> request)();
 		}
-		return <Request<any>> request;
+		return <Request> request;
 	}
 
 	/**

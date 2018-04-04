@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import pageUris from '../fixtures/pageUris';
 import Page from '../../lib/Page';

@@ -1,6 +1,6 @@
 import Page from '../../lib/Page';
 
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 export default (pages: Array<Page>) => describe('updating comments from the server', () => {
 

@@ -26,6 +26,7 @@ isso.printOutput(false);
 
 const coverageVariableName = '__coverage__';
 const paths = {
+	libBaseFolder: 'lib',
 	lib: 'lib/**/*.ts',
 	typings: 'typings/*/**/*.d.ts',
 	unitTest: 'build/test/unit/**/*.js',
@@ -74,7 +75,7 @@ const compileSettings = {
 function doCompile(settings, sources, output) {
 	const compileStream = gulp.src(sources)
 		.pipe(sourcemaps.init())
-		.pipe(typescript(settings, {}, typescript.reporter.longReporter()));
+		.pipe(typescript(settings, typescript.reporter.longReporter()));
 
 	const jsStream = compileStream.js
 		.pipe(sourcemaps.write('.', {sourceRoot: 'lib'}));
@@ -158,7 +159,7 @@ function testStream(testFile, phantomOpts, istanbulOpts) {
 			.on('finish', () =>
 				gulp.src(paths.coverageFile)
 					.pipe(istanbulReport(assign({
-						basePath: paths.lib,
+						basePath: '',
 						reports: {
 							text: ''
 						}
@@ -234,7 +235,7 @@ gulp.task('doc', () =>
 	gulp.src([paths.lib, paths.typings])
 		.pipe(typedoc({
 			module: 'commonjs',
-			target: 'ES5',
+			target: 'ES6', // we set this to ES6 as a cheap trick to get promise support
 			out: paths.output.doc
 		}))
 );

@@ -1,7 +1,7 @@
 import Page from './Page';
 import Comment from './Comment';
-import {AsyncEvent} from 'ts-events';
-import {Response} from 'superagent';
+import { AsyncEvent } from 'ts-events';
+import { Response } from 'superagent';
 
 /**
  * Modes a `CommentList` can be sorted by.
@@ -36,7 +36,7 @@ export const enum SortCriterion {
 	 * Sort based on the comment’s number of likes minus the comment’s number of dislikes.
 	 */
 	LIKESUM
-};
+}
 
 /**
  * Functions returning the number to use for comparison for each `SortCriterion`.
@@ -123,13 +123,13 @@ export default class CommentList implements ArrayLike<Comment> {
 	/**
 	 * Fired when a new comment arrives in this index.
 	 */
-	 // TODO: Use `readonly` when TS 2.0 is available
+	// TODO: Use `readonly` when TS 2.0 is available
 	public onNew = new AsyncEvent<Comment>();
 
 	/**
 	 * Fired when this list’s [#count](#count) changed.
 	 */
-	 // TODO: Use `readonly` when TS 2.0 is available
+	// TODO: Use `readonly` when TS 2.0 is available
 	public onCountChange = new AsyncEvent<number>();
 
 	/**
@@ -345,7 +345,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	/**
 	 * Processes a comment list request response.
 	 *
-	 * @param {response}	The server’s response.
+	 * @param response	The server’s response.
 	 * @return `this`
 	 */
 	private processCommentList(response: Response): CommentList {
@@ -387,7 +387,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	 */
 	public sortBy(criterion: SortCriterion, mode: SortMode = SortMode.ASCENDING): void {
 		this.sortBys({criterion: criterion, mode: mode});
-	};
+	}
 
 	/**
 	 * Sort this list using multiple criteria, potentially in different modes. The list will be kept sorted during

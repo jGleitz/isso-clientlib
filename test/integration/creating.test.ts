@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import Page from '../../lib/Page';
 import Comment from '../../lib/Comment';
 import * as Isso from '../util/isso-control';

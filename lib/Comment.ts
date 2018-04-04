@@ -1,7 +1,7 @@
 import Page from './Page';
 import Author from './Author';
-import {Response} from 'superagent';
-import {AsyncEvent, VoidAsyncEvent} from 'ts-events';
+import { Response } from 'superagent';
+import { AsyncEvent, VoidAsyncEvent } from 'ts-events';
 import CommentList from './CommentList';
 
 /**
