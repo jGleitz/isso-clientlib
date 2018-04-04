@@ -47,7 +47,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToGet(endpoint: string, endStub: superagentEndStub): Sinon.SinonStub {
+	public responseToGet(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
 		return this.registerStub('get', endpoint, endStub);
 	}
 
@@ -58,7 +58,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToPost(endpoint: string, endStub: superagentEndStub): Sinon.SinonStub {
+	public responseToPost(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
 		return this.registerStub('post', endpoint, endStub);
 	}
 
@@ -69,7 +69,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToPut(endpoint: string, endStub: superagentEndStub): Sinon.SinonStub {
+	public responseToPut(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
 		return this.registerStub('put', endpoint, endStub);
 	}
 
@@ -80,7 +80,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToDelete(endpoint: string, endStub: superagentEndStub): Sinon.SinonStub {
+	public responseToDelete(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
 		return this.registerStub('delete', endpoint, endStub);
 	}
 
@@ -100,7 +100,7 @@ export default class FakeIssoServer extends IssoServer {
 		return this.stubResponse(endpoint, 'delete');
 	}
 
-	private registerStub(method: string, endpoint: string, endStub: superagentEndStub): Sinon.SinonStub  {
+	private registerStub(method: string, endpoint: string, endStub: superagentEndStub): sinon.SinonStub  {
 		const requestFactory = <(url: string) => Http.Request> (<any>Http)[method];
 		const registry = <stubRegistry> (<any>this.stubs)[method];
 
