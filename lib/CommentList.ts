@@ -123,24 +123,22 @@ export default class CommentList implements ArrayLike<Comment> {
 	/**
 	 * Fired when a new comment arrives in this index.
 	 */
-	// TODO: Use `readonly` when TS 2.0 is available
-	public onNew = new AsyncEvent<Comment>();
+	public readonly onNew = new AsyncEvent<Comment>();
 
 	/**
 	 * Fired when this list’s [#count](#count) changed.
 	 */
-	// TODO: Use `readonly` when TS 2.0 is available
-	public onCountChange = new AsyncEvent<number>();
+	public readonly onCountChange = new AsyncEvent<number>();
 
 	/**
 	 * Fired when this list’s [#deepCount](#deepcount) changed.
 	 */
-	public onDeepCountChange = new AsyncEvent<number>();
+	public readonly onDeepCountChange = new AsyncEvent<number>();
 
 	/**
 	 * Fired when this list’s [#length](#length) changed.
 	 */
-	public onLengthChange = new AsyncEvent<number>();
+	public readonly onLengthChange = new AsyncEvent<number>();
 
 	/**
 	 * Creates a comment list.

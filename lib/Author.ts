@@ -63,16 +63,16 @@ export default class Author {
 	/**
 	 * Fired when the server assigned an [identifier](#ident) to this author.
 	 */
-	public onIdentAssigned = new AsyncEvent<string>();
+	public readonly onIdentAssigned = new AsyncEvent<string>();
 
 	/**
 	 * Fired when this author’s [website](#website) has changed.
 	 */
-	public onWebsiteChanged = new AsyncEvent<string>();
+	public readonly onWebsiteChanged = new AsyncEvent<string>();
 	/**
 	 * Fired when this author’s [name](#name) changed.
 	 */
-	public onNameChanged = new AsyncEvent<string>();
+	public readonly onNameChanged = new AsyncEvent<string>();
 
 	public constructor(private comment: Comment) {}
 }

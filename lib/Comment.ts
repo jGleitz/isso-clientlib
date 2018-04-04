@@ -158,38 +158,38 @@ export default class Comment {
 	/**
 	 * Fired when this comment was removed from the server.
 	 */
-	public onDeleted = new VoidAsyncEvent();
+	public readonly onDeleted = new VoidAsyncEvent();
 
 	/**
 	 * Fired when `this` comment’s text changed
 	 */
-	public onTextChanged = new AsyncEvent<string>();
+	public readonly onTextChanged = new AsyncEvent<string>();
 
 	/**
 	 * Fired when the date of the last modification of `this` comment changed.
 	 */
-	public onModifiedChanged = new AsyncEvent<Date>();
+	public readonly onModifiedChanged = new AsyncEvent<Date>();
 
 	/**
 	 * Fired when the number of likes on `this` comment changed.
 	 */
-	public onLikesChanged = new AsyncEvent<number>();
+	public readonly onLikesChanged = new AsyncEvent<number>();
 
 	/**
 	 * Fired when the number of dislikes on `this` comment changed.
 	 */
-	public onDislikesChanged = new AsyncEvent<number>();
+	public readonly onDislikesChanged = new AsyncEvent<number>();
 
 	/**
 	 * Fired when this comment receives an ID. This happens after it has been
 	 * successfully transfered to the server for the first time.
 	 */
-	public onIdAssigned = new AsyncEvent<number>();
+	public readonly onIdAssigned = new AsyncEvent<number>();
 
 	/**
 	 * Fired when this comment is published (= made visible to the public).
 	 */
-	public onPublished = new VoidAsyncEvent();
+	public readonly onPublished = new VoidAsyncEvent();
 
 	/**
 	 * The comment this comment replies to if it’s a reply. `null` otherwise.
