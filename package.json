@@ -18,7 +18,7 @@
     "chai-datetime": "^1.4.1",
     "clone": "^1.0.2",
     "deep-assign": "^2.0.0",
-    "es6-promise": "^3.2.1",
+    "es6-promise": "^4.0.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-changed": "^3.0.0",
     "gulp-istanbul": "^1.0.0",
