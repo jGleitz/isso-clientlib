@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import * as clone from 'clone';
+import * as sinon from 'sinon';
 
 import FakeIssoServer from '../util/FakeIssoServer';
 import * as SERVER_FIXTURES from '../fixtures/commentListing';

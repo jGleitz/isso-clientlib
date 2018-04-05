@@ -2,6 +2,7 @@ import IssoServer from '../../lib/IssoServer';
 import * as Http from 'superagent';
 import { superagentEndStub } from './SuperagentStub';
 import { assert } from 'chai';
+import * as sinon from 'sinon';
 
 type stubRegistry = {[endpoint: string]: Array<Http.Request>};
 
@@ -105,7 +106,7 @@ export default class FakeIssoServer extends IssoServer {
 		const registry = <stubRegistry> (<any>this.stubs)[method];
 
 		const request = requestFactory(`https://comments.exapmle.com${endpoint}`);
-		const stub = sinon.stub(request, 'end', endStub);
+		const stub = sinon.stub(request, 'end').callsFake(endStub);
 
 		(registry[endpoint] = registry[endpoint] || []).push(request);
 		return stub;
