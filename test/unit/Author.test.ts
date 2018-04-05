@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import Comment from '../../lib/Comment';
 import Page from '../../lib/Page';
@@ -12,7 +12,9 @@ let page: Page;
 
 describe('Author', () => {
 
-	beforeEach('create a page', () => page = new Page(server, 'test/uri'));
+	beforeEach('create a page', () => {
+		page = new Page(server, 'test/uri');
+	});
 
 	it('is initialised with the comment', () => {
 		const comment = Comment.fromServerData(commentData, page);

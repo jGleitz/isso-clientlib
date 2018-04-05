@@ -1,4 +1,4 @@
-import {AsyncEvent} from 'ts-events';
+import { AsyncEvent } from 'ts-events';
 import Comment from './Comment';
 
 /**
@@ -12,9 +12,6 @@ export default class Author {
 	private _website: string = null;
 
 	private _ident: string = null;
-
-	public constructor(private comment: Comment) {};
-
 	/**
 	 * The author’s identifier. Computed by the server based on its email address.
 	 */
@@ -63,18 +60,19 @@ export default class Author {
 	 */
 	public email: string = null;
 
-
 	/**
 	 * Fired when the server assigned an [identifier](#ident) to this author.
 	 */
-	public onIdentAssigned = new AsyncEvent<string>();
+	public readonly onIdentAssigned = new AsyncEvent<string>();
 
 	/**
 	 * Fired when this author’s [website](#website) has changed.
 	 */
-	public onWebsiteChanged = new AsyncEvent<string>();
+	public readonly onWebsiteChanged = new AsyncEvent<string>();
 	/**
 	 * Fired when this author’s [name](#name) changed.
 	 */
-	public onNameChanged = new AsyncEvent<string>();
+	public readonly onNameChanged = new AsyncEvent<string>();
+
+	public constructor(private comment: Comment) {}
 }

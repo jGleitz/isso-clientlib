@@ -1,9 +1,9 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import * as clone from 'clone';
 
 import FakeIssoServer from '../util/FakeIssoServer';
 import * as SERVER_FIXTURES from '../fixtures/commentListing';
-import {expectData, successResponse} from '../util/SuperagentStub';
+import { expectData, successResponse } from '../util/SuperagentStub';
 
 import Comment from '../../lib/Comment';
 import Page from '../../lib/Page';
@@ -13,8 +13,9 @@ const commentData = SERVER_FIXTURES.standard.replies[0];
 let page: Page;
 
 describe('Comment', () => {
-
-	beforeEach('create a page', () => page = new Page(server, 'test/uri'));
+	beforeEach('create a page', () => {
+		page = new Page(server, 'test/uri');
+	});
 
 	afterEach('reset fake server', () => server.reset());
 

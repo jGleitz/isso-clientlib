@@ -28,7 +28,7 @@ export default class IssoServer {
 	 * @param endpoint	The enpoint URI, relative to this server’s base URL. Must start with a `/`.
 	 * @return A request object to `GET` on `endpoint`.
 	 */
-	public get(endpoint: string): Http.Request<any> {
+	public get(endpoint: string): Http.Request {
 		return Http.get(this.baseUrl + endpoint);
 	}
 
@@ -40,7 +40,7 @@ export default class IssoServer {
 	 *		The enpoint URI, relative to this server’s base URL. Must start with a `/`.
 	 * @return A request object to `POST` on `endpoint`.
 	 */
-	public post(endpoint: string): Http.Request<any> {
+	public post(endpoint: string): Http.Request {
 		return Http.post(this.baseUrl + endpoint)
 			.set('Content-Type', 'application/json');
 	}
@@ -52,7 +52,7 @@ export default class IssoServer {
 	 * @param endpoint	The enpoint URI, relative to this server’s base URL. Must start with a `/`.
 	 * @return A request object to `PUT` on `endpoint`.
 	 */
-	public put(endpoint: string): Http.Request<any> {
+	public put(endpoint: string): Http.Request {
 		return Http.put(this.baseUrl + endpoint);
 	}
 
@@ -63,7 +63,7 @@ export default class IssoServer {
 	 * @param endpoint	The enpoint URI, relative to this server’s base URL. Must start with a `/`.
 	 * @return A request object to `DELETE` on `endpoint`.
 	 */
-	public delete(endpoint: string): Http.Request<any> {
+	public delete(endpoint: string): Http.Request {
 		return Http.del(this.baseUrl + endpoint);
 	}
 }

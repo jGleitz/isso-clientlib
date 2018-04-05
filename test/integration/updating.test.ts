@@ -2,7 +2,7 @@ import Page from '../../lib/Page';
 
 import pageUris from '../fixtures/pageUris';
 
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 export default (pages: Array<Page>) => describe('editing comments', () => {
 

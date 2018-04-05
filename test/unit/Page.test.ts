@@ -1,8 +1,8 @@
 import Page from '../../lib/Page';
 import FakeIssoServer from '../util/FakeIssoServer';
-import {expect} from 'chai';
+import { expect } from 'chai';
 import Location from '../util/Location';
-import {requestFor, successResponse} from '../util/SuperagentStub';
+import { requestFor, successResponse } from '../util/SuperagentStub';
 
 const server = new FakeIssoServer();
 

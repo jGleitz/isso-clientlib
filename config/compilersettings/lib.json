@@ -4,5 +4,6 @@
     "target": "es5",
     "declaration": true,
     "noImplicitAny": true,
-    "removeComments": false
+    "removeComments": false,
+	"lib": ["ES5", "DOM", "ES2015.Promise"]
 }

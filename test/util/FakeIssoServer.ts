@@ -1,9 +1,9 @@
 import IssoServer from '../../lib/IssoServer';
 import * as Http from 'superagent';
-import {superagentEndStub} from './SuperagentStub';
-import {assert} from 'chai';
+import { superagentEndStub } from './SuperagentStub';
+import { assert } from 'chai';
 
-type stubRegistry = {[endpoint: string]: Array<Http.Request<any>>};
+type stubRegistry = {[endpoint: string]: Array<Http.Request>};
 
 /**
  * An `IssoServer` that can be used in tests in order to simulate certain
@@ -47,7 +47,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToGet(endpoint: string, endStub: superagentEndStub): Sinon.SinonStub {
+	public responseToGet(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
 		return this.registerStub('get', endpoint, endStub);
 	}
 
@@ -58,7 +58,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToPost(endpoint: string, endStub: superagentEndStub): Sinon.SinonStub {
+	public responseToPost(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
 		return this.registerStub('post', endpoint, endStub);
 	}
 
@@ -69,7 +69,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToPut(endpoint: string, endStub: superagentEndStub): Sinon.SinonStub {
+	public responseToPut(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
 		return this.registerStub('put', endpoint, endStub);
 	}
 
@@ -80,28 +80,28 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToDelete(endpoint: string, endStub: superagentEndStub): Sinon.SinonStub {
+	public responseToDelete(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
 		return this.registerStub('delete', endpoint, endStub);
 	}
 
-	public get(endpoint: string): Http.Request<any> {
+	public get(endpoint: string): Http.Request {
 		return this.stubResponse(endpoint, 'get');
 	}
 
-	public post(endpoint: string): Http.Request<any> {
+	public post(endpoint: string): Http.Request {
 		return this.stubResponse(endpoint, 'post');
 	}
 
-	public put(endpoint: string): Http.Request<any> {
+	public put(endpoint: string): Http.Request {
 		return this.stubResponse(endpoint, 'put');
 	}
 
-	public delete(endpoint: string): Http.Request<any> {
+	public delete(endpoint: string): Http.Request {
 		return this.stubResponse(endpoint, 'delete');
 	}
 
-	private registerStub(method: string, endpoint: string, endStub: superagentEndStub): Sinon.SinonStub  {
-		const requestFactory = <(url: string) => Http.Request<any>> (<any>Http)[method];
+	private registerStub(method: string, endpoint: string, endStub: superagentEndStub): sinon.SinonStub  {
+		const requestFactory = <(url: string) => Http.Request> (<any>Http)[method];
 		const registry = <stubRegistry> (<any>this.stubs)[method];
 
 		const request = requestFactory(`https://comments.exapmle.com${endpoint}`);
@@ -111,7 +111,7 @@ export default class FakeIssoServer extends IssoServer {
 		return stub;
 	}
 
-	private stubResponse(endpoint: string, method: string): Http.Request<any> {
+	private stubResponse(endpoint: string, method: string): Http.Request {
 		const registry = <stubRegistry> (<any>this.stubs)[method];
 
 		assert(registry[endpoint] && registry[endpoint].length > 0,

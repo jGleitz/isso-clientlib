@@ -1,13 +1,13 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import * as clone from 'clone';
 
 import FakeIssoServer from '../util/FakeIssoServer';
-import {successResponse} from '../util/SuperagentStub';
+import { successResponse } from '../util/SuperagentStub';
 import * as SERVER_FIXTURES from '../fixtures/commentListing';
 
 import Page from '../../lib/Page';
 import Comment from '../../lib/Comment';
-import {SortCriterion, SortMode} from '../../lib/CommentList';
+import { SortCriterion, SortMode } from '../../lib/CommentList';
 
 const server = new FakeIssoServer();
 
@@ -24,7 +24,7 @@ function pageWithCommentList(fixture?: any): Promise<Page> {
 	const page = new Page(server, 'test/uri');
 	return page.comments.fetch()
 		.then(() => page);
-};
+}
 
 const createFromServerSpy = sinon.spy(Comment, 'fromServerData');
 

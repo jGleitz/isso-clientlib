@@ -28,7 +28,7 @@ function call(uri: string, query?: {[param: string]: string}): Promise<any> {
 		});
 }
 
-function assertId(): Promise<{}> {
+function assertId(): Promise<void> {
 	if (issoId !== undefined) {
 		return Promise.resolve();
 	} else {

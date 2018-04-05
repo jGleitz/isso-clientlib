@@ -3,6 +3,7 @@
 import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 import * as chaiAsPromised from 'chai-as-promised';
+// @ts-ignore This import is working correctly, but TypeScript can’t see that
 import * as chaiDateTime from 'chai-datetime';
 import * as es6Promise from 'es6-promise';
 
