@@ -26,9 +26,9 @@ export default class FakeIssoServer extends IssoServer {
 	 * HTTP request was not made.
 	 */
 	public reset(): void {
-		for (let method in this.stubs) {
+		for (const method in this.stubs) {
 			const registry = (<any> this.stubs)[method];
-			for (let endpoint in registry) {
+			for (const endpoint in registry) {
 				assert(registry[endpoint].length === 0,
 					`An expected ${method.toUpperCase()} request for '${endpoint}' did not occur!`);
 			}

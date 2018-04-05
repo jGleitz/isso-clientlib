@@ -10,25 +10,25 @@ describe('IssoServer', () => {
 	});
 
 	it('creates POST requests', () => {
-		let request: any = server.post('/endpoint');
+		const request: any = server.post('/endpoint');
 		expect(request.url).to.equal('https://comments.example.com/endpoint');
 		expect(request.method).to.equal('POST');
 	});
 
 	it('creates GET requests', () => {
-		let request: any = server.get('/endpoint');
+		const request: any = server.get('/endpoint');
 		expect(request.url).to.equal('https://comments.example.com/endpoint');
 		expect(request.method).to.equal('GET');
 	});
 
 	it('creates PUT requests', () => {
-		let request: any = server.put('/endpoint');
+		const request: any = server.put('/endpoint');
 		expect(request.url).to.equal('https://comments.example.com/endpoint');
 		expect(request.method).to.equal('PUT');
 	});
 
 	it('creates DELETE requests', () => {
-		let request: any = server.delete('/endpoint');
+		const request: any = server.delete('/endpoint');
 		expect(request.url).to.equal('https://comments.example.com/endpoint');
 		expect(request.method).to.equal('DELETE');
 	});

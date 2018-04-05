@@ -27,7 +27,7 @@ function pageWithCommentList(fixture?: any): Promise<Page> {
 		.then(() => page);
 }
 
-let sandbox = sinon.createSandbox();
+const sandbox = sinon.createSandbox();
 
 describe('CommentList', () => {
 	beforeEach('spy on Comment.fromServerData', () => {
