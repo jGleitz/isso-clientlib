@@ -1,6 +1,7 @@
 import Page from '../../lib/Page';
 import FakeIssoServer from '../util/FakeIssoServer';
 import { expect } from 'chai';
+import * as sinon from 'sinon';
 import Location from '../util/Location';
 import { requestFor, successResponse } from '../util/SuperagentStub';
 

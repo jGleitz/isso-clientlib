@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import * as clone from 'clone';
+import * as sinon from 'sinon';
 
 import FakeIssoServer from '../util/FakeIssoServer';
 import { successResponse } from '../util/SuperagentStub';
@@ -26,12 +27,15 @@ function pageWithCommentList(fixture?: any): Promise<Page> {
 		.then(() => page);
 }
 
-const createFromServerSpy = sinon.spy(Comment, 'fromServerData');
+let sandbox = sinon.createSandbox();
 
 describe('CommentList', () => {
-	afterEach('reset fake server', () => server.reset());
+	beforeEach('spy on Comment.fromServerData', () => {
+		sandbox.spy(Comment, 'fromServerData');
+	});
 
-	afterEach('reset createFromServerSpy', () => createFromServerSpy.reset());
+	afterEach('reset fake server', () => server.reset());
+	afterEach('reset spies', () => sandbox.restore());
 
 	it('can query comments', () => {
 		server.responseToGet('/', successResponse(SERVER_FIXTURES.standard));
@@ -40,7 +44,7 @@ describe('CommentList', () => {
 		return page.comments.fetch()
 			.then(comments => {
 				expect(page.comments).to.have.length(2);
-				expect(createFromServerSpy).to.have.been.calledThrice;
+				expect(Comment.fromServerData).to.have.been.calledThrice;
 				expect(newCommentEventSpy).to.have.been.calledTwice;
 				expect(comments).to.equal(page.comments);
 
@@ -92,13 +96,18 @@ describe('CommentList', () => {
 
 				return page.comments.fetch()
 					.then(comments => {
-						expect(createFromServerSpy).to.have.been.calledWith(
-							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[0]);
-						expect(createFromServerSpy).to.have.been.calledWith(
-							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[0]);
-						expect(createFromServerSpy).to.have.been.calledWith(
-							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[1]);
-						expect(createFromServerSpy).to.have.been.calledWith(SERVER_FIXTURES.deeplyNested.replies[2]);
+						expect(Comment.fromServerData).to.have.been.calledWith(
+							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[0]
+						);
+						expect(Comment.fromServerData).to.have.been.calledWith(
+							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[0]
+						);
+						expect(Comment.fromServerData).to.have.been.calledWith(
+							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[1]
+						);
+						expect(Comment.fromServerData).to.have.been.calledWith(
+							SERVER_FIXTURES.deeplyNested.replies[2]
+						);
 
 						expect(page.comments.byId(1).replies.byId(2)).to.exist;
 						expect(page.comments.byId(1).replies.byId(2).id).to.equal(2);

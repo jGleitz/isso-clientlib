@@ -1,5 +1,6 @@
 import * as Http from 'superagent';
 import { expect } from 'chai';
+import * as sinon from 'sinon';
 
 import assign from './assign';
 
@@ -16,7 +17,7 @@ export type superagentEndStub = (callback: (error: any, resoponse: any) => void)
  */
 export function requestFor(endStub: superagentEndStub): Http.Request {
 	const request = Http.get('https://comments.example.com/endpoint');
-	sinon.stub(request, 'end', endStub);
+	sinon.stub(request, 'end').callsFake(endStub);
 	return request;
 }
 
