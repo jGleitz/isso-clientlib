@@ -43,7 +43,7 @@ export default (pages: Array<Page>) => describe('creating comments', () => {
 
 	it('more comments', () => {
 		let c = -1;
-		let comments: Array<Comment> = [];
+		const comments: Array<Comment> = [];
 
 		comments[++c] = new Comment(pages[0]);
 		comments[c].rawText = 'Yet a nother comment';

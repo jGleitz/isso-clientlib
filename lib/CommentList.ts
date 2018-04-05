@@ -436,7 +436,7 @@ export default class CommentList implements ArrayLike<Comment> {
 		let lastComment: Comment = undefined;
 		let i = this.length - 1;
 		for (; i >= 0 && this[i] !== comment; i--) {
-			let copy = this[i];
+			const copy = this[i];
 			this[i] = lastComment;
 			lastComment = copy;
 		}
