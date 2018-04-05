@@ -112,19 +112,20 @@ function instrument() {
 
 function bundleStream(fileName) {
 	return webpack({
-		output: {
-			filename: fileName
+		config: {
+			output: {
+				filename: fileName
+			},
+			devtool: 'source-map',
+			module: {
+				loaders: [{
+					test: /\.js$/,
+					loader: 'source-map-loader'
+				}]
+			}
 		},
-		devtool: 'source-map',
-		quiet: true,
-		module: {
-			preLoaders: [{
-				test: /\.js$/,
-				loader: 'source-map-loader'
-			}]
-		}
+		quiet: true
 	})
-	.on('error', gutil.log)
 }
 
 function bundleUnitTest() {
