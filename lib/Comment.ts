@@ -296,6 +296,9 @@ export default class Comment {
 	 * @return A promise that will be fulfilled with `this` when this comment was submitted to the server.
 	 */
 	public send(): Promise<Comment> {
+		if (this.repliesTo !== null && !this.repliesTo.existsOnServer) {
+			return Promise.reject(new Error('The parent comment was not sent yet!'));
+		}
 		if (!this.existsOnServer) {
 			return this.page.send(() =>
 				this.page.server.post('/new')
@@ -397,9 +400,6 @@ export default class Comment {
 	 * @return This comment’s server representation.
 	 */
 	private toRequestData(): Object {
-		if (this.repliesTo !== null && this.repliesTo.id === null) {
-			throw new Error('The parent comment was not sent yet!');
-		}
 		return {
 			// the server expects the text to be sent on updates.
 			text: this.rawText || this.text,
