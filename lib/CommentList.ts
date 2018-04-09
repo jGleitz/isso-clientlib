@@ -56,13 +56,13 @@ const COMMENT_MEMBER_ACCESS_FUNCTIONS = (() => {
  * A list of comments. Offers the ability to query and update the comments in this list. The list’s `count`, the number
  * of comments known by the server to belong into this list, can be queried independently.
  *
- * A list contains only comments that are published or deleted but still have replies.
+ * A list contains only comments that either are published or are deleted but still have replies.
  */
 export default class CommentList implements ArrayLike<Comment> {
 
 	/**
-	 * Array like index signature. Keeps the comments in the order set through [#orderBys](#orderBys) or
-	 * [#orderBy](#orderby). If no order was set yet, the list is ordered by creation the comments’ date.
+	 * Array like index signature. Keeps the comments in the order set through [#sortBys](#sortbys) or
+	 * [#sortBy](#sortby). If no order was set yet, the list is ordered by creation the comments’ date.
 	 */
 	[index: number]: Comment;
 
