@@ -296,22 +296,21 @@ export default class Comment {
 	 * @return A promise that will be fulfilled with `this` when this comment was submitted to the server.
 	 */
 	public send(): Promise<Comment> {
-		if (this.repliesTo !== null && !this.repliesTo.existsOnServer) {
-			return Promise.reject(new Error('The parent comment was not sent yet!'));
-		}
 		if (!this.existsOnServer) {
-			return this.page.send(() =>
-				this.page.server.post('/new')
+			return this.page.send(() => {
+				this.checkSendPreconditions();
+				return this.page.server.post('/new')
 					.query({uri: this.page.uri})
 					.withCredentials()
-					.send(this.toRequestData()),
-				this.afterCreate, this);
+					.send(this.toRequestData());
+				}, this.afterCreate, this);
 		} else if (this.dirty) {
-			return this.page.send(() =>
-				this.page.server.put(`/id/${this.id}`)
+			return this.page.send(() => {
+				this.checkSendPreconditions();
+				return this.page.server.put(`/id/${this.id}`)
 					.withCredentials()
-					.send(this.toRequestData()),
-				this.afterUpdate, this);
+					.send(this.toRequestData());
+				}, this.afterUpdate, this);
 		}
 		return Promise.resolve(this);
 	}
@@ -391,6 +390,17 @@ export default class Comment {
 	private afterDelete(): void {
 		this.parentList.remove(this);
 		this.wasDeleted();
+	}
+
+	/**
+	 * Checks that all preconditions are met to send this comment to the server.
+	 *
+	 * @throws an error if this comment is not ready to be sent yet.
+	 */
+	private checkSendPreconditions(): void {
+		if (this.repliesTo !== null && !this.repliesTo.existsOnServer) {
+			throw new Error('The parent comment was not sent yet!');
+		}
 	}
 
 	/**
