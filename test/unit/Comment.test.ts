@@ -158,7 +158,6 @@ describe('Comment', () => {
 	it('rejects sending if the parent comment was not sent yet', () => {
 		const parent = new Comment(page);
 		const reply = new Comment(parent);
-		server.responseToPost('/new', successResponse());
 		return expect(reply.send()).to.be.rejectedWith('parent comment was not sent');
 	});
 
