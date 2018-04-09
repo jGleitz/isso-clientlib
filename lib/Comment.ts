@@ -297,18 +297,20 @@ export default class Comment {
 	 */
 	public send(): Promise<Comment> {
 		if (!this.existsOnServer) {
-			return this.page.send(() =>
-				this.page.server.post('/new')
+			return this.page.send(() => {
+				this.checkSendPreconditions();
+				return this.page.server.post('/new')
 					.query({uri: this.page.uri})
 					.withCredentials()
-					.send(this.toRequestData()),
-				this.afterCreate, this);
+					.send(this.toRequestData());
+				}, this.afterCreate, this);
 		} else if (this.dirty) {
-			return this.page.send(() =>
-				this.page.server.put(`/id/${this.id}`)
+			return this.page.send(() => {
+				this.checkSendPreconditions();
+				return this.page.server.put(`/id/${this.id}`)
 					.withCredentials()
-					.send(this.toRequestData()),
-				this.afterUpdate, this);
+					.send(this.toRequestData());
+				}, this.afterUpdate, this);
 		}
 		return Promise.resolve(this);
 	}
@@ -391,15 +393,23 @@ export default class Comment {
 	}
 
 	/**
+	 * Checks that all preconditions are met to send this comment to the server.
+	 *
+	 * @throws an error if this comment is not ready to be sent yet.
+	 */
+	private checkSendPreconditions(): void {
+		if (this.repliesTo !== null && !this.repliesTo.existsOnServer) {
+			throw new Error('The parent comment was not sent yet!');
+		}
+	}
+
+	/**
 	 * Transforms this comment into a data object that can be used to send it
 	 * to the isso server.
 	 *
 	 * @return This comment’s server representation.
 	 */
 	private toRequestData(): Object {
-		if (this.repliesTo !== null && this.repliesTo.id === null) {
-			throw new Error('The parent comment was not sent yet!');
-		}
 		return {
 			// the server expects the text to be sent on updates.
 			text: this.rawText || this.text,
