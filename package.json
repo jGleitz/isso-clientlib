@@ -23,7 +23,7 @@
     "chai": "^4.0.0",
     "chai-as-promised": "^5.3.0",
     "chai-datetime": "^1.4.1",
-    "clone": "^1.0.2",
+    "clone": "^2.0.0",
     "deep-assign": "^2.0.0",
     "es6-promise": "^4.0.0",
     "gulp": "github:gulpjs/gulp#4.0",
