@@ -33,7 +33,7 @@
     "gulp-sourcemaps": "^2.6.4",
     "gulp-tslint": "^8.0.0",
     "gulp-typedoc": "^2.0.0",
-    "gulp-typescript": "^4.0.0",
+    "gulp-typescript": "^5.0.0",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.7",
     "merge2": "^1.0.2",
