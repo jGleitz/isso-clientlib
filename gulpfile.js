@@ -4,9 +4,7 @@
 /* eslint-disable global-require */
 
 const gulp = require('gulp');
-const gutil = require('gulp-util');
 const tslint = require('gulp-tslint');
-const stylish = require('tslint-stylish');
 const typescript = require('gulp-typescript');
 const sourcemaps = require('gulp-sourcemaps');
 const merge = require('merge2');
@@ -19,7 +17,7 @@ const istanbul = require('gulp-istanbul');
 const mochaPhantomJs = require('gulp-mocha-phantomjs');
 const istanbulReport = require('remap-istanbul/lib/gulpRemapIstanbul');
 const typedoc = require('gulp-typedoc');
-const assign = require('deep-assign');
+const mergeOptions = require('merge-options');
 const isso = require('./isso-management');
 const testPageMiddleware = require('./test/util/testPageMiddleware');
 isso.printOutput(false);
@@ -49,19 +47,15 @@ const paths = {
 	integrationCoverageReport: 'build/integration-coverage.lcov'
 };
 
-const d = (dependencies, task) => gulp.series(gulp.parallel(dependencies), task);
-
 /**
  * Checks the coding conventions.
  */
 gulp.task('lint', () =>
 	gulp.src([paths.lib, paths.test])
-		.pipe(tslint())
-		.pipe(tslint.report(stylish, {
-			emitError: true,
-			sort: true,
-			bell: true
+		.pipe(tslint({
+			formatter: "stylish"
 		}))
+		.pipe(tslint.report())
 );
 
 const compileSettings = {
@@ -150,7 +144,7 @@ const bundle = gulp.series(
  */
 function testStream(testFile, phantomOpts, istanbulOpts) {
 	return gulp.src(testFile, {read: false})
-		.pipe(mochaPhantomJs(assign({
+		.pipe(mochaPhantomJs(mergeOptions({
 			phantomjs: {
 				useColors: true,
 				hooks: 'mocha-phantomjs-istanbul',
@@ -159,7 +153,7 @@ function testStream(testFile, phantomOpts, istanbulOpts) {
 		}, phantomOpts || {}))
 			.on('finish', () =>
 				gulp.src(paths.coverageFile)
-					.pipe(istanbulReport(assign({
+					.pipe(istanbulReport(mergeOptions({
 						basePath: '',
 						reports: {
 							text: ''
@@ -173,7 +167,7 @@ const unitTestIstanbulOpts = {
 		html: paths.unitCoverageReportFolder,
 		lcovonly: paths.unitCoverageReport
 	}
-}
+};
 
 const integrationTestPhantomOpts = {
 	phantomjs: {
@@ -196,7 +190,7 @@ const integrationTestIstanbulOpts = {
 		html: paths.integrationCoverageReportFolder,
 		lcovonly: paths.integrationCoverageReport
 	}
-}
+};
 
 function startIsso() {
 	return isso.install().then(isso.start);
@@ -220,7 +214,7 @@ function silentUnitTest() {
 }
 
 function silentIntegrationTest() {
-	return testStream('test/integration/index.html', assign({}, integrationTestPhantomOpts, silentPhantom), integrationTestIstanbulOpts);
+	return testStream('test/integration/index.html', mergeOptions({}, integrationTestPhantomOpts, silentPhantom), integrationTestIstanbulOpts);
 }
 
 const silentTest = gulp.series(silentUnitTest, silentIntegrationTest);
