@@ -4,7 +4,6 @@
 /* eslint-disable global-require */
 
 const gulp = require('gulp');
-const gutil = require('gulp-util');
 const tslint = require('gulp-tslint');
 const typescript = require('gulp-typescript');
 const sourcemaps = require('gulp-sourcemaps');
