@@ -74,13 +74,13 @@ export default class CommentList implements ArrayLike<Comment> {
 	/**
 	 * The page the comments in this list belongs to.
 	 */
-	private page: Page;
+	private readonly page: Page;
 
 	/**
 	 * If this list contains the replies to a comment, this is that comment. It’s this list contains the top level
 	 * comment of a page, this is this page.
 	 */
-	private parent: Comment | Page;
+	private readonly parent: Comment | Page;
 
 	/**
 	 * The (flat) count of comments belonging into this list.
