@@ -4,7 +4,7 @@
 
 const process = require('child_process');
 const promisify = require('node-promisify');
-const fs = require('fs')
+const fs = require('fs');
 const http = require('http');
 const url = require('url');
 const rmrf = promisify(require('rimraf'));
@@ -25,7 +25,9 @@ const INFO_REGEX = new RegExp(infoPattern);
  */
 const STARTED_REGEX = new RegExp(`${infoPattern} connected to ${COMMUNICATION_WEBSITE}`);
 
-const OK = () => {ok: true};
+const OK = () => ({
+	ok: true
+});
 
 /**
  * Whether to print the command line output of the commands executed by this module.
@@ -45,7 +47,7 @@ let instancecount = 0;
 /**
  * Removes a newline from the end of the provided `inputString`.
  *
- * @param string	The string to process.
+ * @param inputString    The string to process.
  * @return The input string. If it had a line break at its end, it was removed.
  */
 function trimNewline(inputString) {
@@ -55,7 +57,7 @@ function trimNewline(inputString) {
 /**
  * Prints the command line output of the provided `spawned` to the console iff `print` is true.
  *
- * @param spawned	A child process to print the output of.
+ * @param spawned    A child process to print the output of.
  */
 function printSpawned(spawned) {
 	if (print) {
@@ -67,13 +69,13 @@ function printSpawned(spawned) {
 /**
  * Kills the provided `process`.
  *
- * @param process	The process to kill.
+ * @param process    The process to kill.
  * @return A promise that will be resolved when the process was killed.
  */
 function kill(process) {
 	return new Promise((resolve, reject) => {
 		process.on('error', reject);
-		process.on('exit', resolve);;
+		process.on('exit', resolve);
 		process.kill();
 	});
 }
@@ -81,10 +83,10 @@ function kill(process) {
 /**
  * Executes the provided `commands` on the command line.
  *
- * @param commands	The commands to execute.
- * @param spawnedHandler	An optional function that accepts the spawned child process.
+ * @param command    The commands to execute.
+ * @param spawnedHandler    An optional function that accepts the spawned child process.
  * @return A promise that will be resolved with the command’s output when the command finished excuting. It will be
- *		rejected if executing the command failed or anything was printed to stderr.
+ *        rejected if executing the command failed or anything was printed to stderr.
  */
 function exec(command, spawnedHandler) {
 	return new Promise((resolve, reject) => {
@@ -109,16 +111,18 @@ let freeList = [];
 let communicationServer = null;
 
 const installscript = `
+set -e
+
 here="$(mktemp -d)"
 cd "$here"
 
 # Prefer python 3.5 over python 2.7
-if [ -f '/usr/bin/python3.5' ] && [ -f '/usr/include/python3.5m/Python.h' ]; then
-	python3.5 -m venv "$here"
-elif [ -f '/usr/bin/python2.7' ] && [ -f '/usr/include/python2.7/Python.h' ]; then
+if which python3 && python3 -m venv --help > /dev/null && python3 -m ensurepip --version; then
+	python3 -m venv "$here"
+elif which python2 && which virtualenv; then
 	virtualenv "$here"
 else
-	echo 'Please install python 2.7 or python 3.5 together with the according python-dev package!'
+	echo 'Please install python 2.7 or python 3.5 together with the according python-dev package! For python3, please install also python3-venv!'
 	exit 1
 fi
 
@@ -168,7 +172,7 @@ function communicationServerResponse(request, response) {
 	const id = query.query.id;
 	let isso;
 
-	switch(query.pathname) {
+	switch (query.pathname) {
 		case '/reset':
 			if (id === undefined) {
 				promise = Promise.reject('No id provided!');
@@ -210,13 +214,16 @@ function communicationServerResponse(request, response) {
 			}
 			break;
 		default:
-			testPageMiddleware(request, response, () => {response.statusCode = 500; response.end('Invalid enpoint')});
+			testPageMiddleware(request, response, () => {
+				response.statusCode = 500;
+				response.end('Invalid enpoint')
+			});
 			return;
 	}
 	promise.then(result => response.end(JSON.stringify(result)))
 		.catch(error => {
 			console.error(error.toString());
-			response.setHeader('Content-Type', 'text/plain')
+			response.setHeader('Content-Type', 'text/plain');
 			response.statusCode = 500;
 			response.end(error.toString())
 		});
@@ -374,7 +381,7 @@ class Isso {
 	 * @return A promise that will be resolved when this instance’s config file was (re-)written.
 	 */
 	writeConfigFile() {
-		const config =  `
+		const config = `
 			[general]
 			dbpath = ${this.dbLocation}
 			host =
@@ -399,4 +406,4 @@ module.exports = {
 	install: install,
 	start: start,
 	destroy: destroy
-}
+};

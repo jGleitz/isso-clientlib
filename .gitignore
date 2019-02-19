@@ -35,3 +35,6 @@ jspm_packages
 
 # Typings’ files
 typings
+
+# IDE settings
+.idea/

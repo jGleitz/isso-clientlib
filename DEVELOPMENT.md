@@ -10,7 +10,7 @@ Tests are very important to this project. It’s intended to be a library users 
 
 In order to run the integration test, you need to install python, the python headers and *virtualenv*. On Debian/Ubuntu, run:
 ```
-sudo apt-get install python3.5 python3.5-dev python3.5-venv
+sudo apt-get install python3 python3-dev python3-venv
 ```
 
 #### Execution
