@@ -6,7 +6,6 @@
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const tslint = require('gulp-tslint');
-const stylish = require('tslint-stylish');
 const typescript = require('gulp-typescript');
 const sourcemaps = require('gulp-sourcemaps');
 const merge = require('merge2');
@@ -56,12 +55,10 @@ const d = (dependencies, task) => gulp.series(gulp.parallel(dependencies), task)
  */
 gulp.task('lint', () =>
 	gulp.src([paths.lib, paths.test])
-		.pipe(tslint())
-		.pipe(tslint.report(stylish, {
-			emitError: true,
-			sort: true,
-			bell: true
+		.pipe(tslint({
+			formatter: "stylish"
 		}))
+		.pipe(tslint.report())
 );
 
 const compileSettings = {
