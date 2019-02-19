@@ -9,13 +9,13 @@ export default class IssoServer {
 	/**
 	 * URL of the isso server.
 	 */
-	private baseUrl: string;
+	private readonly baseUrl: string;
 
 	/**
 	 * Creates a server that can be reached at the provided `url`. There should
 	 * usually be only one instance of this class.
 	 *
-	 * @param url	The url of the isso server to communicate with.
+	 * @param baseUrl	The url of the isso server to communicate with.
 	 */
 	constructor(baseUrl: string) {
 		this.baseUrl = baseUrl.charAt(baseUrl.length - 1) === '/' ? baseUrl.substr(0, baseUrl.length - 1) : baseUrl;

@@ -107,11 +107,7 @@ export default class Comment {
 		}
 	}
 
-	private _author: Author = new Author(this);
-
-	public get author(): Author {
-		return this._author;
-	}
+	public readonly author: Author = new Author(this);
 
 	private _createdOn: Date;
 

@@ -74,5 +74,5 @@ export default class Author {
 	 */
 	public readonly onNameChanged = new AsyncEvent<string>();
 
-	public constructor(private comment: Comment) {}
+	public constructor(private readonly comment: Comment) {}
 }
