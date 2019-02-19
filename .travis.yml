@@ -1,6 +1,7 @@
 language: node_js
 node_js: node
 python: '3.6'
+dist: xenial
 
 before_script:
  - npm install -g gulp-cli
