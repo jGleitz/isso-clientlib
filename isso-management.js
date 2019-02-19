@@ -117,9 +117,9 @@ here="$(mktemp -d)"
 cd "$here"
 
 # Prefer python 3.5 over python 2.7
-if which python3 && locate -n 1 '*python3*/Python.h'; then
+if which python3 && python3 -m venv --help > /dev/null && python3 -m ensurepip --version; then
 	python3 -m venv "$here"
-elif which python2 && locate '*python2*/Python.h'; then
+elif which python2 && which virtualenv; then
 	virtualenv "$here"
 else
 	echo 'Please install python 2.7 or python 3.5 together with the according python-dev package! For python3, please install also python3-venv!'
