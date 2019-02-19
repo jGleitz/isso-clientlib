@@ -17,7 +17,7 @@ const istanbul = require('gulp-istanbul');
 const mochaPhantomJs = require('gulp-mocha-phantomjs');
 const istanbulReport = require('remap-istanbul/lib/gulpRemapIstanbul');
 const typedoc = require('gulp-typedoc');
-const assign = require('deep-assign');
+const mergeOptions = require('merge-options');
 const isso = require('./isso-management');
 const testPageMiddleware = require('./test/util/testPageMiddleware');
 isso.printOutput(false);
@@ -46,8 +46,6 @@ const paths = {
 	unitCoverageReport: 'build/unit-coverage.lcov',
 	integrationCoverageReport: 'build/integration-coverage.lcov'
 };
-
-const d = (dependencies, task) => gulp.series(gulp.parallel(dependencies), task);
 
 /**
  * Checks the coding conventions.
@@ -146,7 +144,7 @@ const bundle = gulp.series(
  */
 function testStream(testFile, phantomOpts, istanbulOpts) {
 	return gulp.src(testFile, {read: false})
-		.pipe(mochaPhantomJs(assign({
+		.pipe(mochaPhantomJs(mergeOptions({
 			phantomjs: {
 				useColors: true,
 				hooks: 'mocha-phantomjs-istanbul',
@@ -155,7 +153,7 @@ function testStream(testFile, phantomOpts, istanbulOpts) {
 		}, phantomOpts || {}))
 			.on('finish', () =>
 				gulp.src(paths.coverageFile)
-					.pipe(istanbulReport(assign({
+					.pipe(istanbulReport(mergeOptions({
 						basePath: '',
 						reports: {
 							text: ''
@@ -169,7 +167,7 @@ const unitTestIstanbulOpts = {
 		html: paths.unitCoverageReportFolder,
 		lcovonly: paths.unitCoverageReport
 	}
-}
+};
 
 const integrationTestPhantomOpts = {
 	phantomjs: {
@@ -192,7 +190,7 @@ const integrationTestIstanbulOpts = {
 		html: paths.integrationCoverageReportFolder,
 		lcovonly: paths.integrationCoverageReport
 	}
-}
+};
 
 function startIsso() {
 	return isso.install().then(isso.start);
@@ -216,7 +214,7 @@ function silentUnitTest() {
 }
 
 function silentIntegrationTest() {
-	return testStream('test/integration/index.html', assign({}, integrationTestPhantomOpts, silentPhantom), integrationTestIstanbulOpts);
+	return testStream('test/integration/index.html', mergeOptions({}, integrationTestPhantomOpts, silentPhantom), integrationTestIstanbulOpts);
 }
 
 const silentTest = gulp.series(silentUnitTest, silentIntegrationTest);
