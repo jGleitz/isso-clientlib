@@ -4,7 +4,8 @@
 /* eslint-disable global-require */
 
 const gulp = require('gulp');
-const tslint = require('gulp-tslint');
+const tslint = require('tslint');
+const gulpTslint = require('gulp-tslint');
 const typescript = require('gulp-typescript');
 const sourcemaps = require('gulp-sourcemaps');
 const merge = require('merge2');
@@ -52,10 +53,11 @@ const paths = {
  */
 gulp.task('lint', () =>
 	gulp.src([paths.lib, paths.test])
-		.pipe(tslint({
-			formatter: "stylish"
+		.pipe(gulpTslint({
+			formatter: "stylish",
+			program: tslint.Linter.createProgram("./tsconfig.json")
 		}))
-		.pipe(tslint.report())
+		.pipe(gulpTslint.report())
 );
 
 const compileSettings = {
