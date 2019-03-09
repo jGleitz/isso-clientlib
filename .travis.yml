@@ -1,13 +1,7 @@
 language: node_js
-node_js: node
+node_js: lts/*
 python: '3.6'
 dist: xenial
-
-before_script:
- - npm install -g gulp-cli
-
-script:
- - npm test -s
 
 after_success:
  - bash <(curl -s https://codecov.io/bash) -f coverage/unit/coverage-final.json -F unit
