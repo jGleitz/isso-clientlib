@@ -84,23 +84,50 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Variables</h3>
+							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_commentlist_.html#comment_member_access_functions" class="tsd-kind-icon">COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="_commentlist_.html#modifiablecommentlist" class="tsd-kind-icon">Modifiable<wbr>Comment<wbr>List</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Object literals</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported"><a href="_commentlist_.html#comment_member_access_functions" class="tsd-kind-icon">COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Variables</h2>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="comment_member_access_functions" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS</h3>
-					<div class="tsd-signature tsd-kind-icon">COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> =&nbsp;(() &#x3D;&gt; {const memberAccessFunctions: {[criterion: number]: (comment: Comment) &#x3D;&gt; number} &#x3D; {};memberAccessFunctions[SortCriterion.CREATION] &#x3D; comment &#x3D;&gt; comment.createdOn.getTime();memberAccessFunctions[SortCriterion.MODIFICATION] &#x3D;comment &#x3D;&gt; (comment.lastModifiedOn || comment.createdOn).getTime();memberAccessFunctions[SortCriterion.LIKES] &#x3D; comment &#x3D;&gt; comment.likes;memberAccessFunctions[SortCriterion.DISLIKES] &#x3D; comment &#x3D;&gt; comment.dislikes;memberAccessFunctions[SortCriterion.LIKESUM] &#x3D; comment &#x3D;&gt; comment.likes - comment.dislikes;return memberAccessFunctions;})()</span></div>
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="modifiablecommentlist" class="tsd-anchor"></a>
+					<h3>Modifiable<wbr>Comment<wbr>List</h3>
+					<div class="tsd-signature tsd-kind-icon">Modifiable<wbr>Comment<wbr>List<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/de4b1d5/lib/CommentList.ts#L44">CommentList.ts:44</a></li>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/8754588/lib/CommentList.ts#L53">CommentList.ts:53</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>index: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]: </span><a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Object literals</h2>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="comment_member_access_functions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS</h3>
+					<div class="tsd-signature tsd-kind-icon">COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/8754588/lib/CommentList.ts#L44">CommentList.ts:44</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -108,32 +135,89 @@
 							<p>Functions returning the number to use for comparison for each <code>SortCriterion</code>.</p>
 						</div>
 					</div>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>criterion: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">function</span></h5>
+					<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-object-literal tsd-is-not-exported">
+						<a name="comment_member_access_functions.__computed" class="tsd-anchor"></a>
+						<h3>__computed</h3>
+						<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-object-literal tsd-is-not-exported">
+							<li class="tsd-signature tsd-kind-icon">__computed<span class="tsd-signature-symbol">(</span>comment<span class="tsd-signature-symbol">: </span><a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+							<li class="tsd-signature tsd-kind-icon">__computed<span class="tsd-signature-symbol">(</span>comment<span class="tsd-signature-symbol">: </span><a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+							<li class="tsd-signature tsd-kind-icon">__computed<span class="tsd-signature-symbol">(</span>comment<span class="tsd-signature-symbol">: </span><a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+							<li class="tsd-signature tsd-kind-icon">__computed<span class="tsd-signature-symbol">(</span>comment<span class="tsd-signature-symbol">: </span><a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+							<li class="tsd-signature tsd-kind-icon">__computed<span class="tsd-signature-symbol">(</span>comment<span class="tsd-signature-symbol">: </span><a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/8754588/lib/CommentList.ts#L45">CommentList.ts:45</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-parameters-title">Parameters</h4>
 								<ul class="tsd-parameters">
-									<li class="tsd-parameter-siganture">
-										<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>comment<span class="tsd-signature-symbol">: </span><a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<h4 class="tsd-parameters-title">Parameters</h4>
-												<ul class="tsd-parameters">
-													<li>
-														<h5>comment: <a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a></h5>
-													</li>
-												</ul>
-												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-											</li>
-										</ul>
+									<li>
+										<h5>comment: <a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a></h5>
 									</li>
 								</ul>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							</li>
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/8754588/lib/CommentList.ts#L46">CommentList.ts:46</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-parameters-title">Parameters</h4>
+								<ul class="tsd-parameters">
+									<li>
+										<h5>comment: <a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a></h5>
+									</li>
+								</ul>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							</li>
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/8754588/lib/CommentList.ts#L47">CommentList.ts:47</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-parameters-title">Parameters</h4>
+								<ul class="tsd-parameters">
+									<li>
+										<h5>comment: <a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a></h5>
+									</li>
+								</ul>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							</li>
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/8754588/lib/CommentList.ts#L48">CommentList.ts:48</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-parameters-title">Parameters</h4>
+								<ul class="tsd-parameters">
+									<li>
+										<h5>comment: <a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a></h5>
+									</li>
+								</ul>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							</li>
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/jGleitz/isso-clientlib/blob/8754588/lib/CommentList.ts#L49">CommentList.ts:49</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-parameters-title">Parameters</h4>
+								<ul class="tsd-parameters">
+									<li>
+										<h5>comment: <a href="../classes/_comment_.comment.html" class="tsd-signature-type">Comment</a></h5>
+									</li>
+								</ul>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 							</li>
 						</ul>
-					</div>
+					</section>
 				</section>
 			</section>
 		</div>
@@ -171,7 +255,10 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_commentlist_.commentlist.html" class="tsd-kind-icon">Comment<wbr>List</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_commentlist_.html#modifiablecommentlist" class="tsd-kind-icon">Modifiable<wbr>Comment<wbr>List</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_commentlist_.html#comment_member_access_functions" class="tsd-kind-icon">COMMENT_<wbr>MEMBER_<wbr>ACCESS_<wbr>FUNCTIONS</a>
 					</li>
 				</ul>

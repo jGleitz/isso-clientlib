@@ -67,7 +67,50 @@
 				<h1 id="isso-clientlib-build-status-codecov">isso-clientlib <a href="https://travis-ci.org/jGleitz/isso-clientlib"><img src="https://travis-ci.org/jGleitz/isso-clientlib.svg?branch=master" alt="Build Status"></a>  <a href="https://codecov.io/gh/jGleitz/isso-clientlib"><img src="https://codecov.io/gh/jGleitz/isso-clientlib/branch/master/graph/badge.svg" alt="codecov"></a></h1>
 				<p>A client library to interact with the isso commenting server. <a href="https://jgleitz.github.io/isso-clientlib/">API Documentation</a></p>
 				<h2 id="development">Development</h2>
-				<p>If you’re interested in contributing to this project, you’re very welcome to do so! Read <a href="DEVELOPMENT.md">the development docs</a> to get you started.</p>
+				<p>This library is written in <a href="https://www.typescriptlang.org/">TypeScript</a>. To get started, <a href="https://nodejs.org/en/download/">install Node.js and npm</a> and run <code>npm install</code> in the project folder.</p>
+				<p>Relevant projects and libraries are:</p>
+				<ul>
+					<li><a href="http://visionmedia.github.io/superagent/">SuperAgent</a>, the HTTP library</li>
+					<li><a href="https://github.com/rogierschouten/ts-events">ts-events</a> for asynchronous events</li>
+					<li><a href="https://jestjs.io/">jest</a>, the test framework</li>
+					<li><a href="https://palantir.github.io/tslint/">ts-lint</a>, used for checking the code for style</li>
+					<li><a href="https://typedoc.org/">typedoc</a> to render the <a href="https://jgleitz.github.io/isso-clientlib/">API Documentation</a></li>
+				</ul>
+				<h3 id="testing">Testing</h3>
+				<p>Tests are very important to this project. It’s intended to be a library users can rely on. The library is tested using both <em>unit</em> and <em>integration</em> tests. The integration test spins up real isso instance to make sure the library is always compatible to the latest version of isso.</p>
+				<h4 id="prerequisite">Prerequisite</h4>
+				<p>In order to run the integration test, you need to install python, the python headers and virtualenv. On Debian/Ubuntu, run:</p>
+				<pre><code class="language-bash">sudo apt install python3 python3-dev python3-venv</code></pre>
+				<h3 id="scripts">Scripts</h3>
+				<p>To check the code, you can use these tasks:</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Task</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>npm test</code></td>
+							<td>run all checks</td>
+						</tr>
+						<tr>
+							<td><code>npm start</code></td>
+							<td>start the jest in watch mode to continuously run the <em>unit</em> tests on changed code</td>
+						</tr>
+						<tr>
+							<td><code>npm run lint</code></td>
+							<td>lint the code</td>
+						</tr>
+						<tr>
+							<td><code>npm run unit-test</code></td>
+							<td>run only unit tests</td>
+						</tr>
+						<tr>
+							<td><code>npm run integration-test</code></td>
+							<td>run only the integration test</td>
+						</tr>
+				</tbody></table>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
