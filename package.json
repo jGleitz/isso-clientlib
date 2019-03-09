@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "tslint --project . --format stylish",
+    "start": "jest -c unit.jest.config.js --watch",
     "unit-test": "jest -c unit.jest.config.js",
     "integration-test": "jest -c integration.jest.config.js",
     "test": "npm run lint && npm run unit-test && npm run integration-test",
