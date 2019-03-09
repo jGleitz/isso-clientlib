@@ -85,7 +85,7 @@ export default class Comment {
 		return this._text;
 	}
 
-	public _rawText?: string;
+	private _rawText?: string;
 
 	/**
 	 * This comments’s raw text. This is the unrendered, unfiltered text as entered by the user. The raw text is only
