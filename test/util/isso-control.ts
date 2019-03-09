@@ -3,17 +3,16 @@
  */
 
 import * as Http from 'superagent';
+import { communicationServerPort as COMMUNICATION_SERVER_PORT } from '../fixtures/issoManagementParameters';
 
-const SERVER_ADDRESS = 'http://localhost:3010/';
+const SERVER_ADDRESS = `http://localhost:${COMMUNICATION_SERVER_PORT}`;
 
-const makeVoid = () => <void> undefined;
+let issoId: string | undefined;
 
-let issoId: string;
-
-function call(uri: string, query?: {[param: string]: string}): Promise<any> {
+function call(uri: string, query?: { [param: string]: string }): Promise<any> {
 	return new Promise((resolve, reject) => {
 		Http.get(SERVER_ADDRESS + uri)
-			.query(query)
+			.query(query || {})
 			.end((error, response) => {
 				if (error) {
 					reject(error);
@@ -25,7 +24,7 @@ function call(uri: string, query?: {[param: string]: string}): Promise<any> {
 					}
 				}
 			});
-		});
+	});
 }
 
 function assertId(): Promise<void> {
@@ -37,17 +36,13 @@ function assertId(): Promise<void> {
 }
 
 /**
- * Starts an isso server instance. Has no effect if an instance is already running.
+ * Starts an existing isso server instance. Has no effect if an instance is already running.
  *
  * @return A promise that will be resolved when the server instance was started (or is already running). The promise
- *		will be resolved with the url under which the server can be reached.
+ *        will be resolved with the url under which the server can be reached.
  */
 export function start(): Promise<string> {
-	if (issoId !== undefined) {
-		return call('start', {id: issoId}).then(response => response.url);
-	} else {
-		return call('start').then(response => {issoId = response.id; return response.url; });
-	}
+	return assertId().then(() => call('/start', { id: issoId! })).then(response => response.url);
 }
 
 /**
@@ -56,7 +51,7 @@ export function start(): Promise<string> {
  * @return A promise that will be resolved when the server instance was stopped (or none is running).
  */
 export function stop(): Promise<void> {
-	return assertId().then(() => call('stop', {id: issoId})).then(makeVoid);
+	return assertId().then(() => call('/stop', { id: issoId! }));
 }
 
 /**
@@ -64,8 +59,15 @@ export function stop(): Promise<void> {
  *
  * @return A promise that will be resolved when the reset server instance was started.
  */
-export function reset(): Promise<void> {
-	return assertId().then(() => call('reset', {id: issoId})).then(makeVoid);
+export function create(): Promise<string> {
+	if (issoId !== undefined) {
+		return Promise.reject('There already is an existing Isso instance for this thread!');
+	} else {
+		return call('/create').then(response => {
+			issoId = response.id;
+			return response.url;
+		});
+	}
 }
 
 /**
@@ -74,7 +76,7 @@ export function reset(): Promise<void> {
  * @return A promise that will be resolved when the server instance was started.
  */
 export function enableModeration(): Promise<void> {
-	return assertId().then(() => call('start', {moderation: 'active', id: issoId})).then(makeVoid);
+	return assertId().then(() => call('/start', { moderation: 'active', id: issoId! }));
 }
 
 /**
@@ -83,7 +85,7 @@ export function enableModeration(): Promise<void> {
  * @return A promise that will be resolved when the server instance was started.
  */
 export function disableModeration(): Promise<void> {
-	return assertId().then(() => call('start', {moderation: 'inactive', id: issoId})).then(makeVoid);
+	return assertId().then(() => call('/start', { moderation: 'inactive', id: issoId! }));
 }
 
 /**
@@ -93,8 +95,8 @@ export function disableModeration(): Promise<void> {
  */
 export function finished(): Promise<void> {
 	if (issoId !== undefined) {
-		return call('return', {id: issoId}).then(() => issoId = undefined);
+		return call('/return', { id: issoId }).then(() => issoId = undefined);
 	} else {
-		return Promise.resolve(undefined);
+		return Promise.resolve();
 	}
 }

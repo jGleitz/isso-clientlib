@@ -1,17 +1,14 @@
 {
-	"compileOnSave": false,
-    "compilerOptions": {
+	"compilerOptions": {
 		"allowSyntheticDefaultImports": false,
 		"allowUnreachableCode": false,
-        "target": "es5",
-        "noImplicitAny": true
-    },
+		"target": "es6",
+		"noImplicitAny": true,
+		"strict": true,
+		"noEmit": true,
+		"moduleResolution": "node"
+	},
 	"exclude": [
-		"node_modules",
-		"typings/main",
-		"typings/main.d.ts",
-		"build",
-		"dist",
-		"config"
+		"node_modules"
 	]
 }

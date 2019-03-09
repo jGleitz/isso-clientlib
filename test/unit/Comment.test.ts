@@ -1,6 +1,4 @@
-import { expect } from 'chai';
 import * as clone from 'clone';
-import * as sinon from 'sinon';
 
 import FakeIssoServer from '../util/FakeIssoServer';
 import * as SERVER_FIXTURES from '../fixtures/commentListing';
@@ -14,40 +12,40 @@ const commentData = SERVER_FIXTURES.standard.replies[0];
 let page: Page;
 
 describe('Comment', () => {
-	beforeEach('create a page', () => {
+	beforeEach(() => { // create a page
 		page = new Page(server, 'test/uri');
 	});
 
-	afterEach('reset fake server', () => server.reset());
+	afterEach(() => server.reset()); // reset fake server
 
 	it('can be created from server data', () => {
 		const comment = Comment.fromServerData(commentData, page);
-		expect(comment.text).to.equal('<p>Hello, World!</p>\n');
-		expect(comment.id).to.equal(1);
-		expect(comment.createdOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 1, 1, 572)));
-		expect(comment.lastModifiedOn).to.be.null;
-		expect(comment.likes).to.equal(3);
-		expect(comment.dislikes).to.equal(1);
-		expect(comment.repliesTo).to.be.null;
-		expect(comment.page).to.equal(page);
-		expect(comment.replies.length).to.equal(1);
-		expect(comment.published).to.be.true;
-		expect(comment.deleted).to.be.false;
+		expect(comment.text).toBe('<p>Hello, World!</p>\n');
+		expect(comment.id).toBe(1);
+		expect(comment.createdOn).toEqual(new Date(Date.UTC(2013, 11, 17, 23, 1, 1, 572)));
+		expect(comment.lastModifiedOn).toBeUndefined();
+		expect(comment.likes).toBe(3);
+		expect(comment.dislikes).toBe(1);
+		expect(comment.repliesTo).toBeUndefined();
+		expect(comment.page).toBe(page);
+		expect(comment.replies.length).toBe(1);
+		expect(comment.published).toBeTrue();
+		expect(comment.deleted).toBeFalse();
 
 		const reply = comment.replies[0];
-		expect(reply.repliesTo).to.equal(comment);
-		expect(reply.lastModifiedOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 2, 58, 613)));
+		expect(reply.repliesTo).toBe(comment);
+		expect(reply.lastModifiedOn).toEqual(new Date(Date.UTC(2013, 11, 17, 23, 2, 58, 613)));
 	});
 
 	it('can be submitted to the server when new', () => {
 		const comment = new Comment(page);
-		const commentInsertSpy = sinon.spy(page.comments, 'insert');
-		const replyInsertSpy = sinon.spy(comment.replies, 'insert');
+		const commentInsertSpy = jest.spyOn(page.comments, 'insert').mockName('page.comments.insert');
+		const replyInsertSpy = jest.spyOn(comment.replies, 'insert').mockName('comment.replies.insert');
 		comment.rawText = 'Hey there!';
 
-		expect(comment.author).to.exist;
-		expect(comment.published).to.be.false;
-		expect(comment.id).to.be.null;
+		expect(comment.author).toBeTruthy();
+		expect(comment.published).toBeFalse();
+		expect(comment.id).toBeUndefined();
 		comment.author.email = 'me@mail.org';
 		comment.author.name = 'Test';
 		comment.author.website = 'test.org';
@@ -59,14 +57,14 @@ describe('Comment', () => {
 			author: 'Test'
 		}, successResponse({
 			id: 18,
-			parent: <number> null,
+			parent: null,
 			text: '<p>Hey there!</p>\n',
 			mode: 1,
 			hash: '4505c1eeda98',
 			author: 'Test',
 			website: 'test.org',
 			created: 1387321261.572392,
-			modified: <number> null,
+			modified: null,
 			likes: 0,
 			dislikes: 0,
 			total_replies: 0,
@@ -76,11 +74,13 @@ describe('Comment', () => {
 
 		return comment.send()
 			.then(() => {
-				expect(comment.published).to.be.true;
-				expect(comment.deleted).to.be.false;
-				expect(comment.createdOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 1, 1, 572)));
-				expect(comment.id).to.equal(18);
-				expect(commentInsertSpy).to.have.been.calledWith(comment);
+				expect(comment.published).toBeTrue();
+				expect(comment.deleted).toBeFalse();
+				expect(comment.createdOn).toEqual(new Date(Date.UTC(2013, 11, 17, 23, 1, 1, 572)));
+				expect(comment.id).toBe(18);
+				expect(commentInsertSpy).toHaveBeenCalledWith(comment);
+				expect(comment.text).toBe('<p>Hey there!</p>\n');
+				expect(comment.rawText).toBe('Hey there!');
 			})
 			.then(() => {
 				const reply = new Comment(comment);
@@ -93,14 +93,14 @@ describe('Comment', () => {
 					author: undefined
 				}, successResponse({
 					id: 10,
-					parent: <number> null,
+					parent: null,
 					text: '<p>Hey again!</p>\n',
 					mode: 1,
 					hash: '4505c1eeda98',
 					author: null,
 					website: null,
 					created: 1387321261.572392,
-					modified: <number> null,
+					modified: null,
 					likes: 0,
 					dislikes: 0,
 					total_replies: 0,
@@ -110,9 +110,9 @@ describe('Comment', () => {
 
 				return reply.send().
 					then(() => {
-						expect(reply.repliesTo).to.equal(comment);
-						expect(reply.page).to.equal(page);
-						expect(replyInsertSpy).to.have.been.calledWith(reply);
+						expect(reply.repliesTo).toBe(comment);
+						expect(reply.page).toBe(page);
+						expect(replyInsertSpy).toHaveBeenCalledWith(reply);
 					});
 			});
 	});
@@ -123,14 +123,14 @@ describe('Comment', () => {
 
 		const unpublishedResponse = {
 			id: 18,
-			parent: <number> null,
+			parent: null,
 			text: '<p>Hey there!</p>\n',
 			mode: 2,
 			hash: '4505c1eeda98',
-			author: <string> null,
-			website: <string> null,
+			author: null,
+			website: null,
 			created: 1387321261.572392,
-			lmodified: <number> null,
+			lmodified: null,
 			likes: 0,
 			dislikes: 0,
 			total_replies: 0,
@@ -147,39 +147,39 @@ describe('Comment', () => {
 
 		return comment.send()
 			.then(() => {
-				expect(comment.published).to.be.false;
+				expect(comment.published).toBeFalse();
 			})
 			.then(() => comment.fetch())
 			.then(() => {
-				expect(comment.published).to.be.true;
+				expect(comment.published).toBeTrue();
 			});
 	});
 
 	it('rejects sending if the parent comment was not sent yet', () => {
 		const parent = new Comment(page);
 		const reply = new Comment(parent);
-		return expect(reply.send()).to.be.rejectedWith('parent comment was not sent');
+		return expect(reply.send()).rejects.toThrowError('parent comment was not sent');
 	});
 
 	it('can be updated on the server', () => {
 		const comment = Comment.fromServerData(commentData, page);
-		comment.rawText = 'Hey test!';
+		comment.author.name = 'Captain Hook';
 		server.responseToPut('/id/1', expectData({
-			text: 'Hey test!',
+			text: '<p>Hello, World!</p>\n',
 			email: undefined,
 			parent: null,
 			website: 'peterpan.org',
-			author: 'Peter Pan'
+			author: 'Captain Hook'
 		}, successResponse({
 			id: 10,
-			parent: <number> null,
+			parent: null,
 			text: '<p>Hey again!</p>\n',
 			mode: 1,
 			hash: '4505c1eeda98',
 			author: null,
 			website: null,
 			created: 1387321261.572392,
-			modified: <number> null,
+			modified: null,
 			likes: 0,
 			dislikes: 0,
 			total_replies: 0,
@@ -192,7 +192,7 @@ describe('Comment', () => {
 	it('does not send when unchanged', () => {
 		const comment = Comment.fromServerData(commentData, page);
 		comment.rawText = comment.rawText;
-		return expect(comment.send()).to.be.fulfilled;
+		return expect(comment.send()).resolves.toBeDefined();
 	});
 
 	it('can be updated from the server', () => {
@@ -207,11 +207,11 @@ describe('Comment', () => {
 
 		return comment.fetch()
 			.then(() => {
-				expect(comment.text).to.equal('<p>changed</p>\n');
-				expect(comment.lastModifiedOn).to.equalTime(new Date(Date.UTC(2013, 11, 17, 23, 2, 58, 613)));
-				expect(comment.author.name).to.equal('Tester');
-				expect(comment.likes).to.equal(8);
-				expect(comment.dislikes).to.equal(2);
+				expect(comment.text).toBe('<p>changed</p>\n');
+				expect(comment.lastModifiedOn).toEqual(new Date(Date.UTC(2013, 11, 17, 23, 2, 58, 613)));
+				expect(comment.author.name).toBe('Tester');
+				expect(comment.likes).toBe(8);
+				expect(comment.dislikes).toBe(2);
 			});
 	});
 
@@ -223,8 +223,8 @@ describe('Comment', () => {
 
 		return comment.fetch()
 			.then(() => {
-				expect(comment.deleted).to.be.true;
-				expect(comment.published).to.be.false;
+				expect(comment.deleted).toBeTrue();
+				expect(comment.published).toBeFalse();
 			});
 	});
 
@@ -238,8 +238,8 @@ describe('Comment', () => {
 
 		return comment.sendLike()
 			.then(() => {
-				expect(comment.likes).to.equal(8);
-				expect(comment.dislikes).to.equal(6);
+				expect(comment.likes).toBe(8);
+				expect(comment.dislikes).toBe(6);
 			});
 	});
 
@@ -253,8 +253,8 @@ describe('Comment', () => {
 
 		return comment.sendDislike()
 			.then(() => {
-				expect(comment.likes).to.equal(8);
-				expect(comment.dislikes).to.equal(6);
+				expect(comment.likes).toBe(8);
+				expect(comment.dislikes).toBe(6);
 			});
 	});
 
@@ -265,8 +265,8 @@ describe('Comment', () => {
 
 		return comment.delete()
 			.then(() => {
-				expect(comment.published).to.be.false;
-				expect(comment.deleted).to.be.true;
+				expect(comment.published).toBeFalse();
+				expect(comment.deleted).toBeTrue();
 			});
 	});
 
@@ -278,27 +278,27 @@ describe('Comment', () => {
 		return comment.delete()
 			.then(() => comment.delete())
 			.then(() => {
-				expect(comment.published).to.be.false;
-				expect(comment.deleted).to.be.true;
+				expect(comment.published).toBeFalse();
+				expect(comment.deleted).toBeTrue();
 			});
 	});
 
 	it('notifies its parent list when being deleted', () => {
 		const comment = Comment.fromServerData(commentData, page);
 		const reply = Comment.fromServerData(SERVER_FIXTURES.standard.replies[0].replies[0], comment);
-		const pageSpy = sinon.spy(page.comments, 'remove');
-		const commentSpy = sinon.spy(comment.replies, 'remove');
+		const pageSpy = jest.spyOn(page.comments, 'remove').mockName('page.comments.remove');
+		const commentSpy = jest.spyOn(comment.replies, 'remove').mockName('comment.replies.remove');
 
 		server.responseToDelete('/id/1', successResponse(null));
 		server.responseToDelete('/id/2', successResponse(null));
 
 		return comment.delete()
 			.then(() => {
-				expect(pageSpy).to.have.been.calledWith(comment);
+				expect(pageSpy).toHaveBeenCalledWith(comment);
 			})
 			.then(() => reply.delete())
 			.then(() => {
-				expect(commentSpy).to.have.been.calledWith(reply);
+				expect(commentSpy).toHaveBeenCalledWith(reply);
 			});
 	});
 });

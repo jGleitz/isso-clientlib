@@ -62,10 +62,9 @@ export default class Comment {
 	private awaitsModeration = false;
 
 	/**
-	 * This comment’s id (assigned by the server). Will be `null`
-	 * as long as no id was assigned by the server yet.
+	 * This comment’s id (assigned by the server). Will be `undefined` as long as no id was assigned by the server yet.
 	 */
-	public id: number = null;
+	public id?: number;
 
 	private _deleted = false;
 
@@ -77,57 +76,53 @@ export default class Comment {
 		return this._deleted;
 	}
 
-	private _text: string = null;
+	private _text?: string;
 
 	/**
-	 * The comment’s `text`. If this comment is not known to the server yet, this is `null`.
+	 * The comment’s `text`. If this comment is not known to the server yet, this is `undefined`.
 	 */
-	public get text(): string {
+	public get text(): string | undefined {
 		return this._text;
 	}
 
-	private _rawText: string = null;
+	public _rawText?: string;
 
 	/**
 	 * This comments’s raw text. This is the unrendered, unfiltered text as entered by the user. The raw text is only
 	 * set if this comment was created or edited by the user. Comments received from the server do not have a raw
-	 * text set. It’s `null` otherwise.
+	 * text set. It’s `undefined` in that case.
 	 */
-	public get rawText(): string {
+	public get rawText(): string | undefined {
 		return this._rawText;
 	}
 
 	/**
 	 * This comments’s raw text. This is the unrendered, unfiltered text as entered by the user.
 	 */
-	public set rawText(rawText: string) {
+	public set rawText(rawText: string | undefined) {
 		if (rawText !== this._rawText) {
 			this.dirty = true;
 			this._rawText = rawText;
 		}
 	}
 
-	private _author: Author = new Author(this);
+	public readonly author: Author = new Author(this);
 
-	public get author(): Author {
-		return this._author;
-	}
-
-	private _createdOn: Date;
+	private _createdOn?: Date;
 
 	/**
-	 * Date and time this comment was submitted to the server.
+	 * Date and time this comment was submitted to the server. It’s `undefined` if the comment was not submitted yet.
 	 */
-	public get createdOn(): Date {
+	public get createdOn(): Date | undefined {
 		return this._createdOn;
 	}
 
-	private _lastModifiedOn: Date = null;
+	private _lastModifiedOn?: Date;
 
 	/**
-	 * Date and time at which this comment was last modified. `null` if this comment was not yet modified.
+	 * Date and time at which this comment was last modified. It’s `undefined` if this comment was not yet modified.
 	 */
-	public get lastModifiedOn(): Date {
+	public get lastModifiedOn(): Date | undefined {
 		return this._lastModifiedOn;
 	}
 
@@ -192,9 +187,9 @@ export default class Comment {
 	public readonly onPublished = new VoidAsyncEvent();
 
 	/**
-	 * The comment this comment replies to if it’s a reply. `null` otherwise.
+	 * The comment this comment replies to if it’s a reply. `undefined` otherwise.
 	 */
-	public repliesTo: Comment = null;
+	public repliesTo?: Comment;
 
 	/**
 	 * The page this comment is on.
@@ -202,14 +197,14 @@ export default class Comment {
 	public page: Page;
 
 	private get parentList(): CommentList {
-		return this.repliesTo === null ? this.page.comments : this.repliesTo.replies;
+		return this.repliesTo === undefined ? this.page.comments : this.repliesTo.replies;
 	}
 
 	/**
 	 * Creates a comment on the given `page`.
 	 *
-	 * @param parent	The created comment’s parent: The page it’s on if it’s a top level comment, or the comment
-	 *		this comment replies to if it’s a reply.
+	 * @param parent    The created comment’s parent: The page it’s on if it’s a top level comment, or the comment
+	 *        this comment replies to if it’s a reply.
 	 */
 	constructor(parent: Comment | Page) {
 		if (parent instanceof Comment) {
@@ -234,9 +229,9 @@ export default class Comment {
 	 * Creates a comment from data received from the isso server.
 	 *
 	 * @hidden
-	 * @param serverData	Data received from the isso server.
-	 * @param parent	The created comment’s parent: The page it’s on if it’s a top level comment, or the comment
-	 *		this comment replies to if it’s a reply.
+	 * @param serverData    Data received from the isso server.
+	 * @param parent    The created comment’s parent: The page it’s on if it’s a top level comment, or the comment
+	 *        this comment replies to if it’s a reply.
 	 * @return The comment object represented by `serverData`.
 	 */
 	public static fromServerData(serverData: any, parent: Comment | Page): Comment {
@@ -250,20 +245,20 @@ export default class Comment {
 	 * Updates this comment using the provided `serverData` received from the isso server.
 	 *
 	 * @hidden
-	 * @param serverData	A comment data object received from the isso server.
+	 * @param serverData    A comment data object received from the isso server.
 	 */
 	public updateFromServer(serverData: any): void {
 		if (serverData.mode === DELETED_STATE) {
 			this.wasDeleted();
 		}
 		this.awaitsModeration = serverData.mode === AWAITS_MODERATION_STATE;
-		if (this.id === null) {
+		if (this.id === undefined) {
 			this.onIdAssigned.post(this.id = serverData.id);
 		}
 		this.updateText(serverData.text);
 		this._createdOn = this._createdOn || new Date(serverData.created * TIMESTAMP_MULTIPLIER);
 		if (serverData.modified !== null
-			&& (this._lastModifiedOn === null || this._lastModifiedOn.getTime() !== serverData.modified)) {
+			&& (this._lastModifiedOn === undefined || this._lastModifiedOn.getTime() !== serverData.modified)) {
 			this.onModifiedChanged.post(this._lastModifiedOn = new Date(serverData.modified * TIMESTAMP_MULTIPLIER));
 		}
 		this.applyLikes(serverData);
@@ -275,7 +270,7 @@ export default class Comment {
 			this.replies.updateFromServer(serverData);
 		}
 		if (serverData.mode === PUBLISHED_STATE && !this.existsOnServer) {
-			(this.repliesTo === null ? this.page.comments : this.repliesTo.replies).insert(this);
+			(this.repliesTo === undefined ? this.page.comments : this.repliesTo.replies).insert(this);
 			this.onPublished.post();
 		}
 		this.dirty = false;
@@ -300,17 +295,17 @@ export default class Comment {
 			return this.page.send(() => {
 				this.checkSendPreconditions();
 				return this.page.server.post('/new')
-					.query({uri: this.page.uri})
+					.query({ uri: this.page.uri })
 					.withCredentials()
 					.send(this.toRequestData());
-				}, this.afterCreate, this);
+			}, this.afterCreate, this);
 		} else if (this.dirty) {
 			return this.page.send(() => {
 				this.checkSendPreconditions();
 				return this.page.server.put(`/id/${this.id}`)
 					.withCredentials()
 					.send(this.toRequestData());
-				}, this.afterUpdate, this);
+			}, this.afterUpdate, this);
 		}
 		return Promise.resolve(this);
 	}
@@ -318,7 +313,7 @@ export default class Comment {
 	/**
 	 * Updates this comment’s data from the server.
 	 *
-	 * @return	A promised resolved with `this` when the update suceeded.
+	 * @return    A promised resolved with `this` when the update suceeded.
 	 */
 	public fetch(): Promise<Comment> {
 		return this.page.send(
@@ -363,7 +358,7 @@ export default class Comment {
 			return this.page.send(
 				this.page.server.delete(`/id/${this.id}`)
 					.withCredentials(),
-			this.afterDelete, this);
+				this.afterDelete, this);
 		}
 		return Promise.resolve(undefined);
 	}
@@ -398,7 +393,7 @@ export default class Comment {
 	 * @throws an error if this comment is not ready to be sent yet.
 	 */
 	private checkSendPreconditions(): void {
-		if (this.repliesTo !== null && !this.repliesTo.existsOnServer) {
+		if (this.repliesTo !== undefined && !this.repliesTo.existsOnServer) {
 			throw new Error('The parent comment was not sent yet!');
 		}
 	}
@@ -413,10 +408,10 @@ export default class Comment {
 		return {
 			// the server expects the text to be sent on updates.
 			text: this.rawText || this.text,
-			author: this.author.name || undefined,
-			website: this.author.website || undefined,
-			email: this.author.email || undefined,
-			parent: this.repliesTo !== null ? this.repliesTo.id : null
+			author: this.author.name,
+			website: this.author.website,
+			email: this.author.email,
+			parent: this.repliesTo !== undefined ? this.repliesTo.id : null
 		};
 	}
 
@@ -425,7 +420,7 @@ export default class Comment {
 	 * comment.
 	 *
 	 * @param response
-	 *		The server’s response containing information about this comment’s likes and dislikes.
+	 *        The server’s response containing information about this comment’s likes and dislikes.
 	 */
 	private processLikes(response: Response): void {
 		this.applyLikes(response.body);
@@ -435,7 +430,7 @@ export default class Comment {
 	 * Takes the provided `commentLikeObject` and applies the contained information about likes and dislikes to this
 	 * comment.
 	 *
-	 * @param commentLikeObject	An object at least having a `likes` and `dislikes` property.
+	 * @param commentLikeObject    An object at least having a `likes` and `dislikes` property.
 	 */
 	private applyLikes(commentLikeObject: any): void {
 		if (commentLikeObject.likes !== this.likes) {

@@ -1,118 +1,125 @@
+import 'jest-extended';
 import Page from '../../lib/Page';
 
 import pageUris from '../fixtures/pageUris';
+import * as Isso from '../util/isso-control';
+import * as Testdata from './testdata';
 
-import { expect } from 'chai';
+let testPage: Page; // created from pageUris[2];
 
-export default (pages: Array<Page>) => describe('editing comments', () => {
+describe('updating comments', () => {
+	beforeAll(() => Isso.create()
+		.then(Testdata.createPopulatedTestPages([pageUris[2]]))
+		.then(pages => testPage = pages[0]));
+	afterAll(Isso.finished);
 
 	describe('from the page it was created on', () => {
-		it('from the page it was created on', () => {
-			const comment = pages[2].comments[1];
+		test('from the page it was created on', () => {
+			const comment = testPage.comments[1];
 			comment.rawText = 'I *changed*! Can you believe **that**?!';
 			const start = new Date();
 
 			return comment.send().then(() => {
-				expect(comment.text).to.equal('<p>I <em>changed</em>! Can you believe <strong>that</strong>?!</p>');
-				expect(comment.lastModifiedOn).to.be.afterTime(start);
-				expect(comment.lastModifiedOn).to.be.beforeTime(new Date());
+				expect(comment.text).toBe('<p>I <em>changed</em>! Can you believe <strong>that</strong>?!</p>');
+				expect(comment.lastModifiedOn).toBeAfter(start);
+				expect(comment.lastModifiedOn).toBeBefore(new Date());
 			});
 		});
 
-		it('author name', () => {
-			const comment = pages[2].comments[2];
+		test('author name', () => {
+			const comment = testPage.comments[2];
 			comment.author.name = 'Changed Name';
 			const start = new Date();
 
 			return comment.send().then(() => {
-				expect(comment.lastModifiedOn).to.be.afterTime(start);
-				expect(comment.lastModifiedOn).to.be.beforeTime(new Date());
+				expect(comment.lastModifiedOn).toBeAfter(start);
+				expect(comment.lastModifiedOn).toBeBefore(new Date());
 			});
 		});
 
-		it('author website', () => {
-			const comment = pages[2].comments[3];
+		test('author website', () => {
+			const comment = testPage.comments[3];
 			comment.author.website = 'http://changed.website.org';
 			const start = new Date();
 
 			return comment.send().then(() => {
-				expect(comment.lastModifiedOn).to.be.afterTime(start);
-				expect(comment.lastModifiedOn).to.be.beforeTime(new Date());
+				expect(comment.lastModifiedOn).toBeAfter(start);
+				expect(comment.lastModifiedOn).toBeBefore(new Date());
 			});
 		});
 
-		it('like', () => {
-			const comment = pages[2].comments[1];
+		test('like', () => {
+			const comment = testPage.comments[1];
 			return comment.sendLike().then(() => {
 				// we cannot vote on our own comment
-				expect(comment.likes).to.equal(0);
+				expect(comment.likes).toBe(0);
 			});
 		});
 
-		it('dislike', () => {
-			const comment = pages[2].comments[2];
+		test('dislike', () => {
+			const comment = testPage.comments[2];
 			return comment.sendDislike().then(() => {
 				// we cannot vote on our own comment
-				expect(comment.dislikes).to.equal(0);
+				expect(comment.dislikes).toBe(0);
 			});
 		});
 	});
 
 	describe('from a new page', () => {
-		let page: Page;
+		let testPageCopy: Page;
 
-		before('fetch the page', () => {
-			page = new Page(pages[2].server, pageUris[2]);
-			return page.comments.fetch();
+		beforeAll(() => { // fetch test page
+			testPageCopy = new Page(testPage.server, pageUris[2]);
+			return testPageCopy.comments.fetch();
 		});
 
-		it('text', () => {
-			const comment = page.comments[4];
+		test('text', () => {
+			const comment = testPageCopy.comments[4];
 			comment.rawText = 'I *changed*! Can you believe **that**?!';
 			const start = new Date();
 
 			return comment.send().then(() => {
-				expect(comment.text).to.equal('<p>I <em>changed</em>! Can you believe <strong>that</strong>?!</p>');
-				expect(comment.lastModifiedOn).to.be.afterTime(start);
-				expect(comment.lastModifiedOn).to.be.beforeTime(new Date());
+				expect(comment.text).toBe('<p>I <em>changed</em>! Can you believe <strong>that</strong>?!</p>');
+				expect(comment.lastModifiedOn).toBeAfter(start);
+				expect(comment.lastModifiedOn).toBeBefore(new Date());
 			});
 		});
 
-		it('author name', () => {
-			const comment = page.comments[5];
+		test('author name', () => {
+			const comment = testPageCopy.comments[5];
 			comment.author.name = 'Changed Name';
 			const start = new Date();
 
 			return comment.send().then(() => {
-				expect(comment.lastModifiedOn).to.be.afterTime(start);
-				expect(comment.lastModifiedOn).to.be.beforeTime(new Date());
+				expect(comment.lastModifiedOn).toBeAfter(start);
+				expect(comment.lastModifiedOn).toBeBefore(new Date());
 			});
 		});
 
-		it('author website', () => {
-			const comment = page.comments[6];
+		test('author website', () => {
+			const comment = testPageCopy.comments[6];
 			comment.author.website = 'http://changed.website.org';
 			const start = new Date();
 
 			return comment.send().then(() => {
-				expect(comment.lastModifiedOn).to.be.afterTime(start);
-				expect(comment.lastModifiedOn).to.be.beforeTime(new Date());
+				expect(comment.lastModifiedOn).toBeAfter(start);
+				expect(comment.lastModifiedOn).toBeBefore(new Date());
 			});
 		});
 
-		it('like', () => {
-			const comment = page.comments[4];
+		test('like', () => {
+			const comment = testPageCopy.comments[4];
 			return comment.sendLike().then(() => {
 				// we cannot vote on our own comment
-				expect(comment.likes).to.equal(0);
+				expect(comment.likes).toBe(0);
 			});
 		});
 
-		it('dislike', () => {
-			const comment = page.comments[5];
+		test('dislike', () => {
+			const comment = testPageCopy.comments[5];
 			return comment.sendDislike().then(() => {
 				// we cannot vote on our own comment
-				expect(comment.dislikes).to.equal(0);
+				expect(comment.dislikes).toBe(0);
 			});
 		});
 	});

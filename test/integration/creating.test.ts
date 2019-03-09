@@ -1,29 +1,33 @@
-import { expect } from 'chai';
 import Page from '../../lib/Page';
 import Comment from '../../lib/Comment';
 import * as Isso from '../util/isso-control';
+import { createTestPagesInto as createEmptyTestPagesInto } from './testdata';
 
 const start = new Date();
+
+const pages: Array<Page> = [];
 
 /**
  * Fast check of feasibility for comments.
  */
 function checkComment(comment: Comment): void {
-	expect(comment.text).to.not.be.empty;
-	expect(comment.author.ident).to.not.be.empty;
-	expect(comment.createdOn).to.be.afterTime(start);
+	expect(comment.text).not.toBeNil();
+	expect(comment.author.ident).toBeTruthy();
+	expect(comment.createdOn).toBeAfter(start);
 }
 
 
-export default (pages: Array<Page>) => describe('creating comments', () => {
+describe('creating comments', () => {
+	beforeAll(() => Isso.create().then(createEmptyTestPagesInto(pages)));
+	afterAll(Isso.finished);
 
-	it('simple comment', () => {
+	test('simple comment', () => {
 		const comment = new Comment(pages[0]);
 		comment.rawText = 'A simple test comment';
 		return comment.send().then(checkComment);
 	});
 
-	it('full data comment', () => {
+	test('full data comment', () => {
 		const comment = new Comment(pages[0]);
 		comment.rawText = 'A more complex test comment';
 		comment.author.name = 'Mr. Test';
@@ -32,8 +36,8 @@ export default (pages: Array<Page>) => describe('creating comments', () => {
 		return comment.send().then(checkComment);
 	});
 
-	it('response', ()  => {
-		expect(pages[0].comments).to.have.length(2);
+	test('response', () => {
+		expect(pages[0].comments).toHaveLength(2);
 		const parent = pages[0].comments[0];
 		const reply = new Comment(parent);
 		reply.rawText = 'This is a reply';
@@ -41,9 +45,9 @@ export default (pages: Array<Page>) => describe('creating comments', () => {
 		return reply.send().then(checkComment);
 	});
 
-	it('more comments', () => {
+	test('more comments', () => {
 		let c = -1;
-		const comments: Array<Comment> = [];
+		const comments: Comment[] = [];
 
 		comments[++c] = new Comment(pages[0]);
 		comments[c].rawText = 'Yet a nother comment';
@@ -72,11 +76,10 @@ export default (pages: Array<Page>) => describe('creating comments', () => {
 	});
 
 	describe('', () => {
-		before('enable moderation', Isso.enableModeration);
+		beforeAll(Isso.enableModeration);
+		afterAll(Isso.disableModeration);
 
-		after('disable moderation', Isso.disableModeration);
-
-		it('moderated comment', () => {
+		test('moderated comment', () => {
 			const comment = new Comment(pages[0]);
 			comment.rawText = 'Moderated Comment';
 			comment.author.name = 'Mr. Moderated';
@@ -85,8 +88,8 @@ export default (pages: Array<Page>) => describe('creating comments', () => {
 			return comment.send()
 				.then(checkComment)
 				.then(() => {
-					expect(comment.published).to.be.false;
-					expect(pages[0].comments).to.have.length(4);
+					expect(comment.published).toBeFalse();
+					expect(pages[0].comments).toHaveLength(4);
 				});
 		});
 	});

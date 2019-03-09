@@ -1,10 +1,9 @@
 import IssoServer from '../../lib/IssoServer';
 import * as Http from 'superagent';
-import { superagentEndStub } from './SuperagentStub';
-import { assert } from 'chai';
-import * as sinon from 'sinon';
+import { RequestCallback, SuperagentEndStub } from './SuperagentStub';
+import SpyInstance = jest.SpyInstance;
 
-type stubRegistry = {[endpoint: string]: Array<Http.Request>};
+type stubRegistry = { [endpoint: string]: Http.Request[] };
 
 /**
  * An `IssoServer` that can be used in tests in order to simulate certain
@@ -18,7 +17,7 @@ export default class FakeIssoServer extends IssoServer {
 		this.reset();
 	}
 
-	private stubs: {get: stubRegistry, post: stubRegistry, put: stubRegistry, delete: stubRegistry};
+	private stubs!: { get: stubRegistry; post: stubRegistry; put: stubRegistry; delete: stubRegistry; };
 
 	/**
 	 * Resets the server, making it forget all provided stubs. This method should
@@ -27,10 +26,12 @@ export default class FakeIssoServer extends IssoServer {
 	 */
 	public reset(): void {
 		for (const method in this.stubs) {
-			const registry = (<any> this.stubs)[method];
+			const registry = (<any>this.stubs)[method];
 			for (const endpoint in registry) {
-				assert(registry[endpoint].length === 0,
-					`An expected ${method.toUpperCase()} request for '${endpoint}' did not occur!`);
+				if (registry[endpoint].length > 0) {
+					registry[endpoint] = [];
+					throw new Error(`An expected ${method.toUpperCase()} request for '${endpoint}' did not occur!`);
+				}
 			}
 		}
 		this.stubs = {
@@ -48,7 +49,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToGet(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
+	public responseToGet(endpoint: string, endStub: SuperagentEndStub): SpyInstance {
 		return this.registerStub('get', endpoint, endStub);
 	}
 
@@ -59,7 +60,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToPost(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
+	public responseToPost(endpoint: string, endStub: SuperagentEndStub): SpyInstance {
 		return this.registerStub('post', endpoint, endStub);
 	}
 
@@ -70,7 +71,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToPut(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
+	public responseToPut(endpoint: string, endStub: SuperagentEndStub): SpyInstance {
 		return this.registerStub('put', endpoint, endStub);
 	}
 
@@ -81,7 +82,7 @@ export default class FakeIssoServer extends IssoServer {
 	 *
 	 * @return The sinon stub created out of the provided `endStub`.
 	 */
-	public responseToDelete(endpoint: string, endStub: superagentEndStub): sinon.SinonStub {
+	public responseToDelete(endpoint: string, endStub: SuperagentEndStub): SpyInstance {
 		return this.registerStub('delete', endpoint, endStub);
 	}
 
@@ -101,23 +102,29 @@ export default class FakeIssoServer extends IssoServer {
 		return this.stubResponse(endpoint, 'delete');
 	}
 
-	private registerStub(method: string, endpoint: string, endStub: superagentEndStub): sinon.SinonStub  {
-		const requestFactory = <(url: string) => Http.Request> (<any>Http)[method];
-		const registry = <stubRegistry> (<any>this.stubs)[method];
+	private registerStub(method: string, endpoint: string, endStub: SuperagentEndStub): SpyInstance {
+		const requestFactory = <(url: string) => Http.Request>(<any>Http)[method];
+		const registry = <stubRegistry>(<any>this.stubs)[method];
 
 		const request = requestFactory(`https://comments.exapmle.com${endpoint}`);
-		const stub = sinon.stub(request, 'end').callsFake(endStub);
+		const stub = jest.spyOn(request, 'end')
+			.mockName('request.end')
+			.mockImplementation(function (this: Http.Request, callback?: RequestCallback): Http.Request {
+				endStub.call(this, callback || (() => null));
+				return request;
+			});
 
 		(registry[endpoint] = registry[endpoint] || []).push(request);
 		return stub;
 	}
 
-	private stubResponse(endpoint: string, method: string): Http.Request {
-		const registry = <stubRegistry> (<any>this.stubs)[method];
+	private stubResponse(endpoint: string, method: ('get' | 'post' | 'put' | 'delete')): Http.Request {
+		const registry = this.stubs[method];
 
-		assert(registry[endpoint] && registry[endpoint].length > 0,
-			`An unexpected ${method.toUpperCase()} request was created for '${endpoint}'`);
+		if (!registry[endpoint] || registry[endpoint].length === 0) {
+			throw new Error(`An unexpected ${method.toUpperCase()} request was created for '${endpoint}'`);
+		}
 
-		return registry[endpoint].shift();
+		return registry[endpoint].shift()!;
 	}
 }

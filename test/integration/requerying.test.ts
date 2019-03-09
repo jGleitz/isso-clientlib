@@ -1,16 +1,25 @@
 import Page from '../../lib/Page';
+import * as Isso from '../util/isso-control';
+import pageUris from '../fixtures/pageUris';
+import * as Testdata from './testdata';
 
-import { expect } from 'chai';
+let testPage: Page; // created from pageUris[1]
 
-export default (pages: Array<Page>) => describe('updating comments from the server', () => {
+describe('updating comments from the server', () => {
+	beforeAll(() => Isso.create()
+	.then(Testdata.createPopulatedTestPages([pageUris[1]]))
+	.then(pages => testPage = pages[0]));
+	afterAll(Isso.finished);
 
-	it('recognising a deleted comment', () => {
-		expect(pages[1].comments).to.have.length(9);
-		const comment = pages[1].comments[3];
+	test('recognising a deleted comment', () => {
+		expect(testPage.comments).toHaveLength(10);
+		const comment = testPage.comments[3];
 
-		return pages[1].comments.fetch().then(() => {
-			expect(pages[1].comments).to.have.length(8);
-			expect(comment.deleted).to.be.true;
-		});
+		return comment.delete()
+			.then(() => testPage.comments.fetch())
+			.then(() => {
+				expect(testPage.comments).toHaveLength(9);
+				expect(comment.deleted).toBeTrue();
+			});
 	});
 });
