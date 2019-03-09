@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import Comment from '../../lib/Comment';
 import Page from '../../lib/Page';
 
@@ -12,14 +10,14 @@ let page: Page;
 
 describe('Author', () => {
 
-	beforeEach('create a page', () => {
+	beforeEach(() => { // create a page
 		page = new Page(server, 'test/uri');
 	});
 
 	it('is initialised with the comment', () => {
 		const comment = Comment.fromServerData(commentData, page);
-		expect(comment.author.name).to.equal('Peter Pan');
-		expect(comment.author.website).to.equal('peterpan.org');
-		expect(comment.author.ident).to.equal('4505c1eeda98');
+		expect(comment.author.name).toBe('Peter Pan');
+		expect(comment.author.website).toBe('peterpan.org');
+		expect(comment.author.ident).toBe('4505c1eeda98');
 	});
 });

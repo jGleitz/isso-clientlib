@@ -41,16 +41,16 @@ export const enum SortCriterion {
 /**
  * Functions returning the number to use for comparison for each `SortCriterion`.
  */
-const COMMENT_MEMBER_ACCESS_FUNCTIONS = (() => {
-	const memberAccessFunctions: {[criterion: number]: (comment: Comment) => number} = {};
-	memberAccessFunctions[SortCriterion.CREATION] = comment => comment.createdOn.getTime();
-	memberAccessFunctions[SortCriterion.MODIFICATION] =
-		comment => (comment.lastModifiedOn || comment.createdOn).getTime();
-	memberAccessFunctions[SortCriterion.LIKES] = comment => comment.likes;
-	memberAccessFunctions[SortCriterion.DISLIKES] = comment => comment.dislikes;
-	memberAccessFunctions[SortCriterion.LIKESUM] = comment => comment.likes - comment.dislikes;
-	return memberAccessFunctions;
-})();
+const COMMENT_MEMBER_ACCESS_FUNCTIONS: { [criterion: number]: (comment: Comment) => number } = {
+	[SortCriterion.CREATION]: comment => comment.createdOn!.getTime(),
+	[SortCriterion.MODIFICATION]: comment => (comment.lastModifiedOn || comment.createdOn)!.getTime(),
+	[SortCriterion.LIKES]: comment => comment.likes,
+	[SortCriterion.DISLIKES]: comment => comment.dislikes,
+	[SortCriterion.LIKESUM]: comment => comment.likes - comment.dislikes
+};
+
+
+type ModifiableCommentList = {[index: number]: Comment | undefined};
 
 /**
  * A list of comments. Offers the ability to query and update the comments in this list. The list’s `count`, the number
@@ -62,14 +62,14 @@ export default class CommentList implements ArrayLike<Comment> {
 
 	/**
 	 * Array like index signature. Keeps the comments in the order set through [#sortBys](#sortbys) or
-	 * [#sortBy](#sortby). If no order was set yet, the list is ordered by creation the comments’ date.
+	 * [#sortBy](#sortby). If no order was set yet, the list is ordered by the comments’ creation date.
 	 */
 	[index: number]: Comment;
 
 	/**
 	 * Maps ids to their comment objects.
 	 */
-	private commentsById: {[id: number]: Comment} = {};
+	private commentsById: { [id: number]: Comment } = {};
 
 	/**
 	 * The page the comments in this list belongs to.
@@ -90,7 +90,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	/**
 	 * The comparison function used to sort this list.
 	 */
-	private sortFunction: (a: Comment, b: Comment) => number;
+	private sortFunction: (a: Comment, b: Comment) => number = COMMENT_MEMBER_ACCESS_FUNCTIONS[SortCriterion.CREATION];
 
 	/**
 	 * The number of comments known to belong in this list. May differ from this list’s [#length](#length).
@@ -159,7 +159,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * @return	A promise that will be resolved with the deep count when its retrieval succeeded.
 	 */
 	public fetchCount(): Promise<number> {
-		return this._fetch({limit: 0}).then(() => this.count);
+		return this._fetch({ limit: 0 }).then(() => this.count);
 	}
 
 	/**
@@ -184,17 +184,17 @@ export default class CommentList implements ArrayLike<Comment> {
 						}))));
 		// send the query using the first page
 		return firstPage.send(
-				firstPage.server.post('/count').send(requestData),
-				// when the request is ready: wait for the other pages
-				response => readyLock.then(() => {
-					const countArray = <Array<number>> response.body;
-					// assign the new values
-					for (let i = 0; i < pages.length; i++) {
-						pages[i].comments.updateDeepCount(countArray[i]);
-					}
-				})
-			// finally: free all pages
-			.then(unlock));
+			firstPage.server.post('/count').send(requestData),
+			// when the request is ready: wait for the other pages
+			response => readyLock.then(() => {
+				const countArray = <Array<number>>response.body;
+				// assign the new values
+				for (let i = 0; i < pages.length; i++) {
+					pages[i].comments.updateDeepCount(countArray[i]);
+				}
+			})
+				// finally: free all pages
+				.then(unlock));
 	}
 
 	/**
@@ -227,7 +227,7 @@ export default class CommentList implements ArrayLike<Comment> {
 			CommentList.collectiveCountPromise = new Promise(resolve => {
 				// There are significantly faster ways to schedule for the next event loop than window.setTimeout.
 				// However, this is sufficient for our use case.
-				window.setTimeout(() => resolve(CommentList.fetchCollectiveCounts()), 0);
+				setTimeout(() => resolve(CommentList.fetchCollectiveCounts()), 0);
 			});
 		}
 		return CommentList.collectiveCountPromise.then(() => this.deepCount);
@@ -248,7 +248,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	private _fetch(data: any = {}): Promise<CommentList> {
 		return this.page.send(
 			this.page.server.get('/')
-				.query({uri: this.page.uri})
+				.query({ uri: this.page.uri })
 				.query(this.requestData(data)),
 			this.processCommentList, this);
 	}
@@ -263,7 +263,7 @@ export default class CommentList implements ArrayLike<Comment> {
 		// if all comments were hidden by the limit parameter, we only wanted to fetch the count.
 		if (serverData.hidden_replies !== serverData.total_replies || serverData.total_replies === 0) {
 			const newList = serverData.replies;
-			const newCommentById: {[id: number]: Comment} = {};
+			const newCommentById: { [id: number]: Comment } = {};
 			let i = 0;
 			let childrenDeepCount = 0;
 			for (; i < newList.length; i++) {
@@ -280,7 +280,7 @@ export default class CommentList implements ArrayLike<Comment> {
 				childrenDeepCount += comment.replies.deepCount;
 			}
 			for (; i < this.length; i++) {
-				this[i] = undefined;
+				(this as ModifiableCommentList)[i] = undefined;
 			}
 			for (const id in this.commentsById) {
 				if (newCommentById[id] === undefined) {
@@ -329,16 +329,16 @@ export default class CommentList implements ArrayLike<Comment> {
 	 */
 	private doMap<ResultType>(transformer: (comment: Comment) => ResultType, includeChildren: boolean)
 		: Array<ResultType> {
-			const result: Array<ResultType> = [];
-			for (let i = 0; i < this.length; i++) {
-				result.push(transformer(this[i]));
-				if (includeChildren) {
-					this[i].replies.flatMap(transformer)
-						.forEach(transformed => result.push(transformed));
-				}
+		const result: Array<ResultType> = [];
+		for (let i = 0; i < this.length; i++) {
+			result.push(transformer(this[i]));
+			if (includeChildren) {
+				this[i].replies.flatMap(transformer)
+					.forEach(transformed => result.push(transformed));
 			}
-			return result;
 		}
+		return result;
+	}
 
 	/**
 	 * Processes a comment list request response.
@@ -359,7 +359,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	 */
 	private requestData(data: any): any {
 		if (this.parent instanceof Comment) {
-			data.parent = (<Comment> this.parent).id;
+			data.parent = (<Comment>this.parent).id;
 		}
 		return data;
 	}
@@ -384,7 +384,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * @param mode	The sort direction to use.
 	 */
 	public sortBy(criterion: SortCriterion, mode: SortMode = SortMode.ASCENDING): void {
-		this.sortBys({criterion: criterion, mode: mode});
+		this.sortBys({ criterion: criterion, mode: mode });
 	}
 
 	/**
@@ -396,8 +396,8 @@ export default class CommentList implements ArrayLike<Comment> {
 	 *
 	 * @param sortMethods	The sort methods to use, in order of their presedence.
 	 */
-	public sortBys(...sortMethods: Array<{criterion: SortCriterion, mode: SortMode}>): void {
-		sortMethods.push({criterion: SortCriterion.CREATION, mode: SortMode.ASCENDING});
+	public sortBys(...sortMethods: Array<{ criterion: SortCriterion, mode: SortMode }>): void {
+		sortMethods.push({ criterion: SortCriterion.CREATION, mode: SortMode.ASCENDING });
 		const signs = sortMethods.map(method => method.mode === SortMode.DESCENDING ? -1 : 1);
 		const acessors = sortMethods.map(method => COMMENT_MEMBER_ACCESS_FUNCTIONS[method.criterion]);
 		this.sortFunction = (a, b) => {
@@ -422,7 +422,7 @@ export default class CommentList implements ArrayLike<Comment> {
 			this[i + 1] = this[i];
 		}
 		this[i + 1] = comment;
-		this.commentsById[comment.id] = comment;
+		this.commentsById[comment.id!] = comment;
 		this._length++;
 	}
 
@@ -433,15 +433,15 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * @param comment	The comment to remove.
 	 */
 	public remove(comment: Comment): void {
-		let lastComment: Comment = undefined;
+		let lastComment: Comment | undefined = undefined;
 		let i = this.length - 1;
 		for (; i >= 0 && this[i] !== comment; i--) {
 			const copy = this[i];
-			this[i] = lastComment;
+			(this as ModifiableCommentList)[i] = lastComment;
 			lastComment = copy;
 		}
-		delete this.commentsById[comment.id];
-		this[i] = lastComment;
+		delete this.commentsById[comment.id!];
+		(this as ModifiableCommentList)[i] = lastComment;
 		this._length--;
 	}
 

@@ -2,7 +2,7 @@
  * Helper class to deal with the browser’s location in tests.
  */
 export default class Location {
-	private static initial: string = undefined;
+	private static initial?: string;
 
 	/**
 	 * Sets the browser’s location to the provided `newLocation`.

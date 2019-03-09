@@ -1,6 +1,4 @@
-import { expect } from 'chai';
 import * as clone from 'clone';
-import * as sinon from 'sinon';
 
 import FakeIssoServer from '../util/FakeIssoServer';
 import { successResponse } from '../util/SuperagentStub';
@@ -27,29 +25,26 @@ function pageWithCommentList(fixture?: any): Promise<Page> {
 		.then(() => page);
 }
 
-const sandbox = sinon.createSandbox();
-
 describe('CommentList', () => {
-	beforeEach('spy on Comment.fromServerData', () => {
-		sandbox.spy(Comment, 'fromServerData');
+	beforeEach(() => { // spy on Comment.fromServerData
+		jest.spyOn(Comment, 'fromServerData').mockName('Comment.fromServerData');
 	});
 
-	afterEach('reset fake server', () => server.reset());
-	afterEach('reset spies', () => sandbox.restore());
+	afterEach(() => server.reset()); // reset fake server
 
 	it('can query comments', () => {
 		server.responseToGet('/', successResponse(SERVER_FIXTURES.standard));
 		const page = new Page(server, 'test/uri');
-		const newCommentEventSpy = sinon.spy(page.comments.onNew, 'post');
+		const newCommentEventSpy = jest.spyOn(page.comments.onNew, 'post').mockName('newCommentEventSpy');
 		return page.comments.fetch()
 			.then(comments => {
-				expect(page.comments).to.have.length(2);
-				expect(Comment.fromServerData).to.have.been.calledThrice;
-				expect(newCommentEventSpy).to.have.been.calledTwice;
-				expect(comments).to.equal(page.comments);
+				expect(page.comments).toHaveLength(2);
+				expect(Comment.fromServerData).toHaveBeenCalledTimes(3);
+				expect(newCommentEventSpy).toHaveBeenCalledTimes(2);
+				expect(comments).toBe(page.comments);
 
-				expect(page.comments.count).to.equal(2);
-				expect(page.comments.deepCount).to.equal(3);
+				expect(page.comments.count).toBe(2);
+				expect(page.comments.deepCount).toBe(3);
 			});
 	});
 
@@ -57,20 +52,20 @@ describe('CommentList', () => {
 	it('provides map and flatMap', () => {
 		return pageWithCommentList(SERVER_FIXTURES.deeplyNested)
 			.then(page => {
-				expect(page.comments.map(toId)).to.deep.equal([1, 3, 7]);
-				expect(page.comments.flatMap(toId)).to.have.members([1, 2, 4, 6, 5, 3, 7]);
+				expect(page.comments.map(toId)).toEqual([1, 3, 7]);
+				expect(page.comments.flatMap(toId)).toEqual([1, 2, 4, 6, 5, 3, 7]);
 			});
 	});
 
 	it('can query comments by id', () => {
 		return pageWithCommentList()
 			.then(page => {
-				expect(page.comments.byId(1)).to.be.an.instanceof(Comment);
-				expect(page.comments.byId(2)).to.be.undefined;
-				expect(page.comments.byId(1).replies.byId(2)).to.be.an.instanceof(Comment);
-				expect(page.comments.byId(3)).to.be.an.instanceof(Comment);
-				expect(page.comments.byId(5)).to.be.undefined;
-				expect(page.comments.byId(0)).to.be.undefined;
+				expect(page.comments.byId(1)).toBeInstanceOf(Comment);
+				expect(page.comments.byId(2)).toBeUndefined();
+				expect(page.comments.byId(1).replies.byId(2)).toBeInstanceOf(Comment);
+				expect(page.comments.byId(3)).toBeInstanceOf(Comment);
+				expect(page.comments.byId(5)).toBeUndefined();
+				expect(page.comments.byId(0)).toBeUndefined();
 			});
 	});
 
@@ -81,10 +76,12 @@ describe('CommentList', () => {
 				changedServerData.replies[0].author = 'TestAuthor';
 				server.responseToGet('/', successResponse(changedServerData));
 
-				const updateSpies = page.comments.flatMap(comment => sinon.spy(comment, 'updateFromServer'));
+				const updateSpies = page.comments.flatMap(comment =>
+					jest.spyOn(comment, 'updateFromServer')
+						.mockName('comment.updateFromServer'));
 				return page.comments.fetch().then(comments => {
-					updateSpies.forEach(spy => expect(spy).to.have.been.called);
-					expect(updateSpies[0]).to.have.been.calledWith(changedServerData.replies[0]);
+					updateSpies.forEach(spy => expect(spy).toHaveBeenCalled());
+					expect(updateSpies[0]).toHaveBeenCalledWith(changedServerData.replies[0]);
 				});
 			});
 	});
@@ -93,28 +90,30 @@ describe('CommentList', () => {
 		return pageWithCommentList()
 			.then(page => {
 				server.responseToGet('/', successResponse(SERVER_FIXTURES.deeplyNested));
+				const onNew = jest.fn().mockName('page.comments.onNew');
+				page.comments.onNew.attach(onNew);
 
 				return page.comments.fetch()
 					.then(comments => {
-						expect(Comment.fromServerData).to.have.been.calledWith(
-							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[0]
+						expect(Comment.fromServerData).toHaveBeenCalledWith(
+							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[0], expect.anything()
 						);
-						expect(Comment.fromServerData).to.have.been.calledWith(
-							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[0]
+						expect(Comment.fromServerData).toHaveBeenCalledWith(
+							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[0], expect.anything()
 						);
-						expect(Comment.fromServerData).to.have.been.calledWith(
-							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[1]
+						expect(Comment.fromServerData).toHaveBeenCalledWith(
+							SERVER_FIXTURES.deeplyNested.replies[0].replies[0].replies[1], expect.anything()
 						);
-						expect(Comment.fromServerData).to.have.been.calledWith(
-							SERVER_FIXTURES.deeplyNested.replies[2]
+						expect(Comment.fromServerData).toHaveBeenCalledWith(
+							SERVER_FIXTURES.deeplyNested.replies[2], expect.anything()
 						);
 
-						expect(page.comments.byId(1).replies.byId(2)).to.exist;
-						expect(page.comments.byId(1).replies.byId(2).id).to.equal(2);
+						expect(page.comments.byId(1).replies.byId(2)).toBeDefined();
+						expect(page.comments.byId(1).replies.byId(2).id).toBe(2);
 
-						expect(page.comments.count).to.equal(3);
-						expect(page.comments.deepCount).to.equal(7);
-						expect(page.comments[0].replies.deepCount).to.equal(4);
+						expect(page.comments.count).toBe(3);
+						expect(page.comments.deepCount).toBe(7);
+						expect(page.comments[0].replies.deepCount).toBe(4);
 					});
 			});
 	});
@@ -126,13 +125,14 @@ describe('CommentList', () => {
 			removedCommentData.total_replies--;
 			server.responseToGet('/', successResponse(removedCommentData));
 
-			const deleteSpy = sinon.spy(page.comments.byId(3), 'wasDeleted');
+			const deleteSpy = jest.spyOn(page.comments.byId(3), 'wasDeleted')
+				.mockName('comment.wasDeleted');
 			return page.comments.fetch()
 				.then(comments => {
-					expect(deleteSpy).to.have.been.called;
-					expect(page.comments.byId(3)).to.be.undefined;
-					expect(page.comments.byId(1).id).to.equal(1);
-					expect(page.comments.deepCount).to.equal(2);
+					expect(deleteSpy).toHaveBeenCalled();
+					expect(page.comments.byId(3)).toBeUndefined();
+					expect(page.comments.byId(1).id).toBe(1);
+					expect(page.comments.deepCount).toBe(2);
 				});
 		});
 	});
@@ -149,10 +149,11 @@ describe('CommentList', () => {
 			};
 			modifiedChildList.replies[0].text = 'Test Text';
 			server.responseToGet('/', successResponse(modifiedChildList));
-			const updateSpy = sinon.spy(page.comments.byId(1).replies.byId(2), 'updateFromServer');
+			const updateSpy = jest.spyOn(page.comments.byId(1).replies.byId(2), 'updateFromServer')
+				.mockName('reply.updateFromServer');
 			return page.comments.byId(1).replies.fetch()
 				.then(() => {
-					expect(updateSpy).to.have.been.calledWith(modifiedChildList.replies[0]);
+					expect(updateSpy).toHaveBeenCalledWith(modifiedChildList.replies[0]);
 				});
 		});
 	});
@@ -167,8 +168,8 @@ describe('CommentList', () => {
 		const page = new Page(server, 'test/uri');
 		return page.comments.fetchCount()
 			.then(count => {
-				expect(count).to.equal(8);
-				expect(page.comments.count).to.equal(8);
+				expect(count).toBe(8);
+				expect(page.comments.count).toBe(8);
 			});
 	});
 
@@ -177,8 +178,8 @@ describe('CommentList', () => {
 		const page = new Page(server, 'test/uri');
 		return page.comments.fetchDeepCount()
 			.then(deepCount => {
-				expect(deepCount).to.equal(5);
-				expect(page.comments.deepCount).to.equal(5);
+				expect(deepCount).toBe(5);
+				expect(page.comments.deepCount).toBe(5);
 			});
 	});
 
@@ -187,20 +188,20 @@ describe('CommentList', () => {
 
 		const page = new Page(server, 'test/uri');
 		const checkComments = () => {
-			expect(page.comments).to.have.length(3);
-			expect(page.comments.count).to.equal(3);
-			expect(page.comments.deepCount).to.equal(7);
+			expect(page.comments).toHaveLength(3);
+			expect(page.comments.count).toBe(3);
+			expect(page.comments.deepCount).toBe(7);
 			for (let i = 0; i < page.comments.length; i++) {
-				expect(page.comments[i]).to.exist;
+				expect(page.comments[i]).toBeDefined();
 			}
 
 			const replies = page.comments[0].replies;
-			expect(replies).to.have.length(1);
-			expect(replies.count).to.equal(1);
-			expect(replies.deepCount).to.equal(4);
-			expect(replies[0]).to.exist;
-			expect(replies[0].replies[0]).to.exist;
-			expect(replies[0].replies[1]).to.exist;
+			expect(replies).toHaveLength(1);
+			expect(replies.count).toBe(1);
+			expect(replies.deepCount).toBe(4);
+			expect(replies[0]).toBeDefined();
+			expect(replies[0].replies[0]).toBeDefined();
+			expect(replies[0].replies[1]).toBeDefined();
 		};
 
 		return page.comments.fetch()
@@ -221,8 +222,8 @@ describe('CommentList', () => {
 		return pageWithCommentList().then(page => {
 			server.responseToGet('/', successResponse(SERVER_FIXTURES.deeplyNested.replies[0]));
 			return page.comments[0].replies.fetchDeepCount().then(deepCount => {
-				expect(deepCount).to.equal(4);
-				expect(page.comments[0].replies.deepCount).to.equal(4);
+				expect(deepCount).toBe(4);
+				expect(page.comments[0].replies.deepCount).toBe(4);
 			});
 		});
 	});
@@ -238,27 +239,27 @@ describe('CommentList', () => {
 			thirdPage.comments.fetchDeepCount()
 		])
 			.then(counts => {
-				expect(counts).to.deep.equal([7, 2, 4]);
-				expect(firstPage.comments.deepCount).to.equal(7);
-				expect(secondPage.comments.deepCount).to.equal(2);
-				expect(thirdPage.comments.deepCount).to.equal(4);
+				expect(counts).toEqual([7, 2, 4]);
+				expect(firstPage.comments.deepCount).toBe(7);
+				expect(secondPage.comments.deepCount).toBe(2);
+				expect(thirdPage.comments.deepCount).toBe(4);
 			});
 	});
 
 	it('can be sorted', () => {
 		return pageWithCommentList(SERVER_FIXTURES.forSorting)
 			.then(page => {
-				expect(page.comments.map(toId)).to.deep.equal([1, 2, 3, 4, 5, 6]);
+				expect(page.comments.map(toId)).toEqual([1, 2, 3, 4, 5, 6]);
 				page.comments.sortBy(SortCriterion.CREATION, SortMode.DESCENDING);
-				expect(page.comments.map(toId)).to.deep.equal([6, 5, 4, 3, 2, 1]);
+				expect(page.comments.map(toId)).toEqual([6, 5, 4, 3, 2, 1]);
 				page.comments.sortBy(SortCriterion.LIKES);
-				expect(page.comments.map(toId)).to.deep.equal([3, 1, 2, 5, 6, 4]);
+				expect(page.comments.map(toId)).toEqual([3, 1, 2, 5, 6, 4]);
 				page.comments.sortBy(SortCriterion.DISLIKES, SortMode.DESCENDING);
-				expect(page.comments.map(toId)).to.deep.equal([2, 3, 4, 6, 1, 5]);
+				expect(page.comments.map(toId)).toEqual([2, 3, 4, 6, 1, 5]);
 				page.comments.sortBy(SortCriterion.LIKESUM, SortMode.DESCENDING);
-				expect(page.comments.map(toId)).to.deep.equal([4, 5, 1, 6, 3, 2]);
+				expect(page.comments.map(toId)).toEqual([4, 5, 1, 6, 3, 2]);
 				page.comments.sortBy(SortCriterion.MODIFICATION);
-				expect(page.comments.map(toId)).to.deep.equal([2, 1, 5, 6, 3, 4]);
+				expect(page.comments.map(toId)).toEqual([2, 1, 5, 6, 3, 4]);
 			});
 	});
 
@@ -268,7 +269,7 @@ describe('CommentList', () => {
 				page.comments.sortBys(
 					{criterion: SortCriterion.LIKES, mode: SortMode.DESCENDING},
 					{criterion: SortCriterion.MODIFICATION, mode: SortMode.ASCENDING});
-				expect(page.comments.map(toId)).to.deep.equal([4, 6, 5, 2, 1, 3]);
+				expect(page.comments.map(toId)).toEqual([4, 6, 5, 2, 1, 3]);
 			});
 	});
 
@@ -285,14 +286,14 @@ describe('CommentList', () => {
 				withNewComment.total_replies++;
 				server.responseToGet('/', successResponse(withNewComment));
 
-				expect(page.comments.map(toId)).to.deep.equal([2, 3, 1, 6, 5, 4]);
+				expect(page.comments.map(toId)).toEqual([2, 3, 1, 6, 5, 4]);
 				return page.comments.fetch().then(() => {
-					expect(page.comments.map(toId)).to.deep.equal([1, 3, 6, 2, 5, 4]);
+					expect(page.comments.map(toId)).toEqual([1, 3, 6, 2, 5, 4]);
 				})
-				.then(() => page.comments.fetch())
-				.then(() => {
-					expect(page.comments.map(toId)).to.deep.equal([1, 3, 6, 2, 5, 7, 4]);
-				});
+					.then(() => page.comments.fetch())
+					.then(() => {
+						expect(page.comments.map(toId)).toEqual([1, 3, 6, 2, 5, 7, 4]);
+					});
 			});
 	});
 
@@ -302,22 +303,22 @@ describe('CommentList', () => {
 				page.comments.sortBy(SortCriterion.LIKESUM);
 				const newComment = Comment.fromServerData({
 					id: 9,
-					parent: <number> null,
+					parent: null,
 					text: '<p>Yet another comment</p>\n',
 					mode: 1,
 					hash: '4509cuiaea98',
 					author: 'Marina Müller',
 					website: 'marina@müller.org',
 					created: 158732126.572392,
-					modified: <number> null,
+					modified: null,
 					likes: 3,
 					dislikes: 1,
 					total_replies: 0,
 					hidden_replies: 0,
-					replies: <Array<any>> []
+					replies: <Array<any>>[]
 				}, page);
 				page.comments.insert(newComment);
-				expect(page.comments.map(toId)).to.deep.equal([2, 3, 1, 6, 9, 5, 4]);
+				expect(page.comments.map(toId)).toEqual([2, 3, 1, 6, 9, 5, 4]);
 			});
 	});
 
@@ -325,10 +326,10 @@ describe('CommentList', () => {
 		return pageWithCommentList(SERVER_FIXTURES.forSorting)
 			.then(page => {
 				page.comments.remove(page.comments[2]);
-				expect(page.comments).to.have.length(5);
-				expect(page.comments[5]).to.be.undefined;
+				expect(page.comments).toHaveLength(5);
+				expect(page.comments[5]).toBeUndefined();
 				for (let i = 0; i < page.comments.length; i++) {
-					expect(page.comments[i]).to.exist;
+					expect(page.comments[i]).toBeDefined();
 				}
 			});
 	});

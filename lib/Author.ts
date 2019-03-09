@@ -9,18 +9,18 @@ import Comment from './Comment';
  */
 export default class Author {
 
-	private _website: string = null;
+	private _website?: string;
 
-	private _ident: string = null;
+	private _ident?: string;
 	/**
 	 * The author’s identifier. Computed by the server based on its email address.
 	 */
-	public get ident(): string {
+	public get ident(): string | undefined {
 		return this._ident;
 	}
 
-	public set ident(newIdent: string) {
-		if (this._ident === null && newIdent !== null) {
+	public set ident(newIdent: string | undefined) {
+		if (this._ident === undefined && newIdent !== undefined) {
 			this.onIdentAssigned.post(this._ident = newIdent);
 		}
 	}
@@ -28,27 +28,27 @@ export default class Author {
 	/**
 	 * The author’s website.
 	 */
-	public get website(): string {
+	public get website(): string | undefined {
 		return this._website;
 	}
 
-	public set website(website: string) {
+	public set website(website: string | undefined) {
 		if (website !== this._website) {
 			this.onWebsiteChanged.post(this._website = website);
 			this.comment.authorChanged();
 		}
 	}
 
-	private _name: string = null;
+	private _name?: string;
 
 	/**
 	 * The author’s name.
 	 */
-	public get name(): string {
+	public get name(): string | undefined {
 		return this._name;
 	}
 
-	public set name(name: string) {
+	public set name(name: string | undefined) {
 		if (this._name !== name) {
 			this.onNameChanged.post(this._name = name);
 			this.comment.authorChanged();
@@ -58,7 +58,7 @@ export default class Author {
 	/**
 	 * The author’s email address.
 	 */
-	public email: string = null;
+	public email?: string;
 
 	/**
 	 * Fired when the server assigned an [identifier](#ident) to this author.
@@ -68,11 +68,11 @@ export default class Author {
 	/**
 	 * Fired when this author’s [website](#website) has changed.
 	 */
-	public readonly onWebsiteChanged = new AsyncEvent<string>();
+	public readonly onWebsiteChanged = new AsyncEvent<string | undefined>();
 	/**
 	 * Fired when this author’s [name](#name) changed.
 	 */
-	public readonly onNameChanged = new AsyncEvent<string>();
+	public readonly onNameChanged = new AsyncEvent<string | undefined>();
 
-	public constructor(private readonly comment: Comment) {}
+	public constructor(private readonly comment: Comment) { }
 }

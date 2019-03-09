@@ -1,16 +1,10 @@
 language: node_js
-node_js: node
+node_js: lts/*
 python: '3.6'
 dist: xenial
 
-before_script:
- - npm install -g gulp-cli
-
-script:
- - npm test -s
-
 after_success:
- - bash <(curl -s https://codecov.io/bash) -f build/unit-coverage.lcov -F unit
- - bash <(curl -s https://codecov.io/bash) -f build/integration-coverage.lcov -F integration
- - gulp doc
- - bash <(curl -s https://jgleitz.github.io/travis-deploy-gh-pages/deploy.sh) build/doc/*
+ - bash <(curl -s https://codecov.io/bash) -f coverage/unit/coverage-final.json -F unit
+ - bash <(curl -s https://codecov.io/bash) -f coverage/integration/coverage-final.json -F integration
+ - npm run doc
+ - bash <(curl -s https://jgleitz.github.io/travis-deploy-gh-pages/deploy.sh) doc/*
