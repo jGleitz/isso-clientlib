@@ -34,7 +34,7 @@ const OK = () => ({
 /**
  * Whether to print the command line output of executed commands and additional debug output.
  */
-let print = true;
+let print = false;
 
 /**
  * Number of isso instances.
