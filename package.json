@@ -33,7 +33,7 @@
     "typescript": "^3.3.3"
   },
   "dependencies": {
-    "superagent": "^4.0.0",
+    "superagent": "^5.0.0",
     "ts-events": "^3.2.1"
   }
 }
