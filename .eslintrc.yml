@@ -1,0 +1,122 @@
+extends:
+  - eslint:recommended
+  - plugin:import/errors
+  - plugin:import/warnings
+env:
+  browser: true
+  es6: true
+parserOptions:
+  ecmaVersion: 10
+ignorePatterns:
+  - node_modules/
+  - coverage/
+  - doc/
+rules:
+  comma-dangle: error
+  curly: error
+  dot-notation: error
+  eol-last: error
+  eqeqeq: [error, always]
+  id-match: error
+  new-parens: error
+  no-bitwise: error
+  no-caller: error
+  no-debugger: error
+  no-duplicate-imports: error
+  no-empty: error
+  no-eval: error
+  no-fallthrough: error
+  no-invalid-this: error
+  no-new-wrappers: error
+  no-param-reassign: error
+  no-redeclare: error
+  no-sequences: error
+  no-shadow:
+    - error
+    - hoist: all
+  no-trailing-spaces: error
+  no-unused-expressions: error
+  no-unused-labels: error
+  no-var: error
+  prefer-const: error
+  radix: error
+  space-in-parens: warn
+  spaced-comment: error
+  use-isnan: error
+overrides:
+  - files: '**/*.ts'
+    parser: '@typescript-eslint/parser'
+    parserOptions:
+      project: tsconfig.json
+      sourceType: module
+    plugins:
+      - '@typescript-eslint'
+      - '@typescript-eslint/tslint'
+      - eslint-plugin-tsdoc
+    extends:
+      - plugin:import/typescript
+      - plugin:@typescript-eslint/recommended
+    rules:
+      '@typescript-eslint/class-name-casing': error
+      '@typescript-eslint/explicit-member-accessibility':
+        - error
+        - accessibility: explicit
+      '@typescript-eslint/member-delimiter-style':
+        - error
+        - multiline:
+            delimiter: semi
+            requireLast: true
+          singleline:
+            delimiter: semi
+            requireLast: false
+      '@typescript-eslint/no-empty-function': error
+      '@typescript-eslint/no-namespace': error
+      '@typescript-eslint/no-require-imports': error
+      '@typescript-eslint/no-var-requires': error
+      '@typescript-eslint/prefer-namespace-keyword': error
+      '@typescript-eslint/prefer-readonly': error
+      '@typescript-eslint/triple-slash-reference': error
+      '@typescript-eslint/type-annotation-spacing': error
+      '@typescript-eslint/tslint/config':
+        - error
+        - rules:
+            one-line:
+              - true,
+              - check-catch
+              - check-finally
+              - check-else
+              - check-open-brace
+              - check-whitespace
+            typedef:
+              - true
+              - call-signature
+              - parameter
+              - property-declaration
+            whitespace:
+              - true
+              - check-branch
+              - check-decl
+              - check-operator
+              - check-module
+              - check-separator
+              - check-type
+      no-invalid-this: off # seem not to work correctly with TypeScript
+      '@typescript-eslint/explicit-function-return-type':
+        - warn
+        - allowExpressions: true
+          allowTypedFunctionExpressions: true
+          allowHigherOrderFunctions: true
+      '@typescript-eslint/camelcase':
+        - warn
+        - allow:
+            - total_replies
+            - hidden_replies
+      '@typescript-eslint/no-use-before-define':
+        - error
+        - functions: false
+          classes: false
+      'no-unused-expressions': off
+      '@typescript-eslint/no-unused-expressions': error
+  - files: 'test/**/*'
+    env:
+      jest: true
