@@ -27,7 +27,7 @@
     "rimraf": "^3.0.0",
     "ts-jest": "^25.0.0",
     "ts-node": "^8.0.2",
-    "tslint": "^5.13.0",
+    "tslint": "^6.0.0",
     "typed-promisify": "^0.4.0",
     "typedoc": "^0.16.0",
     "typescript": "^3.3.3"
