@@ -2,7 +2,7 @@
 
 module.exports = {
 	// A preset that is used as a base for Jest's configuration
-	preset: 'ts-jest',
+	// preset: 'ts-jest',
 
 	// All imported modules in your tests should be mocked automatically
 	// automock: false,
@@ -29,9 +29,7 @@ module.exports = {
 	coverageDirectory: 'coverage/unit',
 
 	// An array of regexp pattern strings used to skip coverage collection
-	// coveragePathIgnorePatterns: [
-	//   "/node_modules/"
-	// ],
+	coveragePathIgnorePatterns: ['.*\\.json$'],
 
 	// A list of reporter names that Jest uses when writing coverage reports
 	// coverageReporters: [
@@ -60,13 +58,7 @@ module.exports = {
 	// globalTeardown: null,
 
 	// A set of global variables that need to be available in all test environments
-	globals: {
-		'ts-jest': {
-			diagnostics: {
-				ignoreCodes: [151001]
-			}
-		}
-	},
+	// globals: {},
 
 	// An array of directory names to be searched recursively up from the requiring module's location
 	// moduleDirectories: [

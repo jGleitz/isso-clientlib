@@ -14,14 +14,10 @@ function call(uri: string, query: { [param: string]: string } = {}): Promise<unk
 		Http.get(SERVER_ADDRESS + uri)
 			.query(query)
 			.end((error, response) => {
-				if (error) {
-					reject(error);
+				if (response.ok) {
+					resolve(response.body);
 				} else {
-					if (response.ok) {
-						resolve(response.body);
-					} else {
-						reject(response.text);
-					}
+					reject(response.text);
 				}
 			});
 	});
@@ -31,7 +27,7 @@ function callWithIssoId(uri: string, query: { [param: string]: string } = {}): P
 	if (issoId === undefined) {
 		throw new Error('isso must be started first!');
 	}
-	return call(uri, { id: issoId, ...query });
+	return call(uri, {id: issoId, ...query});
 }
 
 /**
@@ -76,7 +72,7 @@ export function create(): Promise<string> {
  * @return A promise that will be resolved when the server instance was started.
  */
 export function enableModeration(): Promise<void> {
-	return (callWithIssoId('/start', { moderation: 'active' }) as unknown) as Promise<void>;
+	return (callWithIssoId('/start', {moderation: 'active'}) as unknown) as Promise<void>;
 }
 
 /**
@@ -85,7 +81,7 @@ export function enableModeration(): Promise<void> {
  * @return A promise that will be resolved when the server instance was started.
  */
 export function disableModeration(): Promise<void> {
-	return (callWithIssoId('/start', { moderation: 'inactive' }) as unknown) as Promise<void>;
+	return (callWithIssoId('/start', {moderation: 'inactive'}) as unknown) as Promise<void>;
 }
 
 /**
@@ -95,7 +91,7 @@ export function disableModeration(): Promise<void> {
  */
 export function finished(): Promise<void> {
 	if (issoId !== undefined) {
-		return call('/return', { id: issoId }).then(() => (issoId = undefined));
+		return call('/return', {id: issoId}).then(() => (issoId = undefined));
 	} else {
 		return Promise.resolve();
 	}

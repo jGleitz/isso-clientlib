@@ -4,9 +4,9 @@ require('ts-node/register');
 const IssoManagement = require('../util/IssoManagement').default;
 const chalk = require('chalk');
 
-module.exports = async () => {
+module.exports = () => {
 	process.stdout.write('\n\nInstalling Isso... ');
-	await IssoManagement.install()
+	return IssoManagement.install()
 		.then(() =>
 			process.stdout.write(chalk.green('Done') + '\nStarting the Isso management server... ')
 		)

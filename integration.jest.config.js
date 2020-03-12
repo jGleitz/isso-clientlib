@@ -4,7 +4,7 @@ require('ts-node/register');
 
 module.exports = {
 	// A preset that is used as a base for Jest's configuration
-	preset: 'ts-jest',
+	// preset: 'ts-jest',
 
 	// All imported modules in your tests should be mocked automatically
 	// automock: false,
@@ -31,9 +31,7 @@ module.exports = {
 	coverageDirectory: 'coverage/integration',
 
 	// An array of regexp pattern strings used to skip coverage collection
-	// coveragePathIgnorePatterns: [
-	//   "/node_modules/"
-	// ],
+	coveragePathIgnorePatterns: ['.*\\.json$'],
 
 	// A list of reporter names that Jest uses when writing coverage reports
 	// coverageReporters: [
@@ -166,7 +164,9 @@ module.exports = {
 	// This must match the COMMUNICATION_WEBSITE in the test/integration/util/IssoManagement module!
 	testURL: `http://localhost:${
 		require('./test/fixtures/issoManagementParameters').communicationServerPort
-	}`
+	}`,
+
+	testTimeout: 30000,
 
 	// Setting this value to "fake" allows the use of fake timers for functions such as "setTimeout"
 	// timers: "real",
