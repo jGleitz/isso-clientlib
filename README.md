@@ -20,11 +20,7 @@ Tests are very important to this project. It’s intended to be a library users 
 
 #### Prerequisite
 
-In order to run the integration test, you need to install python, the python headers and virtualenv. On Debian/Ubuntu, run:
-
-```bash
-sudo apt install python3 python3-dev python3-venv
-```
+In order to run the integration test, you need to have [`podman`](https://podman.io/) or [`docker`](https://docs.docker.com/install/) installed.
 
 ### Scripts
 
@@ -34,6 +30,9 @@ To check the code, you can use these tasks:
 | -------------------------- | --------------------------------------------------------------------------------- |
 | `npm test`                 | run all checks                                                                    |
 | `npm start`                | start the jest in watch mode to continuously run the _unit_ tests on changed code |
+| `npm run typecheck`        | typecheck the code                                                                |
 | `npm run lint`             | lint the code                                                                     |
+| `npm run format`           | fix formatting problems automatically                                             |
 | `npm run unit-test`        | run only unit tests                                                               |
 | `npm run integration-test` | run only the integration test                                                     |
+| `npm run doc`              | generate the documentation                                                        |
