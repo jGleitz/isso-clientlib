@@ -166,7 +166,7 @@ module.exports = {
 		require('./test/fixtures/issoManagementParameters').communicationServerPort
 	}`,
 
-	testTimeout: 30000,
+	testTimeout: 30000
 
 	// Setting this value to "fake" allows the use of fake timers for functions such as "setTimeout"
 	// timers: "real",

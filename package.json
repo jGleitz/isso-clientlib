@@ -42,6 +42,7 @@
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-tsdoc": "^0.2.3",
+    "hasbin": "^1.2.3",
     "jest": "25.1.0",
     "jest-cli": "25.1.0",
     "jest-extended": "0.11.5",

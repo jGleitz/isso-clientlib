@@ -1,3 +1,5 @@
+// / <reference path="./hasbin.d.ts" />
+
 /* eslint-env node */
 
 /**
@@ -13,9 +15,14 @@ import * as rimraf from 'rimraf';
 import { communicationServerPort as COMMUNICATION_SERVER_PORT } from '../fixtures/issoManagementParameters';
 import testPageMiddleware from './testPageMiddleware';
 import * as tmp from 'tmp-promise';
+import * as hasbin from 'hasbin';
 
 const rmrf = promisify(rimraf) as (path: string) => Promise<void>;
-const writeFile = promisify(fs.writeFile) as (path: string, content: unknown, options?: fs.WriteFileOptions) => Promise<void>;
+const writeFile = promisify(fs.writeFile) as (
+	path: string,
+	content: unknown,
+	options?: fs.WriteFileOptions
+) => Promise<void>;
 
 export const COMMUNICATION_WEBSITE = `http://localhost:${COMMUNICATION_SERVER_PORT}`;
 const BASE_PORT = 3020;
@@ -33,6 +40,11 @@ const STARTED_REGEX = new RegExp(`${infoPattern} connected to ${COMMUNICATION_WE
 const OK = (): { ok: true } => ({
 	ok: true
 });
+
+/**
+ * The docker executable to use (podman or docker)
+ */
+let docker!: string;
 
 /**
  * Whether to print the command line output of executed commands and additional debug output.
@@ -70,6 +82,18 @@ function printSpawned(spawned: ChildProcess): void {
 		spawned.stdout?.on('data', data => console.log('ssso: ' + trimNewline(data.toString())));
 		spawned.stderr?.on('data', data => console.error('ssse: ' + trimNewline(data.toString())));
 	}
+}
+
+function findDocker(): Promise<void> {
+	return new Promise((resolve, reject) => {
+		hasbin.first(['podman', 'docker'], result => {
+			if (result !== false) {
+				docker = result;
+				resolve();
+			}
+			reject('Cannot find podman or docker. Please install one of them!');
+		});
+	});
 }
 
 /**
@@ -131,7 +155,8 @@ export default class IssoManagement {
 	public static install(): Promise<void> {
 		process.umask(0);
 		if (!this.installed) {
-			return execAndPrint('docker pull wonderfall/isso')
+			return findDocker()
+				.then(() => execAndPrint(`${docker} pull wonderfall/isso`))
 				.then(() => tmp.dir())
 				.then(tmpdir => {
 					this._issodir = tmpdir;
@@ -341,8 +366,7 @@ class Isso {
 	/**
 	 * Creates a new isso server instance with the given instance id (but does not start it)
 	 */
-	public constructor(public readonly id: number) {
-	}
+	public constructor(public readonly id: number) {}
 
 	/**
 	 * Starts this instance if it’s not already running.
@@ -355,7 +379,7 @@ class Isso {
 		}
 		return new Promise((resolve, reject) => {
 			this.process = execFile(
-				'docker',
+				docker,
 				[
 					'run',
 					'--rm',
@@ -378,7 +402,7 @@ class Isso {
 				20000
 			);
 
-			const startListener = (data: string) => {
+			const startListener = (data: string): void => {
 				clearTimeout(startTimeout);
 				this.process?.stderr?.removeListener('data', startListener);
 				if (!INFO_REGEX.test(data)) {
@@ -415,8 +439,9 @@ class Isso {
 	 * @return A promise that will be resolved when the database was deleted.
 	 */
 	public removeDatabase(): Promise<void> {
-		return rmrf(this.dbDir)
-			.then(() => fs.promises.mkdir(this.dbDir, {mode: 0o777, recursive: true}));
+		return rmrf(this.dbDir).then(() =>
+			fs.promises.mkdir(this.dbDir, { mode: 0o777, recursive: true })
+		);
 	}
 
 	/**
@@ -443,8 +468,8 @@ class Isso {
 			enabled = false
 		`.replace(/\t/g, '');
 		return rmrf(this.configDir)
-			.then(() => fs.promises.mkdir(this.configDir, {mode: 0o777, recursive: true}))
-			.then(() => writeFile(`${this.configDir}/isso.conf`, config, {mode: 0o777}));
+			.then(() => fs.promises.mkdir(this.configDir, { mode: 0o777, recursive: true }))
+			.then(() => writeFile(`${this.configDir}/isso.conf`, config, { mode: 0o777 }));
 	}
 
 	private get configDir(): string {
