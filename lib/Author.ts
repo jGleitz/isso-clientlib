@@ -8,7 +8,6 @@ import Comment from './Comment';
  * may still have differnt data for the [#name](#name) and [#website](#website).
  */
 export default class Author {
-
 	private _website?: string;
 
 	private _ident?: string;
@@ -21,7 +20,7 @@ export default class Author {
 
 	public set ident(newIdent: string | undefined) {
 		if (this._ident === undefined && newIdent !== undefined) {
-			this.onIdentAssigned.post(this._ident = newIdent);
+			this.onIdentAssigned.post((this._ident = newIdent));
 		}
 	}
 
@@ -34,7 +33,7 @@ export default class Author {
 
 	public set website(website: string | undefined) {
 		if (website !== this._website) {
-			this.onWebsiteChanged.post(this._website = website);
+			this.onWebsiteChanged.post((this._website = website));
 			this.comment.authorChanged();
 		}
 	}
@@ -50,7 +49,7 @@ export default class Author {
 
 	public set name(name: string | undefined) {
 		if (this._name !== name) {
-			this.onNameChanged.post(this._name = name);
+			this.onNameChanged.post((this._name = name));
 			this.comment.authorChanged();
 		}
 	}
@@ -74,5 +73,5 @@ export default class Author {
 	 */
 	public readonly onNameChanged = new AsyncEvent<string | undefined>();
 
-	public constructor(private readonly comment: Comment) { }
+	public constructor(private readonly comment: Comment) {}
 }

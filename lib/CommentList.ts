@@ -38,19 +38,23 @@ export const enum SortCriterion {
 	LIKESUM
 }
 
+const atEnd = Number.MAX_SAFE_INTEGER;
+
 /**
  * Functions returning the number to use for comparison for each `SortCriterion`.
  */
-const COMMENT_MEMBER_ACCESS_FUNCTIONS: { [criterion: number]: (comment: Comment) => number } = {
-	[SortCriterion.CREATION]: comment => comment.createdOn!.getTime(),
-	[SortCriterion.MODIFICATION]: comment => (comment.lastModifiedOn || comment.createdOn)!.getTime(),
+const COMMENT_MEMBER_ACCESS_FUNCTIONS: {
+	[criterion: number]: (comment: Comment) => number;
+} = {
+	[SortCriterion.CREATION]: comment => comment.createdOn?.getTime() || atEnd,
+	[SortCriterion.MODIFICATION]: comment =>
+		(comment.lastModifiedOn || comment.createdOn)?.getTime() || atEnd,
 	[SortCriterion.LIKES]: comment => comment.likes,
 	[SortCriterion.DISLIKES]: comment => comment.dislikes,
 	[SortCriterion.LIKESUM]: comment => comment.likes - comment.dislikes
 };
 
-
-type ModifiableCommentList = {[index: number]: Comment | undefined};
+type ModifiableCommentList = { [index: number]: Comment | undefined };
 
 /**
  * A list of comments. Offers the ability to query and update the comments in this list. The list’s `count`, the number
@@ -59,7 +63,6 @@ type ModifiableCommentList = {[index: number]: Comment | undefined};
  * A list contains only comments that either are published or are deleted but still have replies.
  */
 export default class CommentList implements ArrayLike<Comment> {
-
 	/**
 	 * Array like index signature. Keeps the comments in the order set through [#sortBys](#sortbys) or
 	 * [#sortBy](#sortby). If no order was set yet, the list is ordered by the comments’ creation date.
@@ -90,7 +93,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	/**
 	 * The comparison function used to sort this list.
 	 */
-	private sortFunction: (a: Comment, b: Comment) => number = COMMENT_MEMBER_ACCESS_FUNCTIONS[SortCriterion.CREATION];
+	private sortFunction!: (a: Comment, b: Comment) => number;
 
 	/**
 	 * The number of comments known to belong in this list. May differ from this list’s [#length](#length).
@@ -117,8 +120,8 @@ export default class CommentList implements ArrayLike<Comment> {
 		return this._length;
 	}
 
-	private static collectiveCountQueue: Array<Page> = [];
-	private static collectiveCountPromise: Promise<Array<number>>;
+	private static collectiveCountQueue: Page[] = [];
+	private static collectiveCountPromise: Promise<unknown>;
 
 	/**
 	 * Fired when a new comment arrives in this index.
@@ -166,35 +169,41 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * Issues a collective update of deep counts for the pages collected in `collectiveCountQueue`. Fulfills
 	 * `collectiveCountPromise` when the count are ready.
 	 */
-	private static fetchCollectiveCounts(): Promise<any> {
+	private static fetchCollectiveCounts(): Promise<unknown> {
 		const firstPage = CommentList.collectiveCountQueue[0];
 		const pages = CommentList.collectiveCountQueue;
 		CommentList.collectiveCountQueue = [];
 		const requestData = pages.map(page => page.uri);
 		let unlock: () => void;
-		const lock = new Promise(resolve => unlock = resolve);
+		const lock = new Promise(resolve => (unlock = resolve));
 		// for each but the first page: wait for it to become ready and lock it
 		const readyLock = Promise.all(
 			pages.slice(1).map(
-				page => new Promise(
-					resolve => page.onNoRequest(
-						() => {
+				page =>
+					new Promise(resolve =>
+						page.onNoRequest(() => {
 							resolve();
 							return lock;
-						}))));
+						})
+					)
+			)
+		);
 		// send the query using the first page
 		return firstPage.send(
 			firstPage.server.post('/count').send(requestData),
 			// when the request is ready: wait for the other pages
-			response => readyLock.then(() => {
-				const countArray = <Array<number>>response.body;
-				// assign the new values
-				for (let i = 0; i < pages.length; i++) {
-					pages[i].comments.updateDeepCount(countArray[i]);
-				}
-			})
-				// finally: free all pages
-				.then(unlock));
+			response =>
+				readyLock
+					.then(() => {
+						const countArray = response.body as number[];
+						// assign the new values
+						for (let i = 0; i < pages.length; i++) {
+							pages[i].comments.updateDeepCount(countArray[i]);
+						}
+					})
+					// finally: free all pages
+					.then(unlock)
+		);
 	}
 
 	/**
@@ -245,12 +254,15 @@ export default class CommentList implements ArrayLike<Comment> {
 	/**
 	 * Executes a fetch request, sending the provieded `data`.
 	 */
-	private _fetch(data: any = {}): Promise<CommentList> {
+	private _fetch(data: Record<string, unknown> = {}): Promise<CommentList> {
 		return this.page.send(
-			this.page.server.get('/')
+			this.page.server
+				.get('/')
 				.query({ uri: this.page.uri })
 				.query(this.requestData(data)),
-			this.processCommentList, this);
+			this.processCommentList,
+			this
+		);
 	}
 
 	/**
@@ -259,23 +271,23 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * @hidden
 	 * @param serverData	A comment-like object recieved from the server.
 	 */
-	public updateFromServer(serverData: any): void {
+	public updateFromServer(serverData: Record<string, unknown>): void {
 		// if all comments were hidden by the limit parameter, we only wanted to fetch the count.
 		if (serverData.hidden_replies !== serverData.total_replies || serverData.total_replies === 0) {
-			const newList = serverData.replies;
+			const newList = serverData.replies as Record<string, unknown>[];
 			const newCommentById: { [id: number]: Comment } = {};
 			let i = 0;
 			let childrenDeepCount = 0;
 			for (; i < newList.length; i++) {
 				const data = newList[i];
-				let comment = this.commentsById[data.id];
+				let comment = this.commentsById[data.id as number];
 				if (comment === undefined) {
 					comment = Comment.fromServerData(data, this.parent);
 					this.onNew.post(comment);
 				} else {
 					comment.updateFromServer(data);
 				}
-				newCommentById[data.id] = comment;
+				newCommentById[data.id as number] = comment;
 				this[i] = comment;
 				childrenDeepCount += comment.replies.deepCount;
 			}
@@ -289,10 +301,10 @@ export default class CommentList implements ArrayLike<Comment> {
 			}
 			this.commentsById = newCommentById;
 			this.updateLength(newList.length);
-			this.updateDeepCount(childrenDeepCount + serverData.total_replies);
+			this.updateDeepCount(childrenDeepCount + (serverData.total_replies as number));
 			this.sort();
 		}
-		this.updateCount(serverData.total_replies);
+		this.updateCount(serverData.total_replies as number);
 	}
 
 	/**
@@ -302,7 +314,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * @return The array containing the result of transforming each comment in this list. The returned array will have
 	 *		the transformed values in the same order as the source comment were in this list.
 	 */
-	public map<ResultType>(transformer: (comment: Comment) => ResultType): Array<ResultType> {
+	public map<ResultType>(transformer: (comment: Comment) => ResultType): ResultType[] {
 		return this.doMap(transformer, false);
 	}
 
@@ -316,7 +328,7 @@ export default class CommentList implements ArrayLike<Comment> {
 	 *		the transformed values in the same order as the source comments were in this list. Replies come
 	 *		directly after their parent.
 	 */
-	public flatMap<ResultType>(transformer: (comment: Comment) => ResultType): Array<ResultType> {
+	public flatMap<ResultType>(transformer: (comment: Comment) => ResultType): ResultType[] {
 		return this.doMap(transformer, true);
 	}
 
@@ -327,14 +339,15 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * @param includeChildren	`true` iff comment’s children should be included in the result.
 	 * @return The result of transforming all comments using `tranformer`.
 	 */
-	private doMap<ResultType>(transformer: (comment: Comment) => ResultType, includeChildren: boolean)
-		: Array<ResultType> {
-		const result: Array<ResultType> = [];
+	private doMap<ResultType>(
+		transformer: (comment: Comment) => ResultType,
+		includeChildren: boolean
+	): ResultType[] {
+		const result: ResultType[] = [];
 		for (let i = 0; i < this.length; i++) {
 			result.push(transformer(this[i]));
 			if (includeChildren) {
-				this[i].replies.flatMap(transformer)
-					.forEach(transformed => result.push(transformed));
+				this[i].replies.flatMap(transformer).forEach(transformed => result.push(transformed));
 			}
 		}
 		return result;
@@ -357,9 +370,9 @@ export default class CommentList implements ArrayLike<Comment> {
 	 * @param data	Data for the fetch request.
 	 * @return A data object suitable for a fetch request. Contains the data set in the provided `data` object.
 	 */
-	private requestData(data: any): any {
+	private requestData(data: Record<string, unknown>): Record<string, unknown> {
 		if (this.parent instanceof Comment) {
-			data.parent = (<Comment>this.parent).id;
+			data.parent = this.parent.id;
 		}
 		return data;
 	}
@@ -396,9 +409,12 @@ export default class CommentList implements ArrayLike<Comment> {
 	 *
 	 * @param sortMethods	The sort methods to use, in order of their presedence.
 	 */
-	public sortBys(...sortMethods: Array<{ criterion: SortCriterion, mode: SortMode }>): void {
-		sortMethods.push({ criterion: SortCriterion.CREATION, mode: SortMode.ASCENDING });
-		const signs = sortMethods.map(method => method.mode === SortMode.DESCENDING ? -1 : 1);
+	public sortBys(...sortMethods: { criterion: SortCriterion; mode: SortMode }[]): void {
+		sortMethods.push({
+			criterion: SortCriterion.CREATION,
+			mode: SortMode.ASCENDING
+		});
+		const signs = sortMethods.map(method => (method.mode === SortMode.DESCENDING ? -1 : 1));
 		const acessors = sortMethods.map(method => COMMENT_MEMBER_ACCESS_FUNCTIONS[method.criterion]);
 		this.sortFunction = (a, b) => {
 			let result = 0;
@@ -422,7 +438,10 @@ export default class CommentList implements ArrayLike<Comment> {
 			this[i + 1] = this[i];
 		}
 		this[i + 1] = comment;
-		this.commentsById[comment.id!] = comment;
+		if (!comment.id) {
+			throw new Error('the comment does not have an ID yet!');
+		}
+		this.commentsById[comment.id] = comment;
 		this._length++;
 	}
 
@@ -440,7 +459,10 @@ export default class CommentList implements ArrayLike<Comment> {
 			(this as ModifiableCommentList)[i] = lastComment;
 			lastComment = copy;
 		}
-		delete this.commentsById[comment.id!];
+		if (!comment.id) {
+			throw new Error('the comment does not have an ID yet!');
+		}
+		delete this.commentsById[comment.id];
 		(this as ModifiableCommentList)[i] = lastComment;
 		this._length--;
 	}
@@ -451,19 +473,19 @@ export default class CommentList implements ArrayLike<Comment> {
 
 	private updateLength(newLength: number): void {
 		if (newLength !== this.length) {
-			this.onLengthChange.post(this._length = newLength);
+			this.onLengthChange.post((this._length = newLength));
 		}
 	}
 
 	private updateDeepCount(newCount: number): void {
 		if (newCount !== this._deepCount) {
-			this.onDeepCountChange.post(this._deepCount = newCount);
+			this.onDeepCountChange.post((this._deepCount = newCount));
 		}
 	}
 
 	private updateCount(newCount: number): void {
 		if (newCount !== this._count) {
-			this.onCountChange.post(this._count = newCount);
+			this.onCountChange.post((this._count = newCount));
 		}
 	}
 }

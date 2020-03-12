@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 /**
  * Module offering a web server through which instances of an isso server can be requested and controlled.
  */
@@ -12,7 +14,7 @@ import { communicationServerPort as COMMUNICATION_SERVER_PORT } from '../fixture
 import testPageMiddleware from './testPageMiddleware';
 
 const rmrf = promisify(rimraf) as (path: string) => Promise<void>;
-const writeFile = promisify(fs.writeFile) as (path: string, content: any) => Promise<void>;
+const writeFile = promisify(fs.writeFile) as (path: string, content: unknown) => Promise<void>;
 
 export const COMMUNICATION_WEBSITE = `http://localhost:${COMMUNICATION_SERVER_PORT}`;
 const BASE_PORT = 3020;
@@ -27,7 +29,7 @@ const INFO_REGEX = new RegExp(infoPattern);
  */
 const STARTED_REGEX = new RegExp(`${infoPattern} connected to ${COMMUNICATION_WEBSITE}`);
 
-const OK = () => ({
+const OK = (): { ok: true } => ({
 	ok: true
 });
 
@@ -64,8 +66,8 @@ function trimNewline(inputString: string): string {
  */
 function printSpawned(spawned: ChildProcess): void {
 	if (print) {
-		spawned.stdout.on('data', data => console.log(trimNewline(data.toString())));
-		spawned.stderr.on('data', data => console.error(trimNewline(data.toString())));
+		spawned.stdout?.on('data', data => console.log(trimNewline(data.toString())));
+		spawned.stderr?.on('data', data => console.error(trimNewline(data.toString())));
 	}
 }
 
@@ -91,9 +93,12 @@ function kill(process: ChildProcess): Promise<void> {
  * @return A promise that will be resolved with the commands’ output when the command finished executing. It will be
  *        rejected if executing the commands failed or anything was printed to stderr.
  */
-function execScript(commands: string, spawnedHandler?: (process: ChildProcess) => void): Promise<string> {
+function execScript(
+	commands: string,
+	spawnedHandler?: (process: ChildProcess) => void
+): Promise<string> {
 	return new Promise((resolve, reject) => {
-		const spawned = exec(commands, (error, stdout, stderr) => {
+		const spawned = exec(commands, (error, stdout) => {
 			if (spawnedHandler) {
 				spawnedHandler(spawned);
 			}
@@ -130,8 +135,8 @@ echo "$here"`;
 
 export default class IssoManagement {
 	private static _issoloc?: string;
-	private static readonly issos: Array<Isso> = [];
-	private static readonly freeList: Array<number> = [];
+	private static readonly issos: Isso[] = [];
+	private static readonly freeList: number[] = [];
 	private static communicationServer?: http.Server;
 
 	public static get issoloc(): string | undefined {
@@ -145,10 +150,11 @@ export default class IssoManagement {
 	 */
 	public static install(): Promise<void> {
 		if (this.issoloc === undefined) {
-			return execScript(installscript)
-				.then(result => {
-					this._issoloc = trimNewline(result).split(/\r?\n/).pop();
-				});
+			return execScript(installscript).then(result => {
+				this._issoloc = trimNewline(result)
+					.split(/\r?\n/)
+					.pop();
+			});
 		} else {
 			return Promise.resolve();
 		}
@@ -169,9 +175,11 @@ export default class IssoManagement {
 	}
 
 	private static startCommunicationServer(): Promise<void> {
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 			if (this.communicationServer === undefined) {
-				this.communicationServer = http.createServer(this.communicationServerHandler.bind(IssoManagement));
+				this.communicationServer = http.createServer(
+					this.communicationServerHandler.bind(IssoManagement)
+				);
 				this.communicationServer.listen(COMMUNICATION_SERVER_PORT, resolve);
 			} else {
 				resolve();
@@ -182,7 +190,7 @@ export default class IssoManagement {
 	private static stopCommunicationServer(): Promise<void> {
 		return new Promise((resolve, reject) => {
 			if (this.communicationServer !== undefined) {
-				this.communicationServer.close(resolve);
+				this.communicationServer.close(err => (err ? reject(err) : resolve()));
 			} else {
 				resolve();
 			}
@@ -195,10 +203,10 @@ export default class IssoManagement {
 	 * @return A promise that will be resolved when isso was stopped.
 	 */
 	public static stop(): Promise<void> {
-		return Promise.all([
+		return (Promise.all([
 			Promise.all(this.issos.map(isso => isso.stop())),
 			this.stopCommunicationServer()
-		]) as Promise<any>;
+		]) as unknown) as Promise<void>;
 	}
 
 	/**
@@ -208,18 +216,21 @@ export default class IssoManagement {
 	 */
 	public static destroy(): Promise<void> {
 		return this.stop()
-			.then(() => this.issoloc !== undefined ? rmrf(this.issoloc) : Promise.resolve())
-			.then(() => this._issoloc = undefined);
+			.then(() =>
+				this.issoloc !== undefined ? rmrf(this.issoloc) : Promise.resolve()
+			)
+			.then(() => (this._issoloc = undefined));
 	}
 
 	private static getIsso(id?: string): Isso {
 		let numericId: number;
 		if (id === undefined) {
 			if (this.freeList.length > 0) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				numericId = this.freeList.shift()!;
 			} else {
 				numericId = instancecount++;
-				// tslint:disable-next-line no-use-before-declare TODO figure out if this can be fixed more easily
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				this.issos[numericId] = new Isso(numericId);
 			}
 		} else {
@@ -247,9 +258,12 @@ export default class IssoManagement {
 	/**
 	 * Replies to requests to the communication server.
 	 */
-	private static communicationServerHandler(request: http.IncomingMessage, response: http.ServerResponse): void {
-		let promise: Promise<any>;
-		const query = url.parse(request.url!, true);
+	private static communicationServerHandler(
+		request: http.IncomingMessage,
+		response: http.ServerResponse
+	): void {
+		let promise: Promise<object>;
+		const query = url.parse(request.url || '', true);
 		response.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
 		response.setHeader('Access-Control-Allow-Methods', 'GET');
 		response.setHeader('Content-Type', 'application/json');
@@ -266,7 +280,8 @@ export default class IssoManagement {
 					promise = Promise.reject('Cannot set the id for a new instance!');
 				} else {
 					isso = this.getIsso(undefined);
-					promise = isso.stop()
+					promise = isso
+						.stop()
 						.then(() => isso.removeDatabase())
 						.then(() => isso.writeConfigFile())
 						.then(() => log(`Created Isso #${isso.id}`))
@@ -281,7 +296,8 @@ export default class IssoManagement {
 				} else {
 					isso = this.getIsso(id);
 					isso.moderated = query.query.moderation === 'active';
-					promise = isso.stop()
+					promise = isso
+						.stop()
 						.then(() => isso.writeConfigFile())
 						.then(() => isso.start())
 						.then(() => log(`Re-started Isso #${isso.id}${isso.moderated ? ' (moderated)' : ''}`))
@@ -292,7 +308,8 @@ export default class IssoManagement {
 				if (id === undefined) {
 					promise = Promise.reject('No id provided!');
 				} else {
-					promise = this.getIsso(id).stop()
+					promise = this.getIsso(id)
+						.stop()
 						.then(() => log(`Stopped Isso #${isso.id}`))
 						.then(OK);
 				}
@@ -303,7 +320,8 @@ export default class IssoManagement {
 				} else {
 					isso = this.getIsso(id);
 					isso.moderated = false;
-					promise = isso.stop()
+					promise = isso
+						.stop()
 						.then(() => isso.removeDatabase())
 						.then(() => this.announceFreeId(id))
 						.then(() => log(`Returned Isso #${isso.id}`))
@@ -317,7 +335,8 @@ export default class IssoManagement {
 				});
 				return;
 		}
-		promise.then(result => response.end(JSON.stringify(result)))
+		promise
+			.then(result => response.end(JSON.stringify(result)))
 			.catch(error => {
 				console.error(error);
 				response.setHeader('Content-Type', 'text/plain');
@@ -326,7 +345,6 @@ export default class IssoManagement {
 			});
 	}
 }
-
 
 class Isso {
 	// Whether comments on this instance need moderation. This instance’s config file must be rewritten after
@@ -346,7 +364,7 @@ class Isso {
 	/**
 	 * Creates a new isso server instance with the given instance id (but does not start it)
 	 */
-	constructor(public readonly id: number) {
+	public constructor(public readonly id: number) {
 	}
 
 	/**
@@ -365,8 +383,9 @@ class Isso {
 							this.process = undefined;
 							reject(error);
 						}
-					});
-				this.process.stderr.on('data', data => {
+					}
+				);
+				this.process.stderr?.on('data', data => {
 					if (data instanceof Buffer) {
 						throw Error('Expected a string, got a Buffer!');
 					}
@@ -395,11 +414,10 @@ class Isso {
 	 */
 	public stop(): Promise<void> {
 		if (this.process !== undefined) {
-			return kill(this.process)
-				.then(() => {
-					this.process = undefined;
-					this._started = false;
-				});
+			return kill(this.process).then(() => {
+				this.process = undefined;
+				this._started = false;
+			});
 		} else {
 			return Promise.resolve();
 		}

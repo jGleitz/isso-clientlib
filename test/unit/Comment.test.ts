@@ -12,7 +12,8 @@ const commentData = SERVER_FIXTURES.standard.replies[0];
 let page: Page;
 
 describe('Comment', () => {
-	beforeEach(() => { // create a page
+	beforeEach(() => {
+		// create a page
 		page = new Page(server, 'test/uri');
 	});
 
@@ -49,30 +50,37 @@ describe('Comment', () => {
 		comment.author.email = 'me@mail.org';
 		comment.author.name = 'Test';
 		comment.author.website = 'test.org';
-		server.responseToPost('/new', expectData({
-			text: 'Hey there!',
-			email: 'me@mail.org',
-			parent: null,
-			website: 'test.org',
-			author: 'Test'
-		}, successResponse({
-			id: 18,
-			parent: null,
-			text: '<p>Hey there!</p>\n',
-			mode: 1,
-			hash: '4505c1eeda98',
-			author: 'Test',
-			website: 'test.org',
-			created: 1387321261.572392,
-			modified: null,
-			likes: 0,
-			dislikes: 0,
-			total_replies: 0,
-			hidden_replies: 0,
-			replies: []
-		})));
+		server.responseToPost(
+			'/new',
+			expectData(
+				{
+					text: 'Hey there!',
+					email: 'me@mail.org',
+					parent: null,
+					website: 'test.org',
+					author: 'Test'
+				},
+				successResponse({
+					id: 18,
+					parent: null,
+					text: '<p>Hey there!</p>\n',
+					mode: 1,
+					hash: '4505c1eeda98',
+					author: 'Test',
+					website: 'test.org',
+					created: 1387321261.572392,
+					modified: null,
+					likes: 0,
+					dislikes: 0,
+					total_replies: 0,
+					hidden_replies: 0,
+					replies: []
+				})
+			)
+		);
 
-		return comment.send()
+		return comment
+			.send()
 			.then(() => {
 				expect(comment.published).toBeTrue();
 				expect(comment.deleted).toBeFalse();
@@ -85,35 +93,40 @@ describe('Comment', () => {
 			.then(() => {
 				const reply = new Comment(comment);
 				reply.rawText = 'Hey again!';
-				server.responseToPost('/new', expectData({
-					text: 'Hey again!',
-					email: undefined,
-					parent: 18,
-					website: undefined,
-					author: undefined
-				}, successResponse({
-					id: 10,
-					parent: null,
-					text: '<p>Hey again!</p>\n',
-					mode: 1,
-					hash: '4505c1eeda98',
-					author: null,
-					website: null,
-					created: 1387321261.572392,
-					modified: null,
-					likes: 0,
-					dislikes: 0,
-					total_replies: 0,
-					hidden_replies: 0,
-					replies: []
-				})));
+				server.responseToPost(
+					'/new',
+					expectData(
+						{
+							text: 'Hey again!',
+							email: undefined,
+							parent: 18,
+							website: undefined,
+							author: undefined
+						},
+						successResponse({
+							id: 10,
+							parent: null,
+							text: '<p>Hey again!</p>\n',
+							mode: 1,
+							hash: '4505c1eeda98',
+							author: null,
+							website: null,
+							created: 1387321261.572392,
+							modified: null,
+							likes: 0,
+							dislikes: 0,
+							total_replies: 0,
+							hidden_replies: 0,
+							replies: []
+						})
+					)
+				);
 
-				return reply.send().
-					then(() => {
-						expect(reply.repliesTo).toBe(comment);
-						expect(reply.page).toBe(page);
-						expect(replyInsertSpy).toHaveBeenCalledWith(reply);
-					});
+				return reply.send().then(() => {
+					expect(reply.repliesTo).toBe(comment);
+					expect(reply.page).toBe(page);
+					expect(replyInsertSpy).toHaveBeenCalledWith(reply);
+				});
 			});
 	});
 
@@ -135,7 +148,7 @@ describe('Comment', () => {
 			dislikes: 0,
 			total_replies: 0,
 			hidden_replies: 0,
-			replies: <Array<any>> []
+			replies: []
 		};
 
 		server.responseToPost('/new', successResponse(unpublishedResponse));
@@ -145,7 +158,8 @@ describe('Comment', () => {
 
 		server.responseToGet('/id/18', successResponse(publishedResponse));
 
-		return comment.send()
+		return comment
+			.send()
 			.then(() => {
 				expect(comment.published).toBeFalse();
 			})
@@ -164,33 +178,40 @@ describe('Comment', () => {
 	it('can be updated on the server', () => {
 		const comment = Comment.fromServerData(commentData, page);
 		comment.author.name = 'Captain Hook';
-		server.responseToPut('/id/1', expectData({
-			text: '<p>Hello, World!</p>\n',
-			email: undefined,
-			parent: null,
-			website: 'peterpan.org',
-			author: 'Captain Hook'
-		}, successResponse({
-			id: 10,
-			parent: null,
-			text: '<p>Hey again!</p>\n',
-			mode: 1,
-			hash: '4505c1eeda98',
-			author: null,
-			website: null,
-			created: 1387321261.572392,
-			modified: null,
-			likes: 0,
-			dislikes: 0,
-			total_replies: 0,
-			hidden_replies: 0,
-			replies: []
-		})));
+		server.responseToPut(
+			'/id/1',
+			expectData(
+				{
+					text: '<p>Hello, World!</p>\n',
+					email: undefined,
+					parent: null,
+					website: 'peterpan.org',
+					author: 'Captain Hook'
+				},
+				successResponse({
+					id: 10,
+					parent: null,
+					text: '<p>Hey again!</p>\n',
+					mode: 1,
+					hash: '4505c1eeda98',
+					author: null,
+					website: null,
+					created: 1387321261.572392,
+					modified: null,
+					likes: 0,
+					dislikes: 0,
+					total_replies: 0,
+					hidden_replies: 0,
+					replies: []
+				})
+			)
+		);
 		return comment.send();
 	});
 
 	it('does not send when unchanged', () => {
 		const comment = Comment.fromServerData(commentData, page);
+		// eslint-disable-next-line no-self-assign
 		comment.rawText = comment.rawText;
 		return expect(comment.send()).resolves.toBeDefined();
 	});
@@ -205,14 +226,13 @@ describe('Comment', () => {
 		changed.dislikes = 2;
 		server.responseToGet('/id/1', successResponse(changed));
 
-		return comment.fetch()
-			.then(() => {
-				expect(comment.text).toBe('<p>changed</p>\n');
-				expect(comment.lastModifiedOn).toEqual(new Date(Date.UTC(2013, 11, 17, 23, 2, 58, 613)));
-				expect(comment.author.name).toBe('Tester');
-				expect(comment.likes).toBe(8);
-				expect(comment.dislikes).toBe(2);
-			});
+		return comment.fetch().then(() => {
+			expect(comment.text).toBe('<p>changed</p>\n');
+			expect(comment.lastModifiedOn).toEqual(new Date(Date.UTC(2013, 11, 17, 23, 2, 58, 613)));
+			expect(comment.author.name).toBe('Tester');
+			expect(comment.likes).toBe(8);
+			expect(comment.dislikes).toBe(2);
+		});
 	});
 
 	it('recognises when being deleted but referenced', () => {
@@ -221,41 +241,44 @@ describe('Comment', () => {
 		asDeleted.mode = 4;
 		server.responseToGet('/id/1', successResponse(asDeleted));
 
-		return comment.fetch()
-			.then(() => {
-				expect(comment.deleted).toBeTrue();
-				expect(comment.published).toBeFalse();
-			});
+		return comment.fetch().then(() => {
+			expect(comment.deleted).toBeTrue();
+			expect(comment.published).toBeFalse();
+		});
 	});
 
 	it('can send likes', () => {
 		const comment = Comment.fromServerData(commentData, page);
 
-		server.responseToPost('/id/1/like', successResponse({
-			likes: 8,
-			dislikes: 6
-		}));
+		server.responseToPost(
+			'/id/1/like',
+			successResponse({
+				likes: 8,
+				dislikes: 6
+			})
+		);
 
-		return comment.sendLike()
-			.then(() => {
-				expect(comment.likes).toBe(8);
-				expect(comment.dislikes).toBe(6);
-			});
+		return comment.sendLike().then(() => {
+			expect(comment.likes).toBe(8);
+			expect(comment.dislikes).toBe(6);
+		});
 	});
 
 	it('can send dislikes', () => {
 		const comment = Comment.fromServerData(commentData, page);
 
-		server.responseToPost('/id/1/dislike', successResponse({
-			likes: 8,
-			dislikes: 6
-		}));
+		server.responseToPost(
+			'/id/1/dislike',
+			successResponse({
+				likes: 8,
+				dislikes: 6
+			})
+		);
 
-		return comment.sendDislike()
-			.then(() => {
-				expect(comment.likes).toBe(8);
-				expect(comment.dislikes).toBe(6);
-			});
+		return comment.sendDislike().then(() => {
+			expect(comment.likes).toBe(8);
+			expect(comment.dislikes).toBe(6);
+		});
 	});
 
 	it('can be deleted', () => {
@@ -263,11 +286,10 @@ describe('Comment', () => {
 
 		server.responseToDelete('/id/1', successResponse(null));
 
-		return comment.delete()
-			.then(() => {
-				expect(comment.published).toBeFalse();
-				expect(comment.deleted).toBeTrue();
-			});
+		return comment.delete().then(() => {
+			expect(comment.published).toBeFalse();
+			expect(comment.deleted).toBeTrue();
+		});
 	});
 
 	it('does not delete when already being deleted', () => {
@@ -275,7 +297,8 @@ describe('Comment', () => {
 
 		server.responseToDelete('/id/1', successResponse(null));
 
-		return comment.delete()
+		return comment
+			.delete()
 			.then(() => comment.delete())
 			.then(() => {
 				expect(comment.published).toBeFalse();
@@ -292,7 +315,8 @@ describe('Comment', () => {
 		server.responseToDelete('/id/1', successResponse(null));
 		server.responseToDelete('/id/2', successResponse(null));
 
-		return comment.delete()
+		return comment
+			.delete()
 			.then(() => {
 				expect(pageSpy).toHaveBeenCalledWith(comment);
 			})

@@ -40,7 +40,6 @@ const TIMESTAMP_MULTIPLIER = 1000;
  * used to query and be updated of changes.
  */
 export default class Comment {
-
 	/**
 	 * Whether this comment has data changes that are not yet reflected on
 	 * the server.
@@ -126,7 +125,7 @@ export default class Comment {
 		return this._lastModifiedOn;
 	}
 
-	private _likes: number = 0;
+	private _likes = 0;
 
 	/**
 	 * The number of likes placed on this comment.
@@ -135,8 +134,7 @@ export default class Comment {
 		return this._likes;
 	}
 
-	private _dislikes: number = 0;
-
+	private _dislikes = 0;
 
 	/**
 	 * The number of dislikes placed on this comment.
@@ -206,7 +204,7 @@ export default class Comment {
 	 * @param parent    The created comment’s parent: The page it’s on if it’s a top level comment, or the comment
 	 *        this comment replies to if it’s a reply.
 	 */
-	constructor(parent: Comment | Page) {
+	public constructor(parent: Comment | Page) {
 		if (parent instanceof Comment) {
 			this.repliesTo = parent;
 			this.page = parent.page;
@@ -234,10 +232,10 @@ export default class Comment {
 	 *        this comment replies to if it’s a reply.
 	 * @return The comment object represented by `serverData`.
 	 */
-	public static fromServerData(serverData: any, parent: Comment | Page): Comment {
+	public static fromServerData(serverData: unknown, parent: Comment | Page): Comment {
 		const result = new Comment(parent);
 		result.existsOnServer = true; // we don’t want to fire an onPublished event for this comment.
-		result.updateFromServer(serverData);
+		result.updateFromServer(serverData as Record<string, unknown>);
 		return result;
 	}
 
@@ -247,25 +245,30 @@ export default class Comment {
 	 * @hidden
 	 * @param serverData    A comment data object received from the isso server.
 	 */
-	public updateFromServer(serverData: any): void {
+	public updateFromServer(serverData: Record<string, unknown>): void {
 		if (serverData.mode === DELETED_STATE) {
 			this.wasDeleted();
 		}
 		this.awaitsModeration = serverData.mode === AWAITS_MODERATION_STATE;
 		if (this.id === undefined) {
-			this.onIdAssigned.post(this.id = serverData.id);
+			this.onIdAssigned.post((this.id = serverData.id as number));
 		}
-		this.updateText(serverData.text);
-		this._createdOn = this._createdOn || new Date(serverData.created * TIMESTAMP_MULTIPLIER);
-		if (serverData.modified !== null
-			&& (this._lastModifiedOn === undefined || this._lastModifiedOn.getTime() !== serverData.modified)) {
-			this.onModifiedChanged.post(this._lastModifiedOn = new Date(serverData.modified * TIMESTAMP_MULTIPLIER));
+		this.updateText(serverData.text as string);
+		this._createdOn =
+			this._createdOn || new Date((serverData.created as number) * TIMESTAMP_MULTIPLIER);
+		if (
+			serverData.modified !== null &&
+			(this._lastModifiedOn === undefined || this._lastModifiedOn.getTime() !== serverData.modified)
+		) {
+			this.onModifiedChanged.post(
+				(this._lastModifiedOn = new Date((serverData.modified as number) * TIMESTAMP_MULTIPLIER))
+			);
 		}
 		this.applyLikes(serverData);
 
-		this.author.ident = serverData.hash;
-		this.author.website = serverData.website;
-		this.author.name = serverData.author;
+		this.author.ident = serverData.hash as string | undefined;
+		this.author.website = serverData.website as string | undefined;
+		this.author.name = serverData.author as string | undefined;
 		if (serverData.replies !== undefined) {
 			this.replies.updateFromServer(serverData);
 		}
@@ -292,20 +295,30 @@ export default class Comment {
 	 */
 	public send(): Promise<Comment> {
 		if (!this.existsOnServer) {
-			return this.page.send(() => {
-				this.checkSendPreconditions();
-				return this.page.server.post('/new')
-					.query({ uri: this.page.uri })
-					.withCredentials()
-					.send(this.toRequestData());
-			}, this.afterCreate, this);
+			return this.page.send(
+				() => {
+					this.checkSendPreconditions();
+					return this.page.server
+						.post('/new')
+						.query({ uri: this.page.uri })
+						.withCredentials()
+						.send(this.toRequestData());
+				},
+				this.afterCreate,
+				this
+			);
 		} else if (this.dirty) {
-			return this.page.send(() => {
-				this.checkSendPreconditions();
-				return this.page.server.put(`/id/${this.id}`)
-					.withCredentials()
-					.send(this.toRequestData());
-			}, this.afterUpdate, this);
+			return this.page.send(
+				() => {
+					this.checkSendPreconditions();
+					return this.page.server
+						.put(`/id/${this.id}`)
+						.withCredentials()
+						.send(this.toRequestData());
+				},
+				this.afterUpdate,
+				this
+			);
 		}
 		return Promise.resolve(this);
 	}
@@ -316,9 +329,7 @@ export default class Comment {
 	 * @return    A promised resolved with `this` when the update suceeded.
 	 */
 	public fetch(): Promise<Comment> {
-		return this.page.send(
-			this.page.server.get(`/id/${this.id}`),
-			this.afterUpdate, this);
+		return this.page.send(this.page.server.get(`/id/${this.id}`), this.afterUpdate, this);
 	}
 
 	/**
@@ -327,10 +338,9 @@ export default class Comment {
 	 * @return A promise that will be resolved with the new number of likes when the server request succeeded.
 	 */
 	public sendLike(): Promise<number> {
-		return this.page.send(
-			this.page.server.post(`/id/${this.id}/like`),
-			this.processLikes, this
-		).then(() => this._likes);
+		return this.page
+			.send(this.page.server.post(`/id/${this.id}/like`), this.processLikes, this)
+			.then(() => this._likes);
 	}
 
 	/**
@@ -339,10 +349,9 @@ export default class Comment {
 	 * @return A promise that will be resolved with the new number of dislikes when the server request succeeded.
 	 */
 	public sendDislike(): Promise<number> {
-		return this.page.send(
-			this.page.server.post(`/id/${this.id}/dislike`),
-			this.processLikes, this
-		).then(() => this._dislikes);
+		return this.page
+			.send(this.page.server.post(`/id/${this.id}/dislike`), this.processLikes, this)
+			.then(() => this._dislikes);
 	}
 
 	/**
@@ -356,9 +365,10 @@ export default class Comment {
 	public delete(): Promise<void> {
 		if (!this.deleted) {
 			return this.page.send(
-				this.page.server.delete(`/id/${this.id}`)
-					.withCredentials(),
-				this.afterDelete, this);
+				this.page.server.delete(`/id/${this.id}`).withCredentials(),
+				this.afterDelete,
+				this
+			);
 		}
 		return Promise.resolve(undefined);
 	}
@@ -404,7 +414,7 @@ export default class Comment {
 	 *
 	 * @return This comment’s server representation.
 	 */
-	private toRequestData(): Object {
+	private toRequestData(): object {
 		return {
 			// the server expects the text to be sent on updates.
 			text: this.rawText || this.text,
@@ -432,12 +442,12 @@ export default class Comment {
 	 *
 	 * @param commentLikeObject    An object at least having a `likes` and `dislikes` property.
 	 */
-	private applyLikes(commentLikeObject: any): void {
+	private applyLikes(commentLikeObject: Record<string, unknown>): void {
 		if (commentLikeObject.likes !== this.likes) {
-			this.onLikesChanged.post(this._likes = commentLikeObject.likes);
+			this.onLikesChanged.post((this._likes = commentLikeObject.likes as number));
 		}
 		if (commentLikeObject.dislikes !== this.dislikes) {
-			this.onDislikesChanged.post(this._dislikes = commentLikeObject.dislikes);
+			this.onDislikesChanged.post((this._dislikes = commentLikeObject.dislikes as number));
 		}
 	}
 
@@ -462,7 +472,7 @@ export default class Comment {
 
 	private updateText(newText: string): void {
 		if (this._text !== newText) {
-			this.onTextChanged.post(this._text = newText);
+			this.onTextChanged.post((this._text = newText));
 		}
 	}
 }

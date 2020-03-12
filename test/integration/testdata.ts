@@ -6,16 +6,24 @@ import * as Isso from '../util/isso-control';
 
 let server: Server;
 
-export function createPopulatedTestPages(pageUrisToUse: string[] = pageUris): (serverUrl: string) => Promise<Page[]> {
+export function createPopulatedTestPages(
+	pageUrisToUse: string[] = pageUris
+): (serverUrl: string) => Promise<Page[]> {
 	return createPopulatedTestPagesInto([], pageUrisToUse);
 }
 
-export function createPopulatedTestPagesInto(target: Page[], pageUrisToUse: string[] = pageUris)
-	: (serverUrl: string) => Promise<Page[]> {
-	return (serverUrl: string) => populateTestPages(createTestPagesInto(target, pageUrisToUse)(serverUrl));
+export function createPopulatedTestPagesInto(
+	target: Page[],
+	pageUrisToUse: string[] = pageUris
+): (serverUrl: string) => Promise<Page[]> {
+	return (serverUrl: string) =>
+		populateTestPages(createTestPagesInto(target, pageUrisToUse)(serverUrl));
 }
 
-export function createTestPagesInto(target: Page[], pageUrisToUse: string[] = pageUris): (serverUrl: string) => Page[] {
+export function createTestPagesInto(
+	target: Page[],
+	pageUrisToUse: string[] = pageUris
+): (serverUrl: string) => Page[] {
 	return (serverUrl: string) => {
 		server = new Server(serverUrl);
 		pageUrisToUse.forEach(uri => target.push(new Page(server, uri)));
@@ -24,7 +32,9 @@ export function createTestPagesInto(target: Page[], pageUrisToUse: string[] = pa
 }
 
 export function populateTestPages(pages: Page[]): Promise<Page[]> {
-	return pages.filter(isFirstPage).reduce((prev, page) => prev.then(() => populateFirstPage(page)), Promise.resolve())
+	return pages
+		.filter(isFirstPage)
+		.reduce((prev, page) => prev.then(() => populateFirstPage(page)), Promise.resolve())
 		.then(() => Promise.all(pages.filter(not(isFirstPage)).map(populateOtherPage)))
 		.then(() => {
 			return pages;
@@ -93,12 +103,22 @@ function populateFirstPage(firstPage: Page): Promise<void> {
 }
 
 function populateOtherPage(page: Page): Promise<void> {
-	return Promise.all(
-		['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eigth', 'ninth', 'tenth']
-			.map(text => {
-				const comment = new Comment(page);
-				comment.rawText = `*${text}* comment on this page! That’s so **cool**!`;
-				return comment.send();
-			})
-	) as Promise<any>;
+	return (Promise.all(
+		[
+			'first',
+			'second',
+			'third',
+			'fourth',
+			'fifth',
+			'sixth',
+			'seventh',
+			'eigth',
+			'ninth',
+			'tenth'
+		].map(text => {
+			const comment = new Comment(page);
+			comment.rawText = `*${text}* comment on this page! That’s so **cool**!`;
+			return comment.send();
+		})
+	) as unknown) as Promise<void>;
 }

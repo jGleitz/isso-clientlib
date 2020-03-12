@@ -9,8 +9,8 @@ const server = new IssoFakeServer();
 let page: Page;
 
 describe('Author', () => {
-
-	beforeEach(() => { // create a page
+	beforeEach(() => {
+		// create a page
 		page = new Page(server, 'test/uri');
 	});
 

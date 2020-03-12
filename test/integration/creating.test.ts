@@ -5,7 +5,7 @@ import { createTestPagesInto as createEmptyTestPagesInto } from './testdata';
 
 const start = new Date();
 
-const pages: Array<Page> = [];
+const pages: Page[] = [];
 
 /**
  * Fast check of feasibility for comments.
@@ -15,7 +15,6 @@ function checkComment(comment: Comment): void {
 	expect(comment.author.ident).toBeTruthy();
 	expect(comment.createdOn).toBeAfter(start);
 }
-
 
 describe('creating comments', () => {
 	beforeAll(() => Isso.create().then(createEmptyTestPagesInto(pages)));
@@ -65,11 +64,21 @@ describe('creating comments', () => {
 		comments[c].author.email = 'angry.man@example.org';
 
 		[pages[1], pages[2]].forEach(page => {
-			['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eigth', 'ninth', 'tenth']
-				.forEach(text => {
-					comments[++c] = new Comment(page);
-					comments[c].rawText = `*${text}* comment on this page! That’s so **cool**!`;
-				});
+			[
+				'first',
+				'second',
+				'third',
+				'fourth',
+				'fifth',
+				'sixth',
+				'seventh',
+				'eigth',
+				'ninth',
+				'tenth'
+			].forEach(text => {
+				comments[++c] = new Comment(page);
+				comments[c].rawText = `*${text}* comment on this page! That’s so **cool**!`;
+			});
 		});
 
 		return Promise.all(comments.map(comment => comment.send()));
@@ -85,7 +94,8 @@ describe('creating comments', () => {
 			comment.author.name = 'Mr. Moderated';
 			comment.author.email = 'moderated@mrtest.com';
 			comment.author.website = 'https://example.org';
-			return comment.send()
+			return comment
+				.send()
 				.then(checkComment)
 				.then(() => {
 					expect(comment.published).toBeFalse();

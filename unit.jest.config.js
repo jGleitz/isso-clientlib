@@ -1,6 +1,8 @@
+/* eslint-env node */
+
 module.exports = {
 	// A preset that is used as a base for Jest's configuration
-	preset: "ts-jest",
+	preset: 'ts-jest',
 
 	// All imported modules in your tests should be mocked automatically
 	// automock: false,
@@ -21,10 +23,10 @@ module.exports = {
 	collectCoverage: true,
 
 	// An array of glob patterns indicating a set of files for which coverage information should be collected
-	collectCoverageFrom: ["<rootDir>/lib/**"],
+	collectCoverageFrom: ['<rootDir>/lib/**'],
 
 	// The directory where Jest should output its coverage files
-	coverageDirectory: "coverage/unit",
+	coverageDirectory: 'coverage/unit',
 
 	// An array of regexp pattern strings used to skip coverage collection
 	// coveragePathIgnorePatterns: [
@@ -115,10 +117,7 @@ module.exports = {
 	// rootDir: null,
 
 	// A list of paths to directories that Jest should use to search for files in
-	roots: [
-		"<rootDir>/lib",
-		"<rootDir>/test/unit"
-	],
+	roots: ['<rootDir>/lib', '<rootDir>/test/unit'],
 
 	// Allows you to use a custom runner instead of Jest's default test runner
 	// runner: "jest-runner",
@@ -127,7 +126,7 @@ module.exports = {
 	// setupFiles: [],
 
 	// A list of paths to modules that run some code to configure or set up the testing framework before each test
-	setupFilesAfterEnv: ["jest-extended"],
+	setupFilesAfterEnv: ['jest-extended']
 
 	// A list of paths to snapshot serializer modules Jest should use for snapshot testing
 	// snapshotSerializers: [],

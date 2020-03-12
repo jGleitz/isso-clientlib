@@ -5,7 +5,6 @@ import * as Http from 'superagent';
  * comments. All requests will be sent to it.
  */
 export default class IssoServer {
-
 	/**
 	 * URL of the isso server.
 	 */
@@ -17,8 +16,9 @@ export default class IssoServer {
 	 *
 	 * @param baseUrl    The url of the isso server to communicate with.
 	 */
-	constructor(baseUrl: string) {
-		this.baseUrl = baseUrl.charAt(baseUrl.length - 1) === '/' ? baseUrl.substr(0, baseUrl.length - 1) : baseUrl;
+	public constructor(baseUrl: string) {
+		this.baseUrl =
+			baseUrl.charAt(baseUrl.length - 1) === '/' ? baseUrl.substr(0, baseUrl.length - 1) : baseUrl;
 	}
 
 	/**
@@ -28,7 +28,7 @@ export default class IssoServer {
 	 * @param endpoint    The endpoint URI, relative to this server’s base URL. Must start with a `/`.
 	 * @return A request object to `GET` on `endpoint`.
 	 */
-	public get(endpoint: string): Http.Request {
+	public get(endpoint: string): Http.SuperAgentRequest {
 		return Http.get(this.baseUrl + endpoint);
 	}
 
@@ -40,9 +40,8 @@ export default class IssoServer {
 	 *        The endpoint URI, relative to this server’s base URL. Must start with a `/`.
 	 * @return A request object to `POST` on `endpoint`.
 	 */
-	public post(endpoint: string): Http.Request {
-		return Http.post(this.baseUrl + endpoint)
-			.set('Content-Type', 'application/json');
+	public post(endpoint: string): Http.SuperAgentRequest {
+		return Http.post(this.baseUrl + endpoint).set('Content-Type', 'application/json');
 	}
 
 	/**
@@ -52,7 +51,7 @@ export default class IssoServer {
 	 * @param endpoint    The endpoint URI, relative to this server’s base URL. Must start with a `/`.
 	 * @return A request object to `PUT` on `endpoint`.
 	 */
-	public put(endpoint: string): Http.Request {
+	public put(endpoint: string): Http.SuperAgentRequest {
 		return Http.put(this.baseUrl + endpoint);
 	}
 
@@ -63,7 +62,7 @@ export default class IssoServer {
 	 * @param endpoint    The endpoint URI, relative to this server’s base URL. Must start with a `/`.
 	 * @return A request object to `DELETE` on `endpoint`.
 	 */
-	public delete(endpoint: string): Http.Request {
+	public delete(endpoint: string): Http.SuperAgentRequest {
 		return Http.del(this.baseUrl + endpoint);
 	}
 }

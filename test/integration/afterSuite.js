@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 require('ts-node/register');
 const IssoManagement = require('../util/IssoManagement').default;
 const chalk = require('chalk');
