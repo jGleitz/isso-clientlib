@@ -4,8 +4,7 @@ import FakeIssoServer from '../util/FakeIssoServer';
 import * as SERVER_FIXTURES from '../fixtures/commentListing';
 import { expectData, successResponse } from '../util/SuperagentStub';
 
-import Comment from '../../lib/Comment';
-import Page from '../../lib/Page';
+import { Comment, Page } from '../../lib';
 
 const server = new FakeIssoServer();
 const commentData = SERVER_FIXTURES.standard.replies[0];

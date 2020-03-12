@@ -216,9 +216,7 @@ export default class IssoManagement {
 	 */
 	public static destroy(): Promise<void> {
 		return this.stop()
-			.then(() =>
-				this.issoloc !== undefined ? rmrf(this.issoloc) : Promise.resolve()
-			)
+			.then(() => (this.issoloc !== undefined ? rmrf(this.issoloc) : Promise.resolve()))
 			.then(() => (this._issoloc = undefined));
 	}
 
@@ -364,8 +362,7 @@ class Isso {
 	/**
 	 * Creates a new isso server instance with the given instance id (but does not start it)
 	 */
-	public constructor(public readonly id: number) {
-	}
+	public constructor(public readonly id: number) {}
 
 	/**
 	 * Starts this instance if it’s not already running.

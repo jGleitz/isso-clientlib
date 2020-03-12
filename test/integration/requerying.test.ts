@@ -1,4 +1,4 @@
-import Page from '../../lib/Page';
+import { Page } from '../../lib';
 import * as Isso from '../util/isso-control';
 import pageUris from '../fixtures/pageUris';
 import * as Testdata from './testdata';

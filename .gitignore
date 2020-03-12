@@ -1,6 +1,9 @@
 # Documentation
 /doc
 
+# Build output
+/dist
+
 # Logs
 logs
 *.log

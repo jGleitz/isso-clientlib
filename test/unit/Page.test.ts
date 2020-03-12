@@ -1,4 +1,4 @@
-import Page from '../../lib/Page';
+import { Page } from '../../lib';
 import FakeIssoServer from '../util/FakeIssoServer';
 import Location from '../util/Location';
 import { NULL_REQUEST, requestFor, successResponse } from '../util/SuperagentStub';

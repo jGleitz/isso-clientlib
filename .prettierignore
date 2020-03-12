@@ -1,6 +1,7 @@
 .idea/
 .vscode/
 coverage/
+dist/
 doc/
 node_modules/
 package.json

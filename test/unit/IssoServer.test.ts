@@ -1,4 +1,4 @@
-import IssoServer from '../../lib/IssoServer';
+import { IssoServer } from '../../lib';
 
 let server: IssoServer;
 

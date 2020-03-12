@@ -1,5 +1,4 @@
-import Comment from '../../lib/Comment';
-import Page from '../../lib/Page';
+import { Comment, Page } from '../../lib';
 
 import * as SERVER_FIXTURES from '../fixtures/commentListing';
 import IssoFakeServer from '../util/FakeIssoServer';

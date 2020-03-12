@@ -1,8 +1,8 @@
-import Page from './Page';
-import Author from './Author';
+import { Page } from './Page';
+import { Author } from './Author';
 import { Response } from 'superagent';
 import { AsyncEvent, VoidAsyncEvent } from 'ts-events';
-import CommentList from './CommentList';
+import { CommentList } from './CommentList';
 
 /**
  * The integer used by isso to encode the “awaits moderation” state of a
@@ -39,7 +39,7 @@ const TIMESTAMP_MULTIPLIER = 1000;
  * A comment that’s on a {@link Page}. Holds the comment’s data and can be
  * used to query and be updated of changes.
  */
-export default class Comment {
+export class Comment {
 	/**
 	 * Whether this comment has data changes that are not yet reflected on
 	 * the server.

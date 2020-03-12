@@ -1,5 +1,5 @@
 import { AsyncEvent } from 'ts-events';
-import Comment from './Comment';
+import { Comment } from './Comment';
 
 /**
  * The author of a comment. Every author has an unique identifier that is
@@ -7,7 +7,7 @@ import Comment from './Comment';
  * own author object and different author objects with the same identifier
  * may still have differnt data for the [#name](#name) and [#website](#website).
  */
-export default class Author {
+export class Author {
 	private _website?: string;
 
 	private _ident?: string;

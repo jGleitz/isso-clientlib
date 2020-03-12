@@ -1,10 +1,8 @@
-import Server from '../../lib/IssoServer';
+import { Comment, IssoServer, Page } from '../../lib';
 import pageUris from '../fixtures/pageUris';
-import Page from '../../lib/Page';
-import Comment from '../../lib/Comment';
 import * as Isso from '../util/isso-control';
 
-let server: Server;
+let server: IssoServer;
 
 export function createPopulatedTestPages(
 	pageUrisToUse: string[] = pageUris
@@ -25,7 +23,7 @@ export function createTestPagesInto(
 	pageUrisToUse: string[] = pageUris
 ): (serverUrl: string) => Page[] {
 	return (serverUrl: string) => {
-		server = new Server(serverUrl);
+		server = new IssoServer(serverUrl);
 		pageUrisToUse.forEach(uri => target.push(new Page(server, uri)));
 		return target;
 	};

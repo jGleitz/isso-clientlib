@@ -1,5 +1,4 @@
-import Page from '../../lib/Page';
-import Comment from '../../lib/Comment';
+import { Comment, Page } from '../../lib';
 import * as Isso from '../util/isso-control';
 import { createTestPagesInto as createEmptyTestPagesInto } from './testdata';
 

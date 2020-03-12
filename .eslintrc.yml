@@ -10,6 +10,7 @@ parserOptions:
 ignorePatterns:
   - node_modules/
   - coverage/
+  - dist/
   - doc/
 rules:
   comma-dangle: error

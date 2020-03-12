@@ -1,4 +1,4 @@
-import IssoServer from '../../lib/IssoServer';
+import { IssoServer } from '../../lib';
 import * as Http from 'superagent';
 import { RequestCallback, SuperagentEndStub } from './SuperagentStub';
 import SpyInstance = jest.SpyInstance;

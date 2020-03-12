@@ -1,13 +1,13 @@
-import IssoServer from './IssoServer';
+import { IssoServer } from './IssoServer';
 import { Request, Response } from 'superagent';
-import CommentList from './CommentList';
+import { CommentList } from './CommentList';
 
 /**
  * Represents one page on the website that can have comments on it. Every
  * {@link Comment} belongs to exactly one page. Pages are identified using
  * their URI.
  */
-export default class Page {
+export class Page {
 	/**
 	 * The promise for the request at the end of this page’s request queue.
 	 */

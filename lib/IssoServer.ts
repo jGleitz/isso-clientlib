@@ -4,7 +4,7 @@ import * as Http from 'superagent';
  * Abstraction of the isso comment server. This is the server storing the
  * comments. All requests will be sent to it.
  */
-export default class IssoServer {
+export class IssoServer {
 	/**
 	 * URL of the isso server.
 	 */

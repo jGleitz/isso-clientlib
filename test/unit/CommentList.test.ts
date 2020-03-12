@@ -4,9 +4,7 @@ import FakeIssoServer from '../util/FakeIssoServer';
 import { successResponse } from '../util/SuperagentStub';
 import * as SERVER_FIXTURES from '../fixtures/commentListing';
 
-import Page from '../../lib/Page';
-import Comment from '../../lib/Comment';
-import { SortCriterion, SortMode } from '../../lib/CommentList';
+import { Comment, Page, SortCriterion, SortMode } from '../../lib';
 
 const server = new FakeIssoServer();
 

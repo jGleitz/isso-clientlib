@@ -1,12 +1,12 @@
-import Page from './Page';
-import Comment from './Comment';
+import { Page } from './Page';
+import { Comment } from './Comment';
 import { AsyncEvent } from 'ts-events';
 import { Response } from 'superagent';
 
 /**
  * Modes a `CommentList` can be sorted by.
  */
-export const enum SortMode {
+export enum SortMode {
 	ASCENDING,
 	DESCENDING
 }
@@ -14,7 +14,7 @@ export const enum SortMode {
 /**
  * Criteria a `CommentList` can be sorted by.
  */
-export const enum SortCriterion {
+export enum SortCriterion {
 	/**
 	 * Sort based on the comment’s creation timestamp.
 	 */
@@ -62,7 +62,7 @@ type ModifiableCommentList = { [index: number]: Comment | undefined };
  *
  * A list contains only comments that either are published or are deleted but still have replies.
  */
-export default class CommentList implements ArrayLike<Comment> {
+export class CommentList implements ArrayLike<Comment> {
 	/**
 	 * Array like index signature. Keeps the comments in the order set through [#sortBys](#sortbys) or
 	 * [#sortBy](#sortby). If no order was set yet, the list is ordered by the comments’ creation date.
