@@ -433,14 +433,14 @@ export class CommentList implements ArrayLike<Comment> {
 	 * @param comment	The comment to add.
 	 */
 	public insert(comment: Comment): void {
+		if (!comment.id) {
+			throw new Error('the comment does not have an ID yet!');
+		}
 		let i = this.length - 1;
 		for (; i >= 0 && this.sortFunction(this[i], comment) > 0; i--) {
 			this[i + 1] = this[i];
 		}
 		this[i + 1] = comment;
-		if (!comment.id) {
-			throw new Error('the comment does not have an ID yet!');
-		}
 		this.commentsById[comment.id] = comment;
 		this._length++;
 	}
@@ -452,15 +452,15 @@ export class CommentList implements ArrayLike<Comment> {
 	 * @param comment	The comment to remove.
 	 */
 	public remove(comment: Comment): void {
+		if (!comment.id) {
+			throw new Error('the comment does not have an ID yet!');
+		}
 		let lastComment: Comment | undefined = undefined;
 		let i = this.length - 1;
 		for (; i >= 0 && this[i] !== comment; i--) {
 			const copy = this[i];
 			(this as ModifiableCommentList)[i] = lastComment;
 			lastComment = copy;
-		}
-		if (!comment.id) {
-			throw new Error('the comment does not have an ID yet!');
 		}
 		delete this.commentsById[comment.id];
 		(this as ModifiableCommentList)[i] = lastComment;
