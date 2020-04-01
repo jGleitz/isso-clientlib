@@ -36,3 +36,5 @@ To check the code, you can use these tasks:
 | `npm run unit-test`        | run only unit tests                                                               |
 | `npm run integration-test` | run only the integration test                                                     |
 | `npm run doc`              | generate the documentation                                                        |
+
+To execute the integration test while offline, set the environment variable `OFFLINE` to `true`.

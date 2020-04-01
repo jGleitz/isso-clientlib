@@ -1,4 +1,4 @@
-// / <reference path="./hasbin.d.ts" />
+/// <reference path="./hasbin.d.ts" />
 
 /* eslint-env node */
 
@@ -24,6 +24,7 @@ const writeFile = promisify(fs.writeFile) as (
 	options?: fs.WriteFileOptions
 ) => Promise<void>;
 
+const ISSO_IMAGE = 'wonderfall/isso';
 export const COMMUNICATION_WEBSITE = `http://localhost:${COMMUNICATION_SERVER_PORT}`;
 const BASE_PORT = 3020;
 
@@ -40,11 +41,6 @@ const STARTED_REGEX = new RegExp(`${infoPattern} connected to ${COMMUNICATION_WE
 const OK = (): { ok: true } => ({
 	ok: true
 });
-
-/**
- * The docker executable to use (podman or docker)
- */
-let docker!: string;
 
 /**
  * Whether to print the command line output of executed commands and additional debug output.
@@ -84,12 +80,20 @@ function printSpawned(spawned: ChildProcess): void {
 	}
 }
 
-function findDocker(): Promise<void> {
+let dockerCache: string | null = null;
+
+/**
+ * Provides the docker executable to use (podman or docker)
+ */
+function findDocker(): Promise<string> {
+	if (dockerCache !== null) {
+		return Promise.resolve(dockerCache);
+	}
 	return new Promise((resolve, reject) => {
 		hasbin.first(['podman', 'docker'], result => {
 			if (result !== false) {
-				docker = result;
-				resolve();
+				dockerCache = result;
+				resolve(result);
 			}
 			reject('Cannot find podman or docker. Please install one of them!');
 		});
@@ -154,21 +158,32 @@ export default class IssoManagement {
 	 */
 	public static install(): Promise<void> {
 		process.umask(0);
-		if (!this.installed) {
-			return findDocker()
-				.then(() => execAndPrint(`${docker} pull wonderfall/isso`))
-				.then(() => tmp.dir())
-				.then(tmpdir => {
-					this._issodir = tmpdir;
-				});
-		} else {
+		if (this.installed) {
 			return Promise.resolve();
 		}
+		let imageInstall: Promise<unknown>;
+		if (process.env.OFFLINE === 'true') {
+			imageInstall = findDocker()
+				.then(docker => execAndPrint(`${docker} images ${ISSO_IMAGE} --noheading`))
+				.then(output => {
+					if (!output.includes(ISSO_IMAGE)) {
+						throw Error('The isso image is not present, but offline mode is activated!');
+					}
+				});
+		} else {
+			imageInstall = findDocker()
+				.then(docker => execAndPrint(`${docker} pull ${ISSO_IMAGE}`));
+		}
+		return imageInstall
+			.then(() => tmp.dir())
+			.then(tmpdir => {
+				this._issodir = tmpdir;
+			});
 	}
 
 	/**
 	 * Starts the isso service. This will not actually start an isso server instance. Instead, it will start a HTTP
-	 * server on `localhost:3010` that can be used to control an isso server instance.
+	 * server on `localhost:3010` that can be used to contpullrol an isso server instance.
 	 *
 	 * @return A promise that will be resolved when isso started.
 	 */
@@ -366,7 +381,8 @@ class Isso {
 	/**
 	 * Creates a new isso server instance with the given instance id (but does not start it)
 	 */
-	public constructor(public readonly id: number) {}
+	public constructor(public readonly id: number) {
+	}
 
 	/**
 	 * Starts this instance if it’s not already running.
@@ -377,45 +393,43 @@ class Isso {
 		if (this.process !== undefined) {
 			return Promise.resolve();
 		}
-		return new Promise((resolve, reject) => {
-			this.process = execFile(
-				docker,
-				[
-					'run',
-					'--rm',
-					'--network',
-					'host',
-					'-v',
-					`${this.configDir}:/config`,
-					'-v',
-					`${this.dbDir}:/db`,
-					'wonderfall/isso'
-				],
-				error => {
-					if (error && !error.killed) {
-						this.stop().finally(() => reject(error));
+		return findDocker()
+			.then(docker => new Promise((resolve, reject) => {
+				this.process = execFile(
+					docker,
+					[
+						'run',
+						'--rm',
+						'--network', 'host',
+						'-v', `${this.configDir}:/config`,
+						'-v', `${this.dbDir}:/db`,
+						ISSO_IMAGE
+					],
+					error => {
+						if (error && !error.killed) {
+							this.stop().finally(() => reject(error));
+						}
 					}
-				}
-			);
-			const startTimeout = setTimeout(
-				() => this.stop().finally(() => reject('Isso did not start within 20 seconds!')),
-				20000
-			);
+				);
+				const startTimeout = setTimeout(
+					() => this.stop().finally(() => reject('Isso did not start within 20 seconds!')),
+					20000
+				);
 
-			const startListener = (data: string): void => {
-				clearTimeout(startTimeout);
-				this.process?.stderr?.removeListener('data', startListener);
-				if (!INFO_REGEX.test(data)) {
-					console.error(data);
-					this.stop().finally(() => reject(data));
-				} else if (STARTED_REGEX.test(data)) {
-					resolve();
-				}
-			};
+				const startListener = (data: string): void => {
+					clearTimeout(startTimeout);
+					this.process?.stderr?.removeListener('data', startListener);
+					if (!INFO_REGEX.test(data)) {
+						console.error(data);
+						this.stop().finally(() => reject(data));
+					} else if (STARTED_REGEX.test(data)) {
+						resolve();
+					}
+				};
 
-			this.process.stderr?.on('data', startListener);
-			printSpawned(this.process);
-		});
+				this.process.stderr?.on('data', startListener);
+				printSpawned(this.process);
+			}));
 	}
 
 	/**
@@ -440,7 +454,7 @@ class Isso {
 	 */
 	public removeDatabase(): Promise<void> {
 		return rmrf(this.dbDir).then(() =>
-			fs.promises.mkdir(this.dbDir, { mode: 0o777, recursive: true })
+			fs.promises.mkdir(this.dbDir, {mode: 0o777, recursive: true})
 		);
 	}
 
@@ -468,8 +482,8 @@ class Isso {
 			enabled = false
 		`.replace(/\t/g, '');
 		return rmrf(this.configDir)
-			.then(() => fs.promises.mkdir(this.configDir, { mode: 0o777, recursive: true }))
-			.then(() => writeFile(`${this.configDir}/isso.conf`, config, { mode: 0o777 }));
+			.then(() => fs.promises.mkdir(this.configDir, {mode: 0o777, recursive: true}))
+			.then(() => writeFile(`${this.configDir}/isso.conf`, config, {mode: 0o777}));
 	}
 
 	private get configDir(): string {
