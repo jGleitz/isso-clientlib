@@ -22,7 +22,7 @@ export default class FakeIssoServer extends IssoServer {
 		delete: stubRegistry;
 	};
 
-	private setStubsToEmpty() {
+	private setStubsToEmpty(): void {
 		this.stubs = {
 			get: {},
 			post: {},
@@ -122,7 +122,7 @@ export default class FakeIssoServer extends IssoServer {
 		const stub = jest
 			.spyOn(request, 'end')
 			.mockName('request.end')
-			.mockImplementation(function (this: Http.Request, callback?: RequestCallback): Http.Request {
+			.mockImplementation(function(this: Http.Request, callback?: RequestCallback): Http.Request {
 				endStub.call(this, callback || (() => null));
 				return request;
 			});

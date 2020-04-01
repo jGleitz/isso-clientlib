@@ -1,4 +1,4 @@
-/// <reference path="./hasbin.d.ts" />
+// / <reference path="./hasbin.d.ts" />
 
 /* eslint-env node */
 
@@ -171,8 +171,7 @@ export default class IssoManagement {
 					}
 				});
 		} else {
-			imageInstall = findDocker()
-				.then(docker => execAndPrint(`${docker} pull ${ISSO_IMAGE}`));
+			imageInstall = findDocker().then(docker => execAndPrint(`${docker} pull ${ISSO_IMAGE}`));
 		}
 		return imageInstall
 			.then(() => tmp.dir())
@@ -381,8 +380,7 @@ class Isso {
 	/**
 	 * Creates a new isso server instance with the given instance id (but does not start it)
 	 */
-	public constructor(public readonly id: number) {
-	}
+	public constructor(public readonly id: number) {}
 
 	/**
 	 * Starts this instance if it’s not already running.
@@ -393,43 +391,48 @@ class Isso {
 		if (this.process !== undefined) {
 			return Promise.resolve();
 		}
-		return findDocker()
-			.then(docker => new Promise((resolve, reject) => {
-				this.process = execFile(
-					docker,
-					[
-						'run',
-						'--rm',
-						'--network', 'host',
-						'-v', `${this.configDir}:/config`,
-						'-v', `${this.dbDir}:/db`,
-						ISSO_IMAGE
-					],
-					error => {
-						if (error && !error.killed) {
-							this.stop().finally(() => reject(error));
+		return findDocker().then(
+			docker =>
+				new Promise((resolve, reject) => {
+					this.process = execFile(
+						docker,
+						[
+							'run',
+							'--rm',
+							'--network',
+							'host',
+							'-v',
+							`${this.configDir}:/config`,
+							'-v',
+							`${this.dbDir}:/db`,
+							ISSO_IMAGE
+						],
+						error => {
+							if (error && !error.killed) {
+								this.stop().finally(() => reject(error));
+							}
 						}
-					}
-				);
-				const startTimeout = setTimeout(
-					() => this.stop().finally(() => reject('Isso did not start within 20 seconds!')),
-					20000
-				);
+					);
+					const startTimeout = setTimeout(
+						() => this.stop().finally(() => reject('Isso did not start within 20 seconds!')),
+						20000
+					);
 
-				const startListener = (data: string): void => {
-					clearTimeout(startTimeout);
-					this.process?.stderr?.removeListener('data', startListener);
-					if (!INFO_REGEX.test(data)) {
-						console.error(data);
-						this.stop().finally(() => reject(data));
-					} else if (STARTED_REGEX.test(data)) {
-						resolve();
-					}
-				};
+					const startListener = (data: string): void => {
+						clearTimeout(startTimeout);
+						this.process?.stderr?.removeListener('data', startListener);
+						if (!INFO_REGEX.test(data)) {
+							console.error(data);
+							this.stop().finally(() => reject(data));
+						} else if (STARTED_REGEX.test(data)) {
+							resolve();
+						}
+					};
 
-				this.process.stderr?.on('data', startListener);
-				printSpawned(this.process);
-			}));
+					this.process.stderr?.on('data', startListener);
+					printSpawned(this.process);
+				})
+		);
 	}
 
 	/**
@@ -454,7 +457,7 @@ class Isso {
 	 */
 	public removeDatabase(): Promise<void> {
 		return rmrf(this.dbDir).then(() =>
-			fs.promises.mkdir(this.dbDir, {mode: 0o777, recursive: true})
+			fs.promises.mkdir(this.dbDir, { mode: 0o777, recursive: true })
 		);
 	}
 
@@ -482,8 +485,8 @@ class Isso {
 			enabled = false
 		`.replace(/\t/g, '');
 		return rmrf(this.configDir)
-			.then(() => fs.promises.mkdir(this.configDir, {mode: 0o777, recursive: true}))
-			.then(() => writeFile(`${this.configDir}/isso.conf`, config, {mode: 0o777}));
+			.then(() => fs.promises.mkdir(this.configDir, { mode: 0o777, recursive: true }))
+			.then(() => writeFile(`${this.configDir}/isso.conf`, config, { mode: 0o777 }));
 	}
 
 	private get configDir(): string {

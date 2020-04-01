@@ -267,8 +267,8 @@ describe('CommentList', () => {
 	it('can be sorted by multiple criteria', () => {
 		return pageWithCommentList(SERVER_FIXTURES.forSorting).then(page => {
 			page.comments.sortBys(
-				{criterion: SortCriterion.LIKES, mode: SortMode.DESCENDING},
-				{criterion: SortCriterion.MODIFICATION, mode: SortMode.ASCENDING}
+				{ criterion: SortCriterion.LIKES, mode: SortMode.DESCENDING },
+				{ criterion: SortCriterion.MODIFICATION, mode: SortMode.ASCENDING }
 			);
 			expect(page.comments.map(toId)).toEqual([4, 6, 5, 2, 1, 3]);
 		});

@@ -1,5 +1,5 @@
 declare module 'clone' {
-	function clone<T>(o: T): T
+	function clone<T>(o: T): T;
 
-	export default clone
+	export default clone;
 }
