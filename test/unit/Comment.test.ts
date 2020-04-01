@@ -1,4 +1,4 @@
-import * as clone from 'clone';
+import clone from 'clone';
 
 import FakeIssoServer from '../util/FakeIssoServer';
 import * as SERVER_FIXTURES from '../fixtures/commentListing';
