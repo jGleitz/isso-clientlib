@@ -38,17 +38,15 @@ export enum SortCriterion {
 	LIKESUM
 }
 
-const atEnd = Number.MAX_SAFE_INTEGER;
-
 /**
  * Functions returning the number to use for comparison for each `SortCriterion`.
  */
+// invariant: all comments is this list have been submitted to the server
 const COMMENT_MEMBER_ACCESS_FUNCTIONS: {
 	[criterion: number]: (comment: Comment) => number;
 } = {
-	[SortCriterion.CREATION]: comment => comment.createdOn?.getTime() || atEnd,
-	[SortCriterion.MODIFICATION]: comment =>
-		(comment.lastModifiedOn || comment.createdOn)?.getTime() || atEnd,
+	[SortCriterion.CREATION]: comment => comment.createdOn!.getTime(),
+	[SortCriterion.MODIFICATION]: comment => (comment.lastModifiedOn || comment.createdOn!).getTime(),
 	[SortCriterion.LIKES]: comment => comment.likes,
 	[SortCriterion.DISLIKES]: comment => comment.dislikes,
 	[SortCriterion.LIKESUM]: comment => comment.likes - comment.dislikes
@@ -452,9 +450,6 @@ export class CommentList implements ArrayLike<Comment> {
 	 * @param comment	The comment to remove.
 	 */
 	public remove(comment: Comment): void {
-		if (!comment.id) {
-			throw new Error('the comment does not have an ID yet!');
-		}
 		let lastComment: Comment | undefined = undefined;
 		let i = this.length - 1;
 		for (; i >= 0 && this[i] !== comment; i--) {
@@ -462,7 +457,8 @@ export class CommentList implements ArrayLike<Comment> {
 			(this as ModifiableCommentList)[i] = lastComment;
 			lastComment = copy;
 		}
-		delete this.commentsById[comment.id];
+		// invariant: all comments is this list have been submitted to the server
+		delete this.commentsById[comment.id!];
 		(this as ModifiableCommentList)[i] = lastComment;
 		this._length--;
 	}

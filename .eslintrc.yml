@@ -118,6 +118,7 @@ overrides:
           classes: false
       'no-unused-expressions': off
       '@typescript-eslint/no-unused-expressions': error
+      '@typescript-eslint/no-non-null-assertion': off
   - files: 'test/**/*'
     env:
       jest: true
