@@ -1,7 +1,7 @@
-import Page from '../../lib/Page';
+import { Page } from '../../lib';
 import FakeIssoServer from '../util/FakeIssoServer';
 import Location from '../util/Location';
-import { requestFor, successResponse, NULL_REQUEST } from '../util/SuperagentStub';
+import { NULL_REQUEST, requestFor, successResponse } from '../util/SuperagentStub';
 
 const server = new FakeIssoServer();
 
@@ -33,27 +33,31 @@ describe('Page', () => {
 	it('can send a request', () => {
 		const page = new Page(server, 'test/uri');
 		const request = requestFor(successResponse());
-		return page.send(request, a => a).then(() => {
-			expect(request.end).toHaveBeenCalled();
-		});
+		return page
+			.send(request, a => a)
+			.then(() => {
+				expect(request.end).toHaveBeenCalled();
+			});
 	});
 
 	it('can send a request from a factory', () => {
 		const requestFactory = jest.fn(() => requestFor(successResponse()));
 		let continueCallback!: () => void;
-		const delayPromise = new Promise((resolve, reject) => continueCallback = resolve);
+		const delayPromise = new Promise(resolve => (continueCallback = resolve));
 		const page = new Page(server, 'test/uri');
-		const promises: Array<Promise<any>> = [];
+		const promises: Promise<unknown>[] = [];
 
 		promises[0] = page.send(requestFor(successResponse()), () => {
 			expect(requestFactory).not.toHaveBeenCalled();
 			return delayPromise;
 		});
-		promises[1] = page.send(requestFactory, a => a).then(() => {
-			expect(requestFactory).toHaveBeenCalled();
-		});
+		promises[1] = page
+			.send(requestFactory, a => a)
+			.then(() => {
+				expect(requestFactory).toHaveBeenCalled();
+			});
 		expect(requestFactory).not.toHaveBeenCalled();
-		continueCallback!();
+		continueCallback();
 		return Promise.all(promises);
 	});
 

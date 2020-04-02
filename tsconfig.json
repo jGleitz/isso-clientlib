@@ -2,13 +2,11 @@
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": false,
 		"allowUnreachableCode": false,
-		"target": "es6",
+		"target": "ESNext",
 		"noImplicitAny": true,
 		"strict": true,
-		"noEmit": true,
-		"moduleResolution": "node"
+		"moduleResolution": "node",
+		"noEmit": true
 	},
-	"exclude": [
-		"node_modules"
-	]
+	"exclude": ["node_modules"]
 }

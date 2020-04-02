@@ -9,30 +9,25 @@ const SERVER_ADDRESS = `http://localhost:${COMMUNICATION_SERVER_PORT}`;
 
 let issoId: string | undefined;
 
-function call(uri: string, query?: { [param: string]: string }): Promise<any> {
+function call(uri: string, query: { [param: string]: string } = {}): Promise<unknown> {
 	return new Promise((resolve, reject) => {
 		Http.get(SERVER_ADDRESS + uri)
-			.query(query || {})
+			.query(query)
 			.end((error, response) => {
-				if (error) {
-					reject(error);
+				if (response.ok) {
+					resolve(response.body);
 				} else {
-					if (response.ok) {
-						resolve(response.body);
-					} else {
-						reject(response.text);
-					}
+					reject(response.text);
 				}
 			});
 	});
 }
 
-function assertId(): Promise<void> {
-	if (issoId !== undefined) {
-		return Promise.resolve();
-	} else {
-		return Promise.reject(new Error('isso must be started first!'));
+function callWithIssoId(uri: string, query: { [param: string]: string } = {}): Promise<unknown> {
+	if (issoId === undefined) {
+		throw new Error('isso must be started first!');
 	}
+	return call(uri, { id: issoId, ...query });
 }
 
 /**
@@ -42,7 +37,7 @@ function assertId(): Promise<void> {
  *        will be resolved with the url under which the server can be reached.
  */
 export function start(): Promise<string> {
-	return assertId().then(() => call('/start', { id: issoId! })).then(response => response.url);
+	return callWithIssoId('/start').then(response => (response as { url: string }).url);
 }
 
 /**
@@ -51,7 +46,7 @@ export function start(): Promise<string> {
  * @return A promise that will be resolved when the server instance was stopped (or none is running).
  */
 export function stop(): Promise<void> {
-	return assertId().then(() => call('/stop', { id: issoId! }));
+	return (callWithIssoId('/stop') as unknown) as Promise<void>;
 }
 
 /**
@@ -64,8 +59,9 @@ export function create(): Promise<string> {
 		return Promise.reject('There already is an existing Isso instance for this thread!');
 	} else {
 		return call('/create').then(response => {
-			issoId = response.id;
-			return response.url;
+			const responseObject = response as { id: string; url: string };
+			issoId = responseObject.id;
+			return responseObject.url;
 		});
 	}
 }
@@ -76,7 +72,7 @@ export function create(): Promise<string> {
  * @return A promise that will be resolved when the server instance was started.
  */
 export function enableModeration(): Promise<void> {
-	return assertId().then(() => call('/start', { moderation: 'active', id: issoId! }));
+	return (callWithIssoId('/start', { moderation: 'active' }) as unknown) as Promise<void>;
 }
 
 /**
@@ -85,7 +81,7 @@ export function enableModeration(): Promise<void> {
  * @return A promise that will be resolved when the server instance was started.
  */
 export function disableModeration(): Promise<void> {
-	return assertId().then(() => call('/start', { moderation: 'inactive', id: issoId! }));
+	return (callWithIssoId('/start', { moderation: 'inactive' }) as unknown) as Promise<void>;
 }
 
 /**
@@ -95,7 +91,7 @@ export function disableModeration(): Promise<void> {
  */
 export function finished(): Promise<void> {
 	if (issoId !== undefined) {
-		return call('/return', { id: issoId }).then(() => issoId = undefined);
+		return call('/return', { id: issoId }).then(() => (issoId = undefined));
 	} else {
 		return Promise.resolve();
 	}

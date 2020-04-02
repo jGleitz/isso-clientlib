@@ -1,5 +1,5 @@
 import 'jest-extended';
-import Page from '../../lib/Page';
+import { Page } from '../../lib';
 
 import pageUris from '../fixtures/pageUris';
 import * as Isso from '../util/isso-control';
@@ -8,9 +8,11 @@ import * as Testdata from './testdata';
 let testPage: Page; // created from pageUris[2];
 
 describe('updating comments', () => {
-	beforeAll(() => Isso.create()
-		.then(Testdata.createPopulatedTestPages([pageUris[2]]))
-		.then(pages => testPage = pages[0]));
+	beforeAll(() =>
+		Isso.create()
+			.then(Testdata.createPopulatedTestPages([pageUris[2]]))
+			.then(pages => (testPage = pages[0]))
+	);
 	afterAll(Isso.finished);
 
 	describe('from the page it was created on', () => {
@@ -20,7 +22,9 @@ describe('updating comments', () => {
 			const start = new Date();
 
 			return comment.send().then(() => {
-				expect(comment.text).toBe('<p>I <em>changed</em>! Can you believe <strong>that</strong>?!</p>');
+				expect(comment.text).toBe(
+					'<p>I <em>changed</em>! Can you believe <strong>that</strong>?!</p>'
+				);
 				expect(comment.lastModifiedOn).toBeAfter(start);
 				expect(comment.lastModifiedOn).toBeBefore(new Date());
 			});
@@ -68,7 +72,8 @@ describe('updating comments', () => {
 	describe('from a new page', () => {
 		let testPageCopy: Page;
 
-		beforeAll(() => { // fetch test page
+		beforeAll(() => {
+			// fetch test page
 			testPageCopy = new Page(testPage.server, pageUris[2]);
 			return testPageCopy.comments.fetch();
 		});
@@ -79,7 +84,9 @@ describe('updating comments', () => {
 			const start = new Date();
 
 			return comment.send().then(() => {
-				expect(comment.text).toBe('<p>I <em>changed</em>! Can you believe <strong>that</strong>?!</p>');
+				expect(comment.text).toBe(
+					'<p>I <em>changed</em>! Can you believe <strong>that</strong>?!</p>'
+				);
 				expect(comment.lastModifiedOn).toBeAfter(start);
 				expect(comment.lastModifiedOn).toBeBefore(new Date());
 			});

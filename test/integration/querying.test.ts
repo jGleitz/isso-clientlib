@@ -1,14 +1,16 @@
 import pageUris from '../fixtures/pageUris';
-import Page from '../../lib/Page';
+import { Page } from '../../lib';
 import * as Isso from '../util/isso-control';
 import * as Testdata from './testdata';
 
 let testPage: Page; // created from pageUris[0]
 
 describe('querying comments', () => {
-	beforeAll(() => Isso.create()
-	.then(Testdata.createPopulatedTestPages([pageUris[0]]))
-	.then(pages => testPage = pages[0]));
+	beforeAll(() =>
+		Isso.create()
+			.then(Testdata.createPopulatedTestPages([pageUris[0]]))
+			.then(pages => (testPage = pages[0]))
+	);
 	afterAll(Isso.finished);
 
 	test('full list', () => {
@@ -28,5 +30,4 @@ describe('querying comments', () => {
 			expect(deepCount).toBe(7);
 		});
 	});
-
 });

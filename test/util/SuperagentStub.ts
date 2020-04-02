@@ -1,9 +1,11 @@
 import * as Http from 'superagent';
 
-export type RequestCallback = (error: any, response: Http.Response) => void;
-export type SuperagentEndStub = (callback: (error: any, response: Http.Response) => void) => void;
+export type RequestCallback = (error: unknown, response: Http.Response) => void;
+export type SuperagentEndStub = (
+	callback: (error: unknown, response: Http.Response) => void
+) => void;
 
-export const NULL_REQUEST = null as any as Http.Response;
+export const NULL_REQUEST = (null as unknown) as Http.Response;
 
 /**
  * Creates a Superagent request object that uses the provided
@@ -16,8 +18,13 @@ export const NULL_REQUEST = null as any as Http.Response;
  */
 export function requestFor(endStub: SuperagentEndStub): Http.Request {
 	const request = Http.get('https://comments.example.com/endpoint');
-	jest.spyOn(request, 'end').mockName('request.end')
-		.mockImplementation(function (this: Http.Request, callback?: RequestCallback): Http.SuperAgentRequest {
+	jest
+		.spyOn(request, 'end')
+		.mockName('request.end')
+		.mockImplementation(function(
+			this: Http.Request,
+			callback?: RequestCallback
+		): Http.SuperAgentRequest {
 			endStub.call(this, callback || (() => null));
 			return request;
 		});
@@ -34,20 +41,29 @@ export function requestFor(endStub: SuperagentEndStub): Http.Request {
  *        Further attributes to set on the simulated response object.
  * @return A stub for a superagent request’s `end` method.
  */
-export function successResponse(body: any = {}, furtherOptions?: any): SuperagentEndStub {
+export function successResponse(body: unknown = {}, furtherOptions?: object): SuperagentEndStub {
 	return callback => {
-		callback(null, Object.assign({
-			ok: true,
-			status: 200,
-			text: JSON.stringify(body),
-			body: body,
-			type: 'application/json'
-		}, furtherOptions));
+		callback(
+			null,
+			Object.assign(
+				{
+					ok: true,
+					status: 200,
+					text: JSON.stringify(body),
+					body: body,
+					type: 'application/json'
+				},
+				furtherOptions
+			) as Http.Response
+		);
 	};
 }
 
-export function expectData(expectedData: any, responseStub: SuperagentEndStub): SuperagentEndStub {
-	return function (this: (Http.Request & { _data: any }), callback: RequestCallback): void {
+export function expectData(
+	expectedData: unknown,
+	responseStub: SuperagentEndStub
+): SuperagentEndStub {
+	return function(this: Http.Request & { _data: unknown }, callback: RequestCallback): void {
 		expect(this._data).toEqual(expectedData);
 		return responseStub(callback);
 	};
@@ -61,14 +77,20 @@ export function expectData(expectedData: any, responseStub: SuperagentEndStub): 
  *        Further attributes to set on the simulated response object.
  * @return A stub for a superagent request’s `end` method.
  */
-export function failResponse(furtherOptions?: any): SuperagentEndStub {
+export function failResponse(furtherOptions?: object): SuperagentEndStub {
 	return callback => {
-		callback(null, Object.assign({
-			ok: false,
-			status: 404,
-			text: 'The page could not be found',
-			type: 'application/json',
-			body: {}
-		}, furtherOptions));
+		callback(
+			null,
+			Object.assign(
+				{
+					ok: false,
+					status: 404,
+					text: 'The page could not be found',
+					type: 'application/json',
+					body: {}
+				},
+				furtherOptions
+			) as Http.Response
+		);
 	};
 }

@@ -1,18 +1,17 @@
-import IssoServer from './IssoServer';
+import { IssoServer } from './IssoServer';
 import { Request, Response } from 'superagent';
-import CommentList from './CommentList';
+import { CommentList } from './CommentList';
 
 /**
  * Represents one page on the website that can have comments on it. Every
  * {@link Comment} belongs to exactly one page. Pages are identified using
  * their URI.
  */
-export default class Page {
-
+export class Page {
 	/**
 	 * The promise for the request at the end of this page’s request queue.
 	 */
-	private pendingQueryPromise: Promise<void> = Promise.resolve();
+	private pendingQueryPromise: Promise<unknown> = Promise.resolve();
 
 	/**
 	 * The comments on this page.
@@ -27,7 +26,7 @@ export default class Page {
 	 * @param server    The isso server.
 	 * @param uri    The created page’s uri.
 	 */
-	constructor(public server: IssoServer, uri: string) {
+	public constructor(public server: IssoServer, uri: string) {
 		this.uri = uri.charAt(0) === '/' ? uri : '/' + uri;
 	}
 
@@ -53,25 +52,28 @@ export default class Page {
 	 * @param thisObject    The object to bind `process` to.
 	 * @return A promise that will be resolved with `process`’s result.
 	 */
-	public send<R>(request: Request | (() => Request), process: (response: Response) => R, thisObject?: any)
-		: Promise<R> {
-		return this.onNoRequest(() => new Promise((resolve, reject) => {
-			Page.getRequest(request).end((error, result) => {
-				if (error) {
-					reject(error);
-					return;
-				}
-				const processor = thisObject ? process.bind(thisObject) : process;
-				resolve(processor(result));
-			});
-		}));
+	public send<R>(
+		request: Request | (() => Request),
+		process: (response: Response) => R,
+		thisObject?: ThisParameterType<(response: Response) => R>
+	): Promise<R> {
+		return this.onNoRequest(
+			() =>
+				new Promise((resolve, reject) => {
+					Page.getRequest(request).end((error, result) => {
+						if (error) {
+							reject(error);
+							return;
+						}
+						const processor = thisObject ? process.bind(thisObject) : process;
+						resolve(processor(result));
+					});
+				})
+		);
 	}
 
 	private static getRequest(request: Request | (() => Request)): Request {
-		if (typeof request === 'function') {
-			return (<() => Request>request)();
-		}
-		return <Request>request;
+		return typeof request === 'function' ? request() : request;
 	}
 
 	/**
@@ -81,7 +83,7 @@ export default class Page {
 	 * @param func    A function to execute when no request is pending on this page.
 	 * @return A promise that will be resolved with the return value of `func`.
 	 */
-	public onNoRequest(func: () => any): Promise<any> {
-		return this.pendingQueryPromise = this.pendingQueryPromise.then(func, func);
+	public onNoRequest<T>(func: () => T | PromiseLike<T>): Promise<T> {
+		return (this.pendingQueryPromise = this.pendingQueryPromise.then(func, func));
 	}
 }

@@ -1,8 +1,8 @@
 {
-  "out": "doc",
-  "mode": "modules",
-  "module": "commonjs",
-  "target": "ES6",
-  "excludePrivate": true,
-  "excludeProtected": true
+	"out": "doc",
+	"mode": "modules",
+	"module": "commonjs",
+	"target": "ES6",
+	"excludePrivate": true,
+	"excludeProtected": true
 }
