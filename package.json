@@ -23,7 +23,7 @@
     "clone": "^2.0.0",
     "jest": "^24.1.0",
     "jest-cli": "^24.3.1",
-    "jest-extended": "^0.11.1",
+    "jest-extended": "0.11.5",
     "rimraf": "^3.0.0",
     "ts-jest": "^25.0.0",
     "ts-node": "^8.0.2",
